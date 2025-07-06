@@ -1,0 +1,99 @@
+/* Shared Container Styles */
+.dialog-section {
+  padding: 2rem;
+  background-color: #f9fafb; /* light gray background */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  max-width: 900px;
+  margin: 2rem auto;
+  line-height: 1.7;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Headings */
+.dialog-section h3 {
+  color: #1a202c; /* dark gray */
+  font-size: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid #3182ce; /* blue accent */
+  padding-left: 10px;
+}
+
+.dialog-section h3 strong {
+  font-weight: 700;
+}
+
+/* Paragraphs */
+.dialog-section p {
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+/* Subheadings (e.g., h4 inside About or Contact) */
+.dialog-section h4 {
+  color: #2d3748;
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Anchor links */
+.dialog-section a {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.dialog-section a:hover {
+  text-decoration: underline;
+}
+.dialog-section ul {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+
+.dialog-section ul li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #444;
+}
+
+/* Strong Text */
+.dialog-section strong {
+  color: #1e88e5;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  .dialog-section {
+    padding: 16px;
+  }
+
+  h2[mat-dialog-title] {
+    font-size: 20px;
+  }
+
+  .dialog-section h3 {
+    font-size: 18px;
+  }
+
+  .dialog-section p,
+  .dialog-section ul li {
+    font-size: 14px;
+  }
+}
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

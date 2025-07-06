@@ -1,0 +1,81 @@
+<h2 mat-dialog-title fxLayout="row" fxLayoutAlign="center center">
+  <mat-icon color="primary" style="margin-right: 8px;">dashboard</mat-icon>
+  Welcome to <strong style="margin-left: 5px;">PRABHA</strong>
+</h2>
+
+<mat-dialog-content fxLayout="column" fxLayoutGap="16px" style="padding: 16px;">
+  <p>
+    This AI Enabled BI Tool <strong>PRABHA</strong> provides an interactive sales prediction and analysis dashboard for
+    a textile shop, leveraging 5 years of historical sales data.
+  </p>
+
+  <div fxLayout="column" fxLayoutGap="8px">
+
+    <!-- Key Features Section -->
+    <h3 fxLayout="row" fxLayoutAlign="start center">
+      <mat-icon color="primary">star</mat-icon>
+      <span style="margin-left: 8px;">Key Features</span>
+    </h3>
+
+    <div fxLayout="column" fxLayoutGap="12px"
+      style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa;">
+
+      <div>
+        <h4 fxLayout="row" fxLayoutAlign="start center">
+          <span style="margin-left: 8px;">1. Sales Prediction using Historical Data</span>
+        </h4>
+        <ul style="margin-left: 30px;">
+          <li>A line graph visualizes the predicted sales trends based on 5 years of past sales data.</li>
+          <li>Machine learning or statistical models are applied to forecast future demand.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 fxLayout="row" fxLayoutAlign="start center">
+          <span style="margin-left: 8px;">2. Product-wise Sales Analysis (2022 vs. 2023)</span>
+        </h4>
+        <ul style="margin-left: 30px;">
+          <li>A bar chart compares sales of textile products between 2022 and 2023.</li>
+          <li>Helps identify top-performing products and declining trends.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 fxLayout="row" fxLayoutAlign="start center">
+          <span style="margin-left: 8px;">3. Month-wise Revenue Comparison</span>
+        </h4>
+        <ul style="margin-left: 30px;">
+          <li>A bar chart displays monthly revenue across different years.</li>
+          <li>Enables seasonal trend analysis.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Business Benefits Section -->
+    <h3 fxLayout="row" fxLayoutAlign="start center" style="margin-top: 24px;">
+      <mat-icon color="primary">star</mat-icon>
+      <span style="margin-left: 8px;">Business Benefits</span>
+    </h3>
+
+    <div fxLayout="column" fxLayoutGap="12px"
+      style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa;">
+      <ul style="margin-left: 30px;">
+        <li><strong>Accurate Demand Forecasting</strong> – Reduces overstocking/understocking.</li>
+        <li><strong>Performance Tracking</strong> – Identifies best-selling products.</li>
+        <li><strong>Data-Driven Decisions</strong> – Optimizes pricing and inventory.</li>
+      </ul>
+    </div>
+
+  </div>
+  <p>
+    This dashboard empowers textile shop owners with actionable insights, improving profitability through data-driven
+    strategies.
+    Future enhancements could include real-time sales tracking and AI-powered recommendations.
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="center center">
+  <a mat-raised-button color="accent" (click)="close()">
+    <mat-icon>close</mat-icon> Close
+  </a>
+</mat-dialog-actions>
