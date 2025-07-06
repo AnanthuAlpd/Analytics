@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppSettings } from '../app.settings';
 
@@ -50,15 +50,22 @@ export class AuthService {
     return this.http.get(url);
   }
 
+
+
   refreshToken(): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/refresh`;
     const refreshToken = localStorage.getItem('refresh_token');
-    return this.http.post(url, {}, {
-      headers: {
-        Authorization: `Bearer ${refreshToken}`
-      }
+  
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${refreshToken}`
     });
+  
+   // console.log('📢 Refreshing using token:', refreshToken);  // 🔍 Add this for debug
+  
+    return this.http.post(url, {}, { headers });
   }
+
+  
   
   getAuthHeaders(): { [header: string]: string } {
     const token = localStorage.getItem('access_token');

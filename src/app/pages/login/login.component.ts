@@ -59,7 +59,7 @@ export class LoginComponent {
         } else if (userType === 'CLIENT') {
           this.router.navigate(['/dashboard/client']);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard/demo']);
         }
       },
       error: (error) => {
