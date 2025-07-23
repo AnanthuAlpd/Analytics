@@ -9,7 +9,7 @@
                     <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit(form.value);">
                         <mat-icon>exit_to_app</mat-icon>
                     </button>
-                    <a mat-button routerLink="/register">Don't have an account? Sign up now!</a>
+                    <a mat-button [routerLink]="['/register', 'employee']">Don't have an account? Sign up now!</a>
                 </div>
                 <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
                     <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">

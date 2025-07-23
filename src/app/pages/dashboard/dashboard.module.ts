@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { SharedModule } from '../../shared/shared.module';
@@ -16,6 +16,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DemoPopupComponent } from './demo-dashboard/demo-popup/demo-popup.component';
 import { ClientDashboardComponent } from './client-dashboard/client-dashboard.component';
 import { EmpDashboardComponent } from './emp-dashboard/emp-dashboard.component';
+
 
 
 export const routes: Routes = [
@@ -54,7 +55,8 @@ export const routes: Routes = [
     NgxChartsModule,
     PerfectScrollbarModule,
     SharedModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    ReactiveFormsModule
   ],
   declarations: [
     DashboardComponent,

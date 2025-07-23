@@ -30,6 +30,9 @@ export class PagesComponent implements OnInit {
   }
   
   ngOnInit() {
+    const userType = localStorage.getItem('userType')
+    //console.log(userType);
+    
     if(window.innerWidth <= 768){
       this.settings.menu = 'vertical';
       this.settings.sidenavIsOpened = false;

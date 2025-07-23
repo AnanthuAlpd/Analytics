@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { debounceTime, switchMap } from 'rxjs';
 import { AppSettings } from 'src/app/app.settings';
 import { Settings } from 'src/app/app.settings.model';
-import { DashBoardService } from 'src/app/services/dashboard.service';
+import { DashBoardService, Product } from 'src/app/services/dashboard.service';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -28,6 +30,11 @@ export class ClientDashboardComponent implements OnInit {
   topRevenueLoaded = false;
   unsoldProducts: any[] = [];
   topRatedProducts: any[] = [];
+  monthlyRevenueData: any[] = [];
+  monthlyUnitsData: any[] = [];
+  productCtrl = new FormControl();
+  filteredProducts: Product[] = [];
+
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -42,6 +49,13 @@ export class ClientDashboardComponent implements OnInit {
     this.loadTopSellingProductsChart();
     this.loadTopRevenueProductsChart();
     this.loadTables();
+    this.loadMonthlyTrendsChart();
+    this.productCtrl.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(searchTerm => this.dashBoardService.getSearchProducts(searchTerm))
+    ).subscribe(products => {
+      this.filteredProducts = products;
+    });
   }
 
   // Load KPI card data from API
@@ -82,6 +96,7 @@ export class ClientDashboardComponent implements OnInit {
       this.cd.detectChanges();  // run after data set
     });
   }
+
   private loadTables(): void {
     this.dashBoardService.getLeastSellingProducts().subscribe(res => {
       this.leastSellingProducts = res || [];
@@ -96,7 +111,19 @@ export class ClientDashboardComponent implements OnInit {
     })
   }
 
-  
+  private loadMonthlyTrendsChart(productId?: number): void
+{
+  this.dashBoardService.getMonthlyTrend(productId).subscribe(res =>{
+     this.monthlyRevenueData = res.monthly_revenue;
+  this.monthlyUnitsData = res.monthly_units;
+  })
+}  
+
+onProductSelected(selectedName: string) {
+  const selectedProduct = this.filteredProducts.find(p => p.name === selectedName);
+  console.log('Selected Product:', selectedProduct);
+  this.loadMonthlyTrendsChart(selectedProduct.product_id);
+}
 }
 
 
