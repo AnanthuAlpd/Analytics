@@ -16,6 +16,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DemoPopupComponent } from './demo-dashboard/demo-popup/demo-popup.component';
 import { ClientDashboardComponent } from './client-dashboard/client-dashboard.component';
 import { EmpDashboardComponent } from './emp-dashboard/emp-dashboard.component';
+import { LeadsFormComponent } from './emp-dashboard/leads-form/leads-form.component';
 
 
 
@@ -24,7 +25,7 @@ export const routes: Routes = [
     path: '',
     component: DashboardComponent,
     canActivate: [AuthGuard],
-    data: { expectedRole: 'EMPLOYEE', breadcrumb: 'Dashboard' }  // or remove this line to allow all
+    data: {  breadcrumb: 'Dashboard' }  // or remove this line to allow all
   },
   {
     path: 'demo',
@@ -36,13 +37,13 @@ export const routes: Routes = [
     path: 'employee',
     component: EmpDashboardComponent,
     canActivate: [AuthGuard],
-    data: { expectedRole: 'EMPLOYEE', breadcrumb: 'Employee Dashboard' }
+    data: {  breadcrumb: 'Employee Dashboard' }
   },
   {
     path: 'client',
     component: ClientDashboardComponent,
     canActivate: [AuthGuard],
-    data: { expectedRole: 'CLIENT' , breadcrumb: 'Client Dashboard'}
+    data: { breadcrumb: 'Client Dashboard'}
   }
 ];
 
@@ -67,7 +68,8 @@ export const routes: Routes = [
     DemoDashboardComponent,
     DemoPopupComponent,
     ClientDashboardComponent,
-    EmpDashboardComponent
+    EmpDashboardComponent,
+    LeadsFormComponent
   ]
 })
 export class DashboardModule { }

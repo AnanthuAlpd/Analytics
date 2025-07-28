@@ -44,6 +44,7 @@ import { registerLocaleData } from '@angular/common';
 import localeIn from '@angular/common/locales/en-IN';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ClientEmpListComponent } from './pages/super-admin/client-emp-list/client-emp-list.component';
 registerLocaleData(localeIn);
 
 @NgModule({
@@ -80,7 +81,8 @@ registerLocaleData(localeIn);
     FullScreenComponent,
     ApplicationsComponent,
     MessagesComponent,
-    UserMenuComponent
+    UserMenuComponent,
+    ClientEmpListComponent
   ],
   providers: [
     AppSettings,

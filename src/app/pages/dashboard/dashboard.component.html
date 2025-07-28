@@ -1,51 +1,118 @@
-<!-- <app-info-cards></app-info-cards> -->
-<div fxLayout="row wrap">
-  <div fxFlex="100" fxFlex.gt-sm="100" class="flex-p">
-      <app-analytics></app-analytics>
-  </div>
-  <!-- <div fxFlex="100" fxFlex.gt-sm="30" fxLayout="column">
-      <div fxFlex="100" class="flex-p">
-          <mat-card>
-              <div fxLayout="row" fxLayoutAlign="space-between center" class="muted-text">
-                  <mat-icon class="icon-lg">monetization_on</mat-icon>
-                  <div>
-                      <h1>$ 35700</h1>
-                      <h2 class="fw-400">Profit</h2>
-                  </div>
-              </div>
-          </mat-card>
-      </div>
-      <div fxFlex="100" class="flex-p">
-          <mat-card>
-              <div fxLayout="row" fxLayoutAlign="space-between center" class="muted-text">
-                  <mat-icon class="icon-lg">cloud_download</mat-icon>
-                  <div>
-                      <h1>187230</h1>
-                      <h2 class="fw-400">Downloads</h2>
-                  </div>
-              </div>
-          </mat-card>
-      </div>
-      <div fxFlex="100" class="flex-p">
-          <mat-card>
-              <div fxLayout="row" fxLayoutAlign="space-between center" class="muted-text">
-                  <mat-icon class="icon-lg">shopping_cart</mat-icon>
-                  <div>
-                      <h1>78,25 %</h1>
-                      <h2 class="fw-400">Sales</h2>
-                  </div>
-              </div>
-          </mat-card>
-      </div>
-  </div> -->
-</div>
-<div fxLayout="row wrap">
-    <!-- <div fxFlex="100" fxFlex.gt-sm="45" class="flex-p">
-        <app-disk-space></app-disk-space>
-    </div> -->
-    <div fxFlex="100" fxFlex.gt-sm="100" class="flex-p">
-        <app-todo></app-todo>
+<div class="dashboard-container" fxLayout="column" fxLayoutGap="50px">
+
+    <!-- Stats Cards Section -->
+    <div class="stats-section">
+        <h2 class="section-title">Dashboard Overview</h2>
+        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+
+            <!-- Client Leads Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card client-leads">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar primary-bg">
+                            <mat-icon>group_add</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">New Clients</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">This month</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number">
+
+                        </div>
+                        <div class="stat-growth">
+                            <mat-icon>trending_up</mat-icon>
+                            <span>%</span>
+                        </div>
+
+                    </mat-card-content>
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="primary">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
+            <!-- Employee Leads Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card employee-leads">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar warn-bg">
+                            <mat-icon>badge</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">New Employees</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">This Month</mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number">
+
+                        </div>
+
+                        <div class="stat-growth">
+                            <mat-icon>trending_up</mat-icon>
+                            <span>
+                                % </span>
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="warn">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
+
+            <!-- Total Earnings Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card earnings">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar accent-bg">
+                            <mat-icon>account_balance_wallet</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">Total Earnings</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">All time rewards</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number earnings-amount" >
+                            <span class="currency">₹</span>
+                        </div>
+                        <div class="stat-growth positive">
+                            <mat-icon>trending_up</mat-icon>
+                            <span>+%</span>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="accent">
+                            <mat-icon>payment</mat-icon>
+                            View Earnings
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Quick Actions Section -->
+    <div class="quick-actions-section">
+        <h3 class="section-title">Quick Actions</h3>
+        <div fxLayout="row wrap" fxLayoutGap="12px">
+            <button mat-raised-button color="primary" class="action-btn">
+                <mat-icon>person_add</mat-icon>
+                Add Client Lead
+            </button>
+            <button mat-raised-button color="warn" class="action-btn">
+                <mat-icon>work</mat-icon>
+                Add Employee Lead
+            </button>
+            <button mat-stroked-button color="accent" class="action-btn">
+                <mat-icon>analytics</mat-icon>
+                View Reports
+            </button>
+        </div>
     </div>
 </div>
-
-

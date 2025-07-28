@@ -35,7 +35,6 @@ export class ClientDashboardComponent implements OnInit {
   productCtrl = new FormControl();
   filteredProducts: Product[] = [];
 
-
   constructor(
     private cd: ChangeDetectorRef,
     public appSettings: AppSettings,
@@ -45,6 +44,7 @@ export class ClientDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
     this.loadKpiCardData();
     this.loadTopSellingProductsChart();
     this.loadTopRevenueProductsChart();
@@ -121,7 +121,7 @@ export class ClientDashboardComponent implements OnInit {
 
 onProductSelected(selectedName: string) {
   const selectedProduct = this.filteredProducts.find(p => p.name === selectedName);
-  console.log('Selected Product:', selectedProduct);
+  //console.log('Selected Product:', selectedProduct);
   this.loadMonthlyTrendsChart(selectedProduct.product_id);
 }
 }

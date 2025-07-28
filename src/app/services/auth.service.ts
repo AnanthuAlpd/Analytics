@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   getDepartment(): string {
-    return this.getLoggedInUser()?.department_name;
+    return this.getLoggedInUser()?.main_department;
   }
 
   getAllEmployees(){

@@ -4,6 +4,8 @@
 /dist
 /tmp
 /out-tsc
+/src/assets/vid
+
 
 # dependencies
 /node_modules

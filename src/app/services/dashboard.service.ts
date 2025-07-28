@@ -84,4 +84,15 @@ export class DashBoardService {
     const url = `${this.appSettings.settings.baseUrl}/products/autocomplete`;
     return this.http.get<Product[]>(url, { params });
   }
+
+  createLead(leadData: any): Observable<any> {
+    const url = `${this.appSettings.settings.baseUrl}/leads/add`;
+    return this.http.post(url, leadData);
+  }
+
+  getLeadsByEmployeeId(): Observable<any> {
+    const url = `${this.appSettings.settings.baseUrl}/leads/get-leads-byEmplId`;
+    return this.http.get<any>(url);
+  }
+  
 }

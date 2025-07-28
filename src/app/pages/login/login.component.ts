@@ -43,12 +43,15 @@ export class LoginComponent {
         });
 
         // Fix token key
-        localStorage.setItem('access_token', response.access_token); // ✅ Fixed key
+        localStorage.setItem('access_token', response.access_token); 
         localStorage.setItem('refresh_token', response.refresh_token);
 
         // Save user
         const userType = response.user_type;
         const user = userType === 'EMPLOYEE' ? response.employee : response.client;
+        //console.log(user);
+        //console.log(userType);
+        
         localStorage.setItem('userType', userType);
         localStorage.setItem('user', JSON.stringify(user));
 

@@ -22,6 +22,8 @@ export class SidenavComponent implements OnInit {
   public settings: Settings;
   userName: string = '';
   deptName: string = '';
+  serviceName: string | null = null;
+  isClient: boolean = false;
   constructor(public appSettings: AppSettings, public menuService: MenuService, private router: Router,private authService:AuthService) {
     this.settings = this.appSettings.settings;
   }
@@ -32,11 +34,22 @@ export class SidenavComponent implements OnInit {
     this.menuItems = this.menuService.getVerticalMenuItems();
     this.userName = this.authService.getUserName();
     this.deptName = this.authService.getDepartment();
+    const userType = localStorage.getItem('userType');
+    //console.log(userType);
+    this.isClient = userType === 'CLIENT';
+    if (this.isClient) {
+      const clientData = localStorage.getItem('user');
+      if (clientData) {
+        const client = JSON.parse(clientData);
+        this.serviceName = client.service_name || null;
+      }
+      console.log(this.serviceName);
+      
+    }
   }
 
   logout() {
     localStorage.removeItem('user');
-
     // Prevent back navigation
     window.history.pushState(null, '', '/login');
     window.history.replaceState(null, '', '/login');
