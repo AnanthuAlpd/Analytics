@@ -478,3 +478,18 @@ a{
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+.snackbar-success {
+    background-color: #4caf50 !important; /* green */
+    color: #fff !important;
+  }
+  
+  .snackbar-error {
+    background-color: #f44336 !important; /* red */
+    color: #fff !important;
+  }
+  
+  .snackbar-info {
+    background-color: #2196f3 !important; /* blue */
+    color: #fff !important;
+  }
+  

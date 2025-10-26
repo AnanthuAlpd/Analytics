@@ -6,6 +6,7 @@ import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +20,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   employees: any;
   departments: any;
   services: any;
-
+  staticWebsiteUrl:any;
   constructor(
     public appSettings: AppSettings,
     public fb: UntypedFormBuilder,
@@ -43,7 +44,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     const type = this.route.snapshot.paramMap.get('userType');
     this.userType = (type?.toUpperCase() === 'CLIENT') ? 'CLIENT' : 'EMPLOYEE';
-
+    this.staticWebsiteUrl=environment.staticWebSiteUrl;
     this.addDynamicControls();
   }
 

@@ -1,0 +1,99 @@
+<div fxLayout="row wrap">
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Total predicted revenue of 2023 as per the historical data (2018-2022)" color="primary">assessment</mat-icon>
+        <mat-card-title >Total Predicted Revenue</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ totalRevenue | currency:'INR':'symbol' }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header  fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which will be sold more quantity" color="warn">trending_up</mat-icon>
+        <mat-card-title >Highest Selling Product</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ highestSellingProduct }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header  fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which was sold more quantity and get high revenue" color="accent">insert_chart_outlined</mat-icon>
+        <mat-card-title >Top Revenue Generator</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ mostValuableProduct }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div fxLayout="row wrap" class="flex-p">
+  <!-- Table Area using ngx-table -->
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Product Sale Comparison</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Search by product name</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()" />
+        </mat-form-field>
+        <ngx-datatable class="material" [rows]="filteredData" [headerHeight]="50" [footerHeight]="50"
+          [rowHeight]="'auto'" [limit]="pageSize" [sortType]="'single'" [columnMode]="'force'" (sort)="onSort($event)">
+          <!-- Product Name -->
+          <ngx-datatable-column name="Product Name" prop="product_name">
+          </ngx-datatable-column>
+          <!-- Actual Sales 2022 with green text -->
+          <ngx-datatable-column name="Actual Qty Sold 2022" prop="actual_sale_2022">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <mat-chip-list>
+                <mat-chip color="primary" selected>{{ value }}</mat-chip>
+              </mat-chip-list>
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- Predicted Sales 2023 with red text -->
+          <ngx-datatable-column name="Predicted Qty - 2023" prop="predicted_sale_2023">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <mat-chip-list>
+                <mat-chip color="warn" selected>{{ value }}</mat-chip>
+              </mat-chip-list>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- Chart Area using ngx-charts -->
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Total Revenue Comparison 2022-23</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <ngx-charts-bar-vertical-2d [scheme]="colorScheme" [results]="chartData" [gradient]="gradient" [xAxis]="showXAxis"
+        [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+      </ngx-charts-bar-vertical-2d>
+    </mat-card>
+  </div>
+
+</div>
+<div fxLayout="row wrap">
+  <div fxFlex="100" fxFlex.gt-sm="100" class="flex-p">
+    <app-analytics></app-analytics>
+  </div>
+</div>
+
+
+
+

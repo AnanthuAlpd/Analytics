@@ -6,7 +6,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { LoginComponent } from './login.component';
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent, pathMatch: 'full' }
+  { path: ':userType', component: LoginComponent, pathMatch: 'full' }
 ];
 
 @NgModule({

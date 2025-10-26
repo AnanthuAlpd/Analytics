@@ -1,0 +1,401 @@
+.entity-list-card {
+  margin: 24px 12px 24px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+
+  .mat-mdc-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 24px;
+    position: relative;
+
+    .mat-mdc-card-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0;
+      flex: 1;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .mat-mdc-icon-button {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .entity-list-content {
+    padding: 24px;
+
+    .search-container {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: center;
+
+      .search-field {
+        width: 100%;
+        max-width: 500px;
+
+        .mat-mdc-form-field-outline {
+          color: #667eea;
+        }
+
+        .mat-mdc-form-field-focus-overlay {
+          background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .mat-mdc-input-element {
+          font-size: 16px;
+        }
+
+        .mat-icon {
+          color: #667eea;
+        }
+      }
+    }
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+
+      .mat-mdc-progress-spinner {
+        margin-bottom: 24px;
+      }
+
+      p {
+        font-size: 18px;
+        color: #757575;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+
+    .no-data {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+
+      .mat-icon {
+        font-size: 80px;
+        width: 80px;
+        height: 80px;
+        color: #bdbdbd;
+        margin-bottom: 24px;
+      }
+
+      p {
+        font-size: 20px;
+        color: #757575;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+
+    .table-container {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e0e0e0;
+
+      .mat-mdc-table {
+        width: 100%;
+        background: white;
+
+        .mat-mdc-header-row {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          
+          .mat-mdc-header-cell {
+            font-weight: 600;
+            color: #424242;
+            font-size: 14px;
+            border-bottom: 2px solid #667eea;
+            padding: 16px 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+        }
+
+        .mat-mdc-row {
+          transition: all 0.2s ease;
+          cursor: pointer;
+
+          &:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+
+          &:nth-child(even) {
+            background-color: #fafafa;
+
+            &:hover {
+              background-color: rgba(102, 126, 234, 0.08);
+            }
+          }
+
+          .mat-mdc-cell {
+            padding: 16px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #424242;
+            vertical-align: middle;
+
+            // Special padding for roles column
+            &:has(.mat-chip-list), &:has(.mat-mdc-chip-set) {
+              padding: 12px;
+            }
+          }
+        }
+
+        // Employee Info Styling
+        .employee-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .employee-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+          }
+
+          .employee-name {
+            font-weight: 600;
+            color: #1976d2;
+            font-size: 15px;
+            margin-bottom: 2px;
+          }
+
+          .employee-email {
+            color: #757575;
+            font-size: 12px;
+          }
+        }
+
+        // Chip Styling
+        .mat-mdc-chip-set, .mat-chip-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          margin: 0;
+          padding: 0;
+
+          .mat-mdc-chip, .mat-chip {
+            background-color: #e8f5e8 !important;
+            color: #2e7d32 !important;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+            border-radius: 16px;
+            min-height: 28px;
+            padding: 4px 12px;
+            border: none;
+
+            &[color="warn"] {
+              background-color: #ffebee !important;
+              color: #d32f2f !important;
+            }
+
+            &[selected] {
+              background-color: #ffebee !important;
+              color: #d32f2f !important;
+            }
+          }
+        }
+
+        // Action Buttons
+        .mat-mdc-icon-button {
+          width: 36px;
+          height: 36px;
+          margin: 0 2px;
+          transition: all 0.2s ease;
+
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+
+          &:hover {
+            transform: scale(1.1);
+          }
+
+          &[color="primary"]:hover {
+            background-color: rgba(25, 118, 210, 0.1);
+          }
+
+          &[color="accent"]:hover {
+            background-color: rgba(255, 64, 129, 0.1);
+          }
+
+          &[color="warn"]:hover {
+            background-color: rgba(211, 47, 47, 0.1);
+          }
+        }
+      }
+
+      .mat-mdc-paginator {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-top: 1px solid #e0e0e0;
+        padding: 12px 24px;
+
+        .mat-mdc-paginator-range-label {
+          color: #424242;
+          font-weight: 500;
+        }
+
+        .mat-mdc-icon-button {
+          color: #667eea;
+
+          &:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+          }
+
+          &[disabled] {
+            color: #bdbdbd;
+          }
+        }
+
+        .mat-mdc-select {
+          .mat-mdc-select-value {
+            color: #424242;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    margin: 16px 8px;
+
+    .mat-mdc-card-header {
+      padding: 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .mat-mdc-card-title {
+        font-size: 24px;
+      }
+
+      .mat-mdc-icon-button {
+        align-self: flex-end;
+        margin-top: -40px;
+      }
+    }
+
+    .entity-list-content {
+      padding: 16px;
+
+      .search-container {
+        .search-field {
+          width: 100%;
+        }
+      }
+
+      .table-container {
+        overflow-x: auto;
+
+        .mat-mdc-table {
+          min-width: 600px;
+
+          .mat-mdc-header-cell,
+          .mat-mdc-cell {
+            padding: 12px 8px;
+          }
+
+          .employee-info {
+            .employee-avatar {
+              width: 32px;
+              height: 32px;
+              font-size: 16px;
+            }
+
+            .employee-name {
+              font-size: 14px;
+            }
+          }
+
+          .mat-mdc-icon-button {
+            width: 32px;
+            height: 32px;
+
+            .mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    .entity-list-content {
+      .table-container {
+        .mat-mdc-table {
+          .mat-mdc-header-cell,
+          .mat-mdc-cell {
+            &:nth-child(n+4) {
+              display: none;
+            }
+          }
+
+          // Keep actions column visible
+          .mat-mdc-header-cell:last-child,
+          .mat-mdc-cell:last-child {
+            display: table-cell !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Animation for smooth loading
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .table-container {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  // Chip list fix for deprecated warnings
+  .mat-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}

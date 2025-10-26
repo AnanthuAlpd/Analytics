@@ -1,0 +1,171 @@
+<div class="dialog-header">
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content class="dialog-content">
+
+    <!-- 🔍 Search -->
+    <div class="search-container" *ngIf="!loading && dataSource.data.length > 0">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search {{ data.type }}s...</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search by name or other fields">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+    </div>
+
+    <!-- ⏳ Loading Spinner -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading {{ data.type }}s...</p>
+    </div>
+
+    <!-- 🚫 No Data Message -->
+    <div *ngIf="!loading && dataSource.data.length === 0" class="no-data">
+        <mat-icon>person_off</mat-icon>
+        <p>No {{ data.type }}s found</p>
+    </div>
+
+    <!-- 📋 Department Table -->
+    <div *ngIf="!loading && data.type === 'department' && departments.length > 0" class="table-container">
+        <mat-table [dataSource]="dataSource" matSort class="table">
+            <!-- Sl. No Column -->
+            <ng-container matColumnDef="sl_no">
+                <mat-header-cell *matHeaderCellDef> Sl. No </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index">
+                    {{ i + 1 }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                <mat-cell *matCellDef="let department">
+                    {{ department.name }}
+                </mat-cell>
+            </ng-container>
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let department">
+                    <div class="action-buttons">
+                        <button mat-icon-button color="accent" matTooltip="Edit Department" (click)="edit(department)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" matTooltip="Delete Department"
+                            (click)="delete(department)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+
+    <!-- 📋 Role Table -->
+    <div *ngIf="!loading && data.type === 'role' && roles.length > 0" class="table-container">
+        <mat-table [dataSource]="dataSource" matSort class="table">
+            <!-- Sl. No Column -->
+            <ng-container matColumnDef="sl_no">
+                <mat-header-cell *matHeaderCellDef> Sl. No </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index">
+                    {{ i + 1 }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                <mat-cell *matCellDef="let role">
+                    {{ role.name }}
+                </mat-cell>
+            </ng-container>
+            <!-- Description Column -->
+            <ng-container matColumnDef="descriptions">
+                <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+                <mat-cell *matCellDef="let role">
+                    {{ role.description }}
+                </mat-cell>
+            </ng-container>
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let role">
+                    <div class="action-buttons">
+                        <button mat-icon-button color="accent" matTooltip="Edit Role" (click)="edit(role)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" matTooltip="Delete Role"
+                            (click)="delete(role)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+
+    <!-- 📋 Menu Table -->
+    <div *ngIf="!loading && data.type === 'menu' && menus.length > 0" class="table-container">
+        <mat-table [dataSource]="dataSource" matSort class="table">
+            <!-- Sl. No Column -->
+            <ng-container matColumnDef="sl_no">
+                <mat-header-cell *matHeaderCellDef> Sl. No </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index">
+                    {{ i + 1 }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="title">
+                <mat-header-cell *matHeaderCellDef> Title </mat-header-cell>
+                <mat-cell *matCellDef="let menu">
+                    {{ menu.title }}
+                </mat-cell>
+            </ng-container>
+            <!-- Description Column -->
+            <ng-container matColumnDef="router_link">
+                <mat-header-cell *matHeaderCellDef> Router Link </mat-header-cell>
+                <mat-cell *matCellDef="let menu">
+                    {{ menu.router_link }}
+                </mat-cell>
+            </ng-container>
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let menu">
+                    <div class="action-buttons">
+                        <button mat-icon-button color="accent" matTooltip="Edit Menu" (click)="edit(menu)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" matTooltip="Delete Menu"
+                            (click)="delete(menu)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button color="primary" (click)="addNew()">
+      <mat-icon>add</mat-icon>
+      Add {{ data.type | titlecase }}
+    </button>
+  </mat-dialog-actions>

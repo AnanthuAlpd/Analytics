@@ -1,5 +1,20 @@
+<style>
+    .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+.spacer {
+  flex: 1;
+}
+</style>
+<mat-toolbar color="primary" class="navbar">
+    <a class="logo" [href]="staticWebsiteUrl">POTHANSAI</a>
+    <span class="spacer"></span>
+    <a mat-raised-button color="accent" [href]="staticWebsiteUrl" class="small-logo">P</a>
+  </mat-toolbar>
 <mat-sidenav-container>
-
   <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
 
        <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">
@@ -13,7 +28,7 @@
                 </div>
                 <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
                     <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
-                        <span class="box-content-header">member login</span>
+                        <span class="box-content-header">{{userType}} login</span>
                         <mat-form-field class="w-100">
                             <input matInput placeholder="Email" formControlName="email">
                             <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>

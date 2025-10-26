@@ -25,6 +25,9 @@
     </a>
 
     <div *ngIf="menu.hasSubMenu" class="sub-menu" [id]="'sub-menu-'+menu.id">
-        <app-vertical-menu [menuItems]="menuItems" [menuParentId]="menu.id"></app-vertical-menu>
-    </div>
+        <app-vertical-menu 
+          [menuItems]="getChildren(menu.id)" 
+          [menuParentId]="menu.id">
+        </app-vertical-menu>
+      </div>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AppSettings } from '../../../app.settings';
 import { Settings } from '../../../app.settings.model';
 import { MenuService } from '../menu/menu.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from '../../../../environments/environment'
 
@@ -15,8 +15,8 @@ import { environment } from '../../../../environments/environment'
 })
 export class SidenavComponent implements OnInit {
 
-  public userImage : string;
-  logoImage:string;
+  public userImage: string;
+  logoImage: string;
   //'../assets/img/users/profile.png';
   public menuItems: Array<any>;
   public settings: Settings;
@@ -24,14 +24,31 @@ export class SidenavComponent implements OnInit {
   deptName: string = '';
   serviceName: string | null = null;
   isClient: boolean = false;
-  constructor(public appSettings: AppSettings, public menuService: MenuService, private router: Router,private authService:AuthService) {
+  loginUrl: any;
+  constructor(public appSettings: AppSettings, public menuService: MenuService,
+    private router: Router, private authService: AuthService) {
     this.settings = this.appSettings.settings;
   }
 
   ngOnInit() {
-     this.userImage = `${environment.baseHref}assets/img/users/profile.png`;
-     this.logoImage = `${environment.baseHref}assets/img/logo/logo.jpeg`;
-    this.menuItems = this.menuService.getVerticalMenuItems();
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    let roleIds: number[] = [];
+    if (user && user.roles) {
+      roleIds = user.roles.map((r: any) => r.id);
+    }
+
+    this.menuService.getMenusByRoles(roleIds).subscribe({
+      next: (menus) => {
+        this.menuItems = menus;
+        // console.log("Menus:", menus);
+      },
+      error: (err) => {
+        console.error("Error fetching menus", err);
+      }
+    });
+    this.userImage = `${environment.baseHref}assets/img/users/profile.png`;
+    this.logoImage = `${environment.baseHref}assets/img/logo/logo.jpeg`;
+    // this.menuItems = this.menuService.getVerticalMenuItems();
     this.userName = this.authService.getUserName();
     this.deptName = this.authService.getDepartment();
     const userType = localStorage.getItem('userType');
@@ -39,24 +56,33 @@ export class SidenavComponent implements OnInit {
     this.isClient = userType === 'CLIENT';
     if (this.isClient) {
       const clientData = localStorage.getItem('user');
+
       if (clientData) {
         const client = JSON.parse(clientData);
         this.serviceName = client.service_name || null;
       }
-      console.log(this.serviceName);
-      
     }
   }
 
   logout() {
-    localStorage.removeItem('user');
-    // Prevent back navigation
-    window.history.pushState(null, '', '/login');
-    window.history.replaceState(null, '', '/login');
+    const userType = localStorage.getItem('userType');
 
-    // Navigate to login
-    this.router.navigate(['/login']);
+    // Clear storage
+    localStorage.removeItem('user');
+    localStorage.removeItem('userType'); // optional if you want to reset type completely
+
+    // Decide redirect URL
+    let redirectUrl = '/login';
+    if (userType === 'CLIENT') {
+      redirectUrl = '/login/client';
+    } else if (userType === 'EMPLOYEE') {
+      redirectUrl = '/login/employee';
+    }
+
+    // Navigate using Angular Router
+    this.router.navigate([redirectUrl]);
   }
+
 
   public closeSubMenus() {
     let menu = document.getElementById("vertical-menu");

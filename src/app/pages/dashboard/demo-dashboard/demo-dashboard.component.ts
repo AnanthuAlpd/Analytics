@@ -1,122 +1,254 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AppSettings } from 'src/app/app.settings';
-import { Settings } from 'src/app/app.settings.model';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { DashBoardService } from 'src/app/services/dashboard.service';
-import { DemoPopupComponent } from '../demo-dashboard/demo-popup/demo-popup.component';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { DatatableComponent } from '@swimlane/ngx-datatable'; // Keeping if planned for future use, but removed unused imports
 import { MatDialog } from '@angular/material/dialog';
+import { DemoPopupComponent } from '../demo-dashboard/demo-popup/demo-popup.component';
+import { DemoDashboardService } from 'src/app/services/demo-dashboard.service';
+import {
+  KpiSummary,
+  SalesData,
+  ForecastSummary,
+  COLOR_SCHEME
+} from '../demo-dashboard/demo-dashboard-model';
+
+// Keeping the interface structure as it's directly used for dashBoardDataKpi
+interface DashboardDataKpi {
+  kpiSummary: KpiSummary;
+  trends: {
+    totalProducts: string;
+    totalPredictedSales: string;
+    averageGrowth: string;
+    totalBacklogs: string;
+    predictionAccuracy: string;
+  };
+}
 
 @Component({
   selector: 'app-demo-dashboard',
   templateUrl: './demo-dashboard.component.html',
-  styleUrls: ['./demo-dashboard.component.scss']
+  styleUrls: ['./demo-dashboard.component.scss'],
 })
-export class DemoDashboardComponent implements OnInit {
-  @ViewChild(DatatableComponent) table: DatatableComponent;
-
-  public settings: Settings;
-
-  constructor(public appSettings: AppSettings,
-    public dashBoardService: DashBoardService,private dialog: MatDialog) {
-    this.settings = this.appSettings.settings;
-  }
-
-  salesData: any[] = [];      // Full original data
-  filteredData: any[] = [];   // Filtered data for table
-  searchTerm: string = '';
-  pageSize = 6;
-
-  columns = [
-    { prop: 'product_name', name: 'Product Name' },
-    { prop: 'actual_sale_2022', name: 'Actual Qty Sold 2022' },
-    { prop: 'predicted_sale_2023', name: 'Predicted Qty - 2023' }
-  ];
-// Example data for ngx-charts
-chartData = [];
-public showXAxis = true;
-  public showYAxis = true;
-  public gradient = false;
-  public showLegend = false;
-  public showXAxisLabel = true;
-  public xAxisLabel = '';
-  public showYAxisLabel = true;
-  public yAxisLabel = '';
-  public colorScheme = {
-    domain: ['#2F3E9E', '#D22E2E', '#378D3B', '#0096A6', '#F47B00', '#606060']
+export class DemoDashboardComponent implements OnInit, AfterViewInit {
+  // --- KPI Data Structure ---
+  dashBoardDataKpi: DashboardDataKpi = {
+    kpiSummary: {
+      totalProducts: 0,
+      totalPredictedSales: 0,
+      previousActualSales: 0,
+      averageGrowth: 0,
+      totalBacklogs: 0,
+      predictionAccuracy: 0,
+    },
+    trends: {
+      totalProducts: '',
+      totalPredictedSales: '',
+      averageGrowth: '',
+      totalBacklogs: '',
+      predictionAccuracy: '',
+    },
   };
-highestSellingProduct:any;
-mostValuableProduct:any;
-totalRevenue:any;
 
+  // --- Core Dashboard Data & Config ---
+
+  colorScheme = COLOR_SCHEME; // Used by ngx-charts
+  
+  // Table configuration (used for the 'Detailed Forecast Summary' table)
+  displayedColumns: string[] = [
+    'product_name',
+    'current_sales',
+    'predicted_sales',
+    'growth',
+    'confidence',
+    'backlogs',
+  ];
+
+  // --- Filters State ---
+  selectedProduct: number | 'all' = 'all';
+  selectedTimeframe = '6months';
+  // Removed: selectedProductId: number | null = null; (Replaced by selectedProduct)
+
+  // --- Chart Data ---
+  salesChartData: SalesData[] = [];
+  forecastComparisonData: SalesData[] = [];
+  productGrowthData: SalesData[] = [];
+  productSummary: ForecastSummary[] = []; // Data Source for the mat-table
+
+  // --- Component State ---
+  isLoading: boolean;
+  errorMessage: any;
+  // Removed: public settings: Settings; (Unused import and property)
+
+  // Removed: @ViewChild(DatatableComponent) table: DatatableComponent; (Unused ngx-datatable dependency)
+
+  constructor(
+    // Removed: public appSettings: AppSettings, public dashBoardService: DashBoardService
+    private dialog: MatDialog,
+    private demoDashboardService: DemoDashboardService
+  ) {
+    // Removed: this.settings = this.appSettings.settings;
+  }
 
   ngOnInit() {
-    this.fetchSalesData();
-    this.getRevenueChart();
-    this.fetchCardData();
-
+    this.loadKpiData();
+    this.loadSalesTrend(); // Loads sales trend for all products initially
+    this.loadTopProducts();
+    this.loadProductGrowthData();
+    this.loadProductSummary();
   }
 
-ngAfterViewInit(): void {
-    // You may use a setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+  ngAfterViewInit(): void {
+    // Keeping the logic for the demo popup as it is active in the original code
     setTimeout(() => {
       this.dialog.open(DemoPopupComponent, {
         width: '600px',
-        height: 'auto'
+        height: 'auto',
       });
     });
   }
 
-  fetchCardData(){
-    this.dashBoardService.getLineChartAll().subscribe(res=>{
-      this.totalRevenue = res.data.total_revenue[0].total_forecasted_value;
-      this.highestSellingProduct=res.data.max_qty[0].product_name;
-      this.mostValuableProduct=res.data.valuable_product[0].product_name
+  // --- Filter Handlers ---
 
-    })
+  onProductFilterChange(productId: number | 'all') {
+    this.selectedProduct = productId;
+    this.applyFilters();
+    this.loadSalesTrend(productId === 'all' ? undefined : productId); // Update sales trend chart
   }
 
-
-  fetchSalesData() {
-    this.dashBoardService.getDataTable()
-      .subscribe(
-        response => {
-          if (response.status === 'success') {
-            this.salesData = response.data;
-            this.filteredData = [...this.salesData]; // Start with all data
-          } else {
-            console.error('Error fetching data');
-          }
-        },
-        error => {
-          console.error('Error fetching sales data:', error);
-        }
-      );
+  onTimeframeChange(timeframe: string) {
+    this.selectedTimeframe = timeframe;
+    this.applyFilters();
   }
 
-  onFilterChange(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredData = this.salesData.filter(row =>
-      (row.product_name || '').toLowerCase().includes(term)
-    );
+  applyFilters() {
+    // Note: For a live application, this method would trigger API calls 
+    // to reload all dashboard data (KPIs, Charts, Table) based on the new filters.
+    // For now, it only regenerates dummy data and the actual data loading 
+    // is managed by specific methods like loadSalesTrend().
   }
 
-  onSort(event: any): void {
-    const sort = event.sorts[0];
-    const prop = sort.prop;
-    const dir = sort.dir === 'asc' ? 1 : -1;
-    this.filteredData.sort((a, b) => {
-      if ((a[prop] || '') < (b[prop] || '')) return -1 * dir;
-      if ((a[prop] || '') > (b[prop] || '')) return 1 * dir;
-      return 0;
+  // --- KPI Trend Logic ---
+  private setTrends(): void {
+    const {
+      totalProducts,
+      totalPredictedSales,
+      previousActualSales,
+      averageGrowth,
+      totalBacklogs,
+      predictionAccuracy,
+    } = this.dashBoardDataKpi.kpiSummary;
+
+    this.dashBoardDataKpi.trends.totalProducts = `${totalProducts} products`;
+
+    const salesTrend =
+      previousActualSales > 0
+        ? ((totalPredictedSales - previousActualSales) / previousActualSales) *
+          100
+        : 0;
+    this.dashBoardDataKpi.trends.totalPredictedSales = `${
+      salesTrend > 0 ? '+' : ''
+    }${salesTrend.toFixed(1)}% vs last year`;
+
+    this.dashBoardDataKpi.trends.averageGrowth = `${
+      averageGrowth > 0 ? '+' : ''
+    }${averageGrowth}% vs last year`;
+
+    this.dashBoardDataKpi.trends.totalBacklogs =
+      totalBacklogs === 0 ? 'No backlogs' : `${totalBacklogs} units`;
+
+    this.dashBoardDataKpi.trends.predictionAccuracy =
+      predictionAccuracy >= 80
+        ? 'High confidence'
+        : predictionAccuracy >= 50
+        ? 'Moderate confidence'
+        : 'Low confidence';
+  }
+
+  // --- Data Loading Methods ---
+
+  private loadKpiData(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+    this.demoDashboardService.getKpiData().subscribe({
+      next: (kpiData) => {
+        this.isLoading = false;
+        this.dashBoardDataKpi.kpiSummary = kpiData;
+        this.setTrends();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Failed to load KPI data';
+        this.isLoading = false;
+      },
     });
   }
 
-  getRevenueChart(){
-    this.dashBoardService.getRevenueChart().subscribe(res=>{
-      this.chartData=res.data;
-    })
+  // productId is optional, 'all' filter will pass undefined
+  loadSalesTrend(productId?: number): void {
+    this.isLoading = true;
+    this.demoDashboardService.getSalesTrendData(productId).subscribe({
+      next: (data: SalesData[]) => {
+        this.salesChartData = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading sales trend:', err);
+        this.isLoading = false;
+      },
+    });
   }
-  public onSelect(event) {
-    console.log(event);
+
+  loadTopProducts(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    this.demoDashboardService.getTopProductComparison().subscribe({
+      next: (data: SalesData[]) => {
+        this.forecastComparisonData = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching top product data:', err);
+        this.errorMessage = err.message || 'Failed to load data';
+        this.isLoading = false;
+      },
+    });
   }
+
+  loadProductGrowthData(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    this.demoDashboardService.getProductGrowthData().subscribe({
+      next: (data: SalesData[]) => {
+        this.productGrowthData = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching product growth data:', err);
+        this.errorMessage = err.message || 'Failed to load data';
+        this.isLoading = false;
+      },
+    });
+  }
+
+  loadProductSummary(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    this.demoDashboardService.getForecastSummary().subscribe({
+      next: (data: ForecastSummary[]) => {
+        this.productSummary = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching product summary data:', err);
+        this.errorMessage = err.message || 'Failed to load data';
+        this.isLoading = false;
+      },
+    });
+  }
+
+
+  onSelect(event: any): void {
+    console.log('Item clicked', event);
+  }
+
 }

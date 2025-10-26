@@ -7,7 +7,7 @@ import { AppSettings } from '../app.settings';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient, private appSettings: AppSettings) {}
+  constructor(private http: HttpClient, private appSettings: AppSettings) { }
 
   register(userData: any): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/add_employee`;
@@ -19,7 +19,7 @@ export class AuthService {
     return this.http.post(url, userData);
   }
 
-  login(loginData:any):Observable<any>{
+  login(loginData: any): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/login_new`;
     return this.http.post(url, loginData);
   }
@@ -36,16 +36,25 @@ export class AuthService {
     return this.getLoggedInUser()?.main_department;
   }
 
-  getAllEmployees(){
+  getRoles(): [] {
+    return this.getLoggedInUser()?.roles;
+  }
+  hasRole(requiredRoleId: number): boolean {
+    const user = this.getLoggedInUser();
+    if (!user || !user.roles) return false;
+    return user.roles.some(role => role.id === requiredRoleId);
+  }
+
+  getAllEmployees(): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/employees`;
     return this.http.get(url);
   }
 
-  getAllDepartments(){
+  getAllDepartments() {
     const url = `${this.appSettings.settings.baseUrl}/departments`;
     return this.http.get(url);
   }
-  getAllServices(){
+  getAllServices() {
     const url = `${this.appSettings.settings.baseUrl}/services`;
     return this.http.get(url);
   }
@@ -55,28 +64,28 @@ export class AuthService {
   refreshToken(): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/refresh`;
     const refreshToken = localStorage.getItem('refresh_token');
-  
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${refreshToken}`
     });
-  
-   // console.log('📢 Refreshing using token:', refreshToken);  // 🔍 Add this for debug
-  
+
+    // console.log('📢 Refreshing using token:', refreshToken);  // 🔍 Add this for debug
+
     return this.http.post(url, {}, { headers });
   }
 
-  
-  
+
+
   getAuthHeaders(): { [header: string]: string } {
     const token = localStorage.getItem('access_token');
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
-  
+
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
   }
-  
+
 
 }

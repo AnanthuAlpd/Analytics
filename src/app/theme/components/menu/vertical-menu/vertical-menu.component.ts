@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter, SimpleChanges } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AppSettings } from '../../../../app.settings';
 import { Settings } from '../../../../app.settings.model';
+import { Menu } from '../menu.model';
 import { MenuService } from '../menu.service';
 
 @Component({
@@ -12,8 +13,8 @@ import { MenuService } from '../menu.service';
   providers: [ MenuService ]
 })
 export class VerticalMenuComponent implements OnInit {
-  @Input('menuItems') menuItems;
-  @Input('menuParentId') menuParentId;
+  @Input('menuItems') menuItems: Menu[] = []; ;
+  @Input('menuParentId') menuParentId: number | null = null;
   @Output() onClickMenuItem:EventEmitter<any> = new EventEmitter<any>();
   parentMenu:Array<any>;
   public settings: Settings;
@@ -22,9 +23,9 @@ export class VerticalMenuComponent implements OnInit {
   }
 
   ngOnInit() {     
-    this.parentMenu = this.menuItems.filter(item => item.parentId == this.menuParentId);  
+    //console.log("In vertical menu (ngOnInit)", this.menuItems);
+      this.parentMenu = [];
   }
-
   ngAfterViewInit(){
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -46,5 +47,18 @@ export class VerticalMenuComponent implements OnInit {
     this.menuService.closeOtherSubMenus(this.menuItems, menuId);
     this.onClickMenuItem.emit(menuId);     
   }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['menuItems'] && this.menuItems) {
+     // console.log("In vertical menu (ngOnChanges)", this.menuItems);
+      this.parentMenu = this.menuItems.filter(item => item.parentId == this.menuParentId);
+     // console.log("First menu", this.menuItems[0]);
+
+    }
+  }
+
+  getChildren(menuId: number) {
+    return this.menuItems.filter(child => child.parentId === menuId);
+  }
+  
 
 }

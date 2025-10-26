@@ -38,24 +38,23 @@ export class BreadcrumbComponent {
 
     private parseRoute(node: ActivatedRouteSnapshot) { 
         if (node.data['breadcrumb']) {
-            if(node.url.length){
-                let urlSegments: UrlSegment[] = [];
-                node.pathFromRoot.forEach(routerState => {
-                    urlSegments = urlSegments.concat(routerState.url);
-                });
-                let url = urlSegments.map(urlSegment => {
-                    return urlSegment.path;
-                }).join('/');
-                this.breadcrumbs.push({
-                    name: node.data['breadcrumb'],
-                    url: '/' + url
-                }) 
-            }         
+            let urlSegments: UrlSegment[] = [];
+            node.pathFromRoot.forEach(routerState => {
+                urlSegments = urlSegments.concat(routerState.url);
+            });
+            let url = urlSegments.map(urlSegment => {
+                return urlSegment.path;
+            }).join('/');
+            this.breadcrumbs.push({
+                name: node.data['breadcrumb'],
+                url: '/' + url
+            }); 
         }
         if (node.firstChild) {
             this.parseRoute(node.firstChild);
         }
     }
+    
 
     public closeSubMenus(){
         let menu = document.querySelector(".sidenav-menu-outer");

@@ -1,0 +1,73 @@
+<h2 mat-dialog-title class="dialog-title">{{ data.title }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="dialog-form">
+
+    <!-- Department -->
+    <div *ngIf="data.type === 'department'" class="form-section">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Department Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+    </div>
+
+    <!-- Role -->
+    <div *ngIf="data.type === 'role'" class="form-section">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Role Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Menu -->
+    <div *ngIf="data.type === 'menu'" class="form-section menu-form-grid">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Router Link</mat-label>
+        <input matInput formControlName="router_link" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Icon</mat-label>
+        <mat-select formControlName="icon">
+          <mat-option *ngFor="let ic of icons" [value]="ic">
+            <mat-icon>{{ic}}</mat-icon> {{ic}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="has_sub_menu" class="form-checkbox">
+        Has Sub Menu
+      </mat-checkbox>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Parent Menu</mat-label>
+        <mat-select formControlName="parent_id">
+          <mat-option *ngFor="let m of parentMenus" [value]="m.id">{{ m.title }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Roles</mat-label>
+        <mat-select formControlName="roles" multiple>
+          <mat-option *ngFor="let r of allRoles" [value]="r.id">{{ r.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button mat-dialog-close class="btn-cancel">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid" class="btn-primary">
+    {{ isEditMode ? 'Update' : 'Add' }} {{ data.type | titlecase }}
+  </button>
+</mat-dialog-actions>

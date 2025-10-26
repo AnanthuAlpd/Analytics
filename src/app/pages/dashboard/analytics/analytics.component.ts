@@ -100,7 +100,7 @@ selectedMonths: number | null = null;
 
 
   onSelect(event: any) {
-    console.log('Item selected', event);
+   // console.log('Item selected', event);
   }
   loadProducts() {
     this.chartService.getProducts().subscribe({

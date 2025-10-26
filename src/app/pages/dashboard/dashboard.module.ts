@@ -25,27 +25,27 @@ export const routes: Routes = [
     path: '',
     component: DashboardComponent,
     canActivate: [AuthGuard],
-    data: {  breadcrumb: 'Dashboard' }  // or remove this line to allow all
+    data: { breadcrumb: 'Admin Dashboard', role_id: 1 } 
   },
   {
     path: 'demo',
-    component: DemoDashboardComponent 
-    ,
-    data: { breadcrumb: 'Demo Dashboard'} // Public guest dashboard
+    component: DemoDashboardComponent,
+    data: { breadcrumb: 'Demo Dashboard' } // Public
   },
   {
     path: 'employee',
     component: EmpDashboardComponent,
     canActivate: [AuthGuard],
-    data: {  breadcrumb: 'Employee Dashboard' }
+    data: { breadcrumb: 'Employee Dashboard', expectedRole: 'EMPLOYEE' }
   },
   {
     path: 'client',
     component: ClientDashboardComponent,
     canActivate: [AuthGuard],
-    data: { breadcrumb: 'Client Dashboard'}
+    data: { breadcrumb: 'Client Dashboard', expectedRole: 'CLIENT' }
   }
 ];
+
 
 
 @NgModule({

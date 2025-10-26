@@ -1,5 +1,12 @@
-<mat-sidenav-container>
+<style>
 
+</style>
+<mat-toolbar color="primary" class="navbar">
+  <a class="logo" [href]="staticWebsiteUrl">POTHANSAI</a>
+  <span class="spacer"></span>
+  <a mat-raised-button color="accent" [href]="staticWebsiteUrl" class="small-logo">P</a>
+</mat-toolbar>
+<mat-sidenav-container>
   <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">

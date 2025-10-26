@@ -30,7 +30,7 @@ export class DynamicMenuComponent implements OnInit {
               private menuService:MenuService,
               private dynamicMenuService:DynamicMenuService) {
     this.settings = this.appSettings.settings; 
-    this.menuItems = this.menuService.getVerticalMenuItems();
+    //this.menuItems = this.menuService.getVerticalMenuItems();
   }
 
   ngOnInit() {

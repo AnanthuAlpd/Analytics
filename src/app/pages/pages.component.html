@@ -16,7 +16,15 @@
           </button>
           <a *ngIf="settings.menu == 'horizontal'" mat-raised-button color="accent" routerLink="/"
             (click)="closeSubMenus()" class="small-logo">P</a>
-          <a *ngIf="settings.menu == 'horizontal'" class="logo" routerLink="/" (click)="closeSubMenus()">POTHEN'S AI</a>
+          <a *ngIf="settings.menu == 'horizontal'" class="logo" (click)="closeSubMenus()">{{ serviceName === 'Prabha
+            Analytics' ? 'PRABHA' : 'POTHANSAI' }}</a>
+          <!-- routerLink="/" -->
+          <button *ngIf="hasAdminRole()" mat-raised-button color="accent" class="action-btn"
+            [routerLink]="toggleDashboardLink">
+            <mat-icon>{{ toggleDashboardIcon }}</mat-icon>
+            {{ toggleDashboardLabel }}
+          </button>
+
         </div>
         <div fxLayout="row" fxLayoutAlign="end center">
           <div fxLayout="row" fxLayoutAlign="start center" fxShow="false" fxShow.gt-xs class="search-bar">
@@ -92,8 +100,8 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span>RTL</span>
-          <mat-slide-toggle [checked]="settings.rtl" (change)="settings.rtl = !settings.rtl"
-            labelPosition="before"></mat-slide-toggle>
+          <mat-slide-toggle [checked]="settings.rtl" (change)="settings.rtl = !settings.rtl" labelPosition="before">
+          </mat-slide-toggle>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span>Has Footer</span>
