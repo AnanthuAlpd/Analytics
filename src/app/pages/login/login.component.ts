@@ -7,6 +7,9 @@ import { Settings } from '../../app.settings.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
+// 1. New Imports
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component'; 
 
 @Component({
   selector: 'app-login',
@@ -16,14 +19,16 @@ export class LoginComponent {
   public form: UntypedFormGroup;
   public settings: Settings;
   userType: 'EMPLOYEE' | 'CLIENT' = 'EMPLOYEE';
-  staticWebsiteUrl:any;
+  staticWebsiteUrl: any;
+
   constructor(
     public appSettings: AppSettings,
     public fb: UntypedFormBuilder,
     public router: Router,
     public authService: AuthService,
     public snackBar: MatSnackBar,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public dialog: MatDialog // 2. Inject MatDialog
   ) {
     this.settings = this.appSettings.settings;
     this.form = this.fb.group({
@@ -31,42 +36,37 @@ export class LoginComponent {
       password: [null, Validators.compose([Validators.required, Validators.minLength(6)])]
     });
   }
+
   ngOnInit() {
-    const type = this.route.snapshot.paramMap.get('userType');
+    const type = this.route.snapshot.paramMap.get('userTypes');
     this.userType = (type?.toUpperCase() === 'CLIENT') ? 'CLIENT' : 'EMPLOYEE';
-    this.staticWebsiteUrl=environment.staticWebSiteUrl;
+    this.staticWebsiteUrl = environment.staticWebSiteUrl;
   }
 
   public onSubmit(value: any): void {
     if (this.form.invalid) return;
 
     const loginData = this.form.value;
-    //console.log(loginData);
 
     this.authService.login(loginData).subscribe({
       next: (response: any) => {
-        //console.log(response.data);
-        
         this.snackBar.open('Login successful!', 'Close', {
           duration: 3000,
           panelClass: ['success-snackbar']
         });
 
         // Fix token key
-        localStorage.setItem('access_token', response.data.access_token); 
+        localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
 
         // Save user
         const userType = response.data.user_type;
-        const user = response.data.user ;
-        //console.log(user);
-        //console.log(userType);
-        
+        const user = response.data.user;
+
         localStorage.setItem('userType', userType);
         localStorage.setItem('user', JSON.stringify(user));
 
-
-        // 🔀 Navigate based on user type
+        // Navigate based on user type
         if (userType === 'EMPLOYEE') {
           this.router.navigate(['/dashboard/employee']);
         } else if (userType === 'CLIENT') {
@@ -89,5 +89,21 @@ export class LoginComponent {
     setTimeout(() => {
       this.settings.loadingSpinner = false;
     }, 0);
+  }
+
+  // 3. Updated Forgot Password Logic
+  forgotPwd() {
+    // Get the email if the user typed it in the login form
+    const currentEmail = this.form.get('email')?.value || '';
+
+    // Open the dialog
+    this.dialog.open(ForgotPasswordComponent, {
+      width: '450px', // Slightly wider to accommodate the two fields nicely
+      disableClose: true, // Prevents closing by clicking outside (optional)
+      data: {
+        email: currentEmail,
+        userType: this.userType
+      }
+    });
   }
 }

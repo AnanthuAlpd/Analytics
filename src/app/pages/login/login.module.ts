@@ -4,9 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { LoginComponent } from './login.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 export const routes: Routes = [
-  { path: ':userType', component: LoginComponent, pathMatch: 'full' }
+  { path: ':userTypes', component: LoginComponent, pathMatch: 'full' }
 ];
 
 @NgModule({
@@ -18,7 +19,8 @@ export const routes: Routes = [
     SharedModule
   ],
   declarations: [
-    LoginComponent
+    LoginComponent,
+    ForgotPasswordComponent
   ]
 })
 export class LoginModule { }

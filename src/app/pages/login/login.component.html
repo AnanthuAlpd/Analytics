@@ -16,9 +16,7 @@
   </mat-toolbar>
 <mat-sidenav-container>
   <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
-
        <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">
-
             <mat-card class="p-0 mat-elevation-z24 box">
                 <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
                     <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit(form.value);">
@@ -27,6 +25,7 @@
                     <a mat-button [routerLink]="['/register', 'employee']">Don't have an account? Sign up now!</a>
                 </div>
                 <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
+    
                     <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
                         <span class="box-content-header">{{userType}} login</span>
                         <mat-form-field class="w-100">
@@ -40,8 +39,12 @@
                             <mat-error *ngIf="form.controls.password.hasError('minlength')">Password isn't long enough, minimum of 6 characters</mat-error>
                         </mat-form-field>
                     </mat-card>
-                    <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">SIGN IN</button>
-                </mat-card-content>
+                
+                    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px" class="w-100 mt-3">
+                        <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">Sign In</button>
+                        <button mat-raised-button color="warn" class="mat-elevation-z12 box-button" type="button" (click)='forgotPwd()'>Forgot Password</button>
+                    </div>
+                    </mat-card-content>
             </mat-card>
 
         </form>
