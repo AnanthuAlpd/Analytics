@@ -1,0 +1,113 @@
+<div class="page-container">
+  <div class="header-section">
+    <h2><mat-icon>manage_accounts</mat-icon> Staff Directory & Approvals</h2>
+    <p>Review new registrations and manage active ward personnel.</p>
+  </div>
+
+  <div class="table-actions">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Staff (Name, Role, or Speciality)</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Ramesh">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="mat-elevation-z2 table-container desktop-table-view">
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+    
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Staff Name </th>
+        <td mat-cell *matCellDef="let user"> 
+          <div class="user-cell">
+            <strong>{{user.first_name}} {{user.last_name}}</strong>
+            <small>{{user.mob_no}}</small>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="designation">
+        <th mat-header-cell *matHeaderCellDef> Designation </th>
+        <td mat-cell *matCellDef="let user"> {{user.designation}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="speciality">
+        <th mat-header-cell *matHeaderCellDef> Speciality </th>
+        <td mat-cell *matCellDef="let user"> {{user.speciality || 'N/A'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let user">
+          <span class="status-chip" [ngClass]="user.account_status.toLowerCase()">
+            {{user.account_status}}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let user">
+          <div class="action-buttons">
+            <button mat-flat-button color="primary" 
+                    *ngIf="user.account_status === 'Pending'"
+                    (click)="changeUserStatus(user.id, 'Active')">
+              APPROVE
+            </button>
+
+            <button mat-icon-button color="warn" 
+                    *ngIf="user.account_status === 'Active'"
+                    matTooltip="Deactivate User"
+                    (click)="changeUserStatus(user.id, 'Inactive')">
+              <mat-icon>person_off</mat-icon>
+            </button>
+
+            <button mat-icon-button color="accent" 
+                    *ngIf="user.account_status === 'Inactive'"
+                    matTooltip="Reactivate User"
+                    (click)="changeUserStatus(user.id, 'Active')">
+              <mat-icon>person_add</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+  </div>
+
+  <div class="mobile-card-view">
+    <mat-card *ngFor="let user of dataSource.filteredData" class="user-mobile-card">
+      <mat-card-header>
+        <div mat-card-avatar class="user-avatar">{{user.first_name[0]}}</div>
+        <mat-card-title>{{user.first_name}} {{user.last_name}}</mat-card-title>
+        <mat-card-subtitle>{{user.designation}} | {{user.mob_no}}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p><strong>Speciality:</strong> {{user.speciality || 'N/A'}}</p>
+        <div class="status-row">
+          <span>Status: </span>
+          <span class="status-chip" [ngClass]="user.account_status.toLowerCase()">
+              {{user.account_status}}
+          </span>
+        </div>
+      </mat-card-content>
+  
+      <mat-card-actions align="end">
+        <button mat-flat-button color="primary" *ngIf="user.account_status === 'Pending'" 
+                (click)="changeUserStatus(user.id, 'Active')">APPROVE</button>
+        
+        <button mat-flat-button color="warn" *ngIf="user.account_status === 'Active'"
+                (click)="changeUserStatus(user.id, 'Inactive')">DEACTIVATE</button>
+
+        <button mat-flat-button color="accent" *ngIf="user.account_status === 'Inactive'"
+                (click)="changeUserStatus(user.id, 'Active')">REACTIVATE</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

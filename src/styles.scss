@@ -36,3 +36,23 @@ $material-icons-font-path: '~material-icons/iconfont/';
 .ngx-datatable.material .datatable-row-wrapper:hover {
   background-color: #e0f7fa; /* Light cyan */
 }
+/* Custom Snackbar Colors */
+.snack-success {
+  background-color: #2e7d32 !important; // Medical Green
+  color: white !important;
+}
+
+.snack-error {
+  background-color: #d32f2f !important; // Alert Red
+  color: white !important;
+}
+
+.snack-info {
+  background-color: #0288d1 !important; // Info Blue
+  color: white !important;
+}
+
+.snack-warning {
+  background-color: #ed6c02 !important; // Warning Orange
+  color: white !important;
+}

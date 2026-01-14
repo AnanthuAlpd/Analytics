@@ -1,0 +1,77 @@
+.page-container {
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; // Prevents stretching to full height
+    background-color: #e0f2f1;
+    min-height: 100vh;
+    box-sizing: border-box;
+  
+    .form-card {
+      max-width: 600px; // Slightly narrower for a tighter look
+      width: 100%;
+      padding: 0;
+      overflow: hidden;
+    margin-bottom: 24px; // Bottom breathing room
+    }
+  
+    .form-header {
+      background-color: #00796b;
+      color: white;
+      padding: 12px 20px; // Reduced padding
+      display: flex;
+      align-items: center;
+      gap: 12px;
+  
+      .header-icon { font-size: 28px; height: 28px; width: 28px; }
+      h2 { margin: 0; font-size: 1.1rem; } // Smaller title
+      p { margin: 0; opacity: 0.8; font-size: 0.8rem; }
+    }
+  
+    mat-card-content { 
+      padding: 16px 20px 0 20px; // Reduced vertical padding
+    }
+  
+    /* Compact Form Fields */
+    ::ng-deep .mat-form-field-wrapper {
+      margin-bottom: -1.25em; // Pulls fields closer together
+    }
+  
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      .flex-1 { flex: 1; }
+    }
+  
+    .full-width { width: 100%; }
+  
+    .form-footer {
+      padding: 8px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid #eee;
+      background: #fafafa;
+      
+      button {
+        line-height: 32px; // Slimmer buttons
+      }
+    }
+  }
+  
+  /* Mobile Adjustments */
+  @media (max-width: 600px) {
+    .page-container { 
+      padding: 16px; // Adds the gap between top nav and form
+      padding-top: 24px; // Specific top spacing for mobile
+    }
+    
+    .form-card { 
+      border-radius: 8px; // Keep rounded corners for "floating" look
+    }
+  
+    .flex-row { 
+      flex-direction: column; 
+      gap: 0; 
+    }
+  }

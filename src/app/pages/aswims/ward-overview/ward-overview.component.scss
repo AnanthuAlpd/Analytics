@@ -1,0 +1,98 @@
+/* ward-overview.component.scss */
+.overview-wrapper {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+  
+      .title-group {
+        h2 { margin: 0; color: #004d40; font-size: 1.5rem; font-weight: 600; }
+        .count-badge { font-size: 0.8rem; background: #80cbc4; color: white; padding: 2px 10px; border-radius: 12px; }
+      }
+  
+      .search-box { width: 300px; margin-bottom: -1.25em; }
+    }
+  
+    .patient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+  
+    .patient-card {
+      position: relative;
+      border-top: 4px solid #4db6ac;
+      border-radius: 8px;
+      
+      .bed-chip {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #f0fdfa;
+        color: #00796b;
+        padding: 4px 10px; // Slightly more padding for the longer text
+        border: 1px solid #b2dfdb;
+        border-radius: 4px;
+        display: flex;
+        gap: 4px;
+        align-items: baseline;
+      
+        .prefix {
+          font-size: 0.65rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          opacity: 0.8;
+        }
+      
+        .number {
+          font-size: 0.85rem;
+          font-weight: 800;
+        }
+      }
+  
+      mat-card-title { font-size: 1.1rem; color: #333; }
+  
+      .diagnosis-brief {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 4px;
+        
+        small { color: #999; font-weight: bold; font-size: 0.65rem; }
+        p { margin: 4px 0 0; color: #444; font-size: 0.9rem; }
+      }
+      /* Inside ward-overview.component.scss */
+.mat-card-actions {
+    padding: 8px 16px;
+    
+    button[color="accent"] {
+      margin-right: 8px;
+      background-color: rgba(255, 64, 129, 0.05); // Light pinkish hover for heart icon
+      
+      &:hover {
+        background-color: rgba(255, 64, 129, 0.1);
+      }
+    }
+  }
+    }
+  
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      padding: 50px;
+    }
+  
+    @media (max-width: 600px) {
+      .overview-wrapper { padding: 10px; }
+      .header-section { flex-direction: column; align-items: flex-start; }
+      .search-box { width: 100%; }
+    }
+  } 
+  /* DO NOT ADD ANOTHER } HERE */

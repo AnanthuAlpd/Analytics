@@ -7,6 +7,15 @@ export interface KpiSummary {
   predictionAccuracy: number;
 }
 
+export interface KpiSummaryNew {
+  totalProducts: number;
+  totalPredictedSales: number;
+  currentGrowthRate: number;
+  predictedGrowthRate:number;
+  monthly_avg_backorder:number;
+  predictionAccuracy: number;
+}
+
 export interface SalesSeries {
   name: string;            // e.g., '2025-01'
   value: number;           // sales value for the month

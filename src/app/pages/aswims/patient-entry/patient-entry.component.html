@@ -1,0 +1,64 @@
+<div class="page-container">
+    <mat-card class="form-card mat-elevation-z3">
+        <div class="form-header">
+          <mat-icon class="header-icon">add_circle</mat-icon>
+          <div class="header-text">
+            <h2>Patient Admission</h2>
+            <p>Ward: Acute Surgical</p>
+          </div>
+        </div>
+    
+        <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+          <mat-card-content>
+          <div class="form-grid">
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Patient Full Name</mat-label>
+              <input matInput formControlName="name" placeholder="Full name as per ID">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+  
+            <div class="flex-row">
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Ward</mat-label>
+                <mat-select formControlName="ward_id">
+                  <mat-option *ngFor="let ward of wards" [value]="ward.id">
+                    {{ward.ward_name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+  
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Bed No.</mat-label>
+                <input matInput formControlName="bed_no" placeholder="Ex: AS-04">
+                <mat-icon matSuffix>airline_seat_flat</mat-icon>
+              </mat-form-field>
+            </div>
+  
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Date of Admission</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="doa">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+  
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Clinical Diagnosis</mat-label>
+              <textarea matInput formControlName="diagnosis" rows="3" 
+                        placeholder="Brief reason for surgical admission..."></textarea>
+            </mat-form-field>
+  
+          </div>
+        </mat-card-content>
+  
+        <div class="form-footer">
+          <button mat-button type="button" color="warn" routerLink="/aswims/dashboard">CANCEL</button>
+          <button mat-flat-button color="primary" type="submit" 
+                  [disabled]="patientForm.invalid || isLoading">
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+            <span *ngIf="!isLoading">CONFIRM ADMISSION</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>

@@ -5,22 +5,13 @@ import { DemoPopupComponent } from '../demo-dashboard/demo-popup/demo-popup.comp
 import { DemoDashboardService } from 'src/app/services/demo-dashboard.service';
 import {
   KpiSummary,
+  KpiSummaryNew,
   SalesData,
   ForecastSummary,
   COLOR_SCHEME
 } from '../demo-dashboard/demo-dashboard-model';
 
-// Keeping the interface structure as it's directly used for dashBoardDataKpi
-interface DashboardDataKpi {
-  kpiSummary: KpiSummary;
-  trends: {
-    totalProducts: string;
-    totalPredictedSales: string;
-    averageGrowth: string;
-    totalBacklogs: string;
-    predictionAccuracy: string;
-  };
-}
+
 
 @Component({
   selector: 'app-demo-dashboard',
@@ -28,24 +19,7 @@ interface DashboardDataKpi {
   styleUrls: ['./demo-dashboard.component.scss'],
 })
 export class DemoDashboardComponent implements OnInit, AfterViewInit {
-  // --- KPI Data Structure ---
-  dashBoardDataKpi: DashboardDataKpi = {
-    kpiSummary: {
-      totalProducts: 0,
-      totalPredictedSales: 0,
-      previousActualSales: 0,
-      averageGrowth: 0,
-      totalBacklogs: 0,
-      predictionAccuracy: 0,
-    },
-    trends: {
-      totalProducts: '',
-      totalPredictedSales: '',
-      averageGrowth: '',
-      totalBacklogs: '',
-      predictionAccuracy: '',
-    },
-  };
+
 
   // --- Core Dashboard Data & Config ---
 
@@ -65,7 +39,10 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   selectedProduct: number | 'all' = 'all';
   selectedTimeframe = '6months';
   // Removed: selectedProductId: number | null = null; (Replaced by selectedProduct)
-
+  selectedProduct1: number | null = null;
+  selectedMonths: number | null = null;
+  totalComparisonData: any[]
+  combinedData: any[] = [];
   // --- Chart Data ---
   salesChartData: SalesData[] = [];
   forecastComparisonData: SalesData[] = [];
@@ -75,7 +52,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   // --- Component State ---
   isLoading: boolean;
   errorMessage: any;
-  // Removed: public settings: Settings; (Unused import and property)
+  kpiSummaryNew: KpiSummaryNew;
 
   // Removed: @ViewChild(DatatableComponent) table: DatatableComponent; (Unused ngx-datatable dependency)
 
@@ -88,7 +65,10 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.loadKpiData();
+   // this.loadKpiData();
+    this.loadKpiDataNew();
+    this.loadChartData();
+    this.loadTotalComparison();
     this.loadSalesTrend(); // Loads sales trend for all products initially
     this.loadTopProducts();
     this.loadProductGrowthData();
@@ -125,59 +105,72 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     // is managed by specific methods like loadSalesTrend().
   }
 
-  // --- KPI Trend Logic ---
-  private setTrends(): void {
-    const {
-      totalProducts,
-      totalPredictedSales,
-      previousActualSales,
-      averageGrowth,
-      totalBacklogs,
-      predictionAccuracy,
-    } = this.dashBoardDataKpi.kpiSummary;
 
-    this.dashBoardDataKpi.trends.totalProducts = `${totalProducts} products`;
-
-    const salesTrend =
-      previousActualSales > 0
-        ? ((totalPredictedSales - previousActualSales) / previousActualSales) *
-          100
-        : 0;
-    this.dashBoardDataKpi.trends.totalPredictedSales = `${
-      salesTrend > 0 ? '+' : ''
-    }${salesTrend.toFixed(1)}% vs last year`;
-
-    this.dashBoardDataKpi.trends.averageGrowth = `${
-      averageGrowth > 0 ? '+' : ''
-    }${averageGrowth}% vs last year`;
-
-    this.dashBoardDataKpi.trends.totalBacklogs =
-      totalBacklogs === 0 ? 'No backlogs' : `${totalBacklogs} units`;
-
-    this.dashBoardDataKpi.trends.predictionAccuracy =
-      predictionAccuracy >= 80
-        ? 'High confidence'
-        : predictionAccuracy >= 50
-        ? 'Moderate confidence'
-        : 'Low confidence';
-  }
-
-  // --- Data Loading Methods ---
-
-  private loadKpiData(): void {
+  private loadKpiDataNew(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    this.demoDashboardService.getKpiData().subscribe({
+    this.demoDashboardService.getKpiDataNew().subscribe({
       next: (kpiData) => {
-        this.isLoading = false;
-        this.dashBoardDataKpi.kpiSummary = kpiData;
-        this.setTrends();
+        this.isLoading = false;   
+        this.kpiSummaryNew = kpiData;
+        console.log(this.kpiSummaryNew );
+        //this.setTrends();
       },
       error: (error) => {
         this.errorMessage = error.message || 'Failed to load KPI data';
         this.isLoading = false;
       },
     });
+  }
+
+  loadChartData() {
+    this.isLoading = true;
+   // this.error = false;
+
+    this.demoDashboardService.getSalesLineChart(this.selectedProduct1, this.selectedMonths).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.processChartData(response.data);
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading chart data:', err);
+        // this.error = true;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  processChartData(data: any) {
+    // Process actual data
+    const actualSeries = data.actual.map((item: any) => ({
+      name: item.month,
+      value: item.total_quantity_sold,
+      type: item.type,
+      extra: { isActual: true }
+    }));
+
+    // Process predicted data
+    const predictedSeries = data.predicted.map((item: any) => ({
+      name: item.month,
+      value: item.forecasted_quantity,
+      type: item.type,
+      models: item.models,
+      extra: { isActual: false }
+    }));
+
+    // Combine data for the chart
+    this.combinedData = [
+      {
+        name: 'Actual Qty Sold',
+        series: actualSeries
+      },
+      {
+        name: 'Predicted Qty',
+        series: predictedSeries
+      }
+    ];
   }
 
   // productId is optional, 'all' filter will pass undefined
@@ -210,6 +203,24 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
       },
     });
+  }
+
+  loadTotalComparison(){
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    this.demoDashboardService.getTotalProductComparison().subscribe({
+      next: (data: any[]) => {
+        this.totalComparisonData = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching top product data:', err);
+        this.errorMessage = err.message || 'Failed to load data';
+        this.isLoading = false;
+      },
+    });
+
   }
 
   loadProductGrowthData(): void {

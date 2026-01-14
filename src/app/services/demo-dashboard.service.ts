@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppSettings } from '../app.settings';
-import { KpiSummary, SalesData, ForecastSummary } from '../pages/dashboard/demo-dashboard/demo-dashboard-model';
+import { KpiSummary, SalesData, ForecastSummary,KpiSummaryNew } from '../pages/dashboard/demo-dashboard/demo-dashboard-model';
 
 interface ApiResponse<T> {
   status: string;
@@ -34,6 +34,29 @@ export class DemoDashboardService {
     );
   }
 
+  /** Fetch KPI summary data New */
+  getKpiDataNew(): Observable<KpiSummaryNew> {
+    return this.http.get<ApiResponse<KpiSummaryNew>>(`${this.apiUrl}/demo-dashboard/kpi`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch KPI data');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  getSalesLineChart(productId?: number, months?: number): Observable<any> {
+    const url = `${this.appSettings.settings.baseUrl}/sales-chart`;
+    const params: any = {};
+
+    if (productId) params.product_id = productId;
+    if (months) params.months = months;
+
+    return this.http.get(url, { params });
+  }
+
   /** Fetch sales trend (Historical + Predicted) */
   getSalesTrendData(productId?: number): Observable<SalesData[]> {
     const params: any = productId ? { product_id: productId } : {};
@@ -53,6 +76,7 @@ export class DemoDashboardService {
         catchError(this.handleError)
       );
   }
+
   getTopProductComparison(): Observable<SalesData[]> {
     return this.http.get<{ status: string; message: string; data: SalesData[] }>(
       `${this.apiUrl}/demo-dashboard/product-comparison`
@@ -67,6 +91,19 @@ export class DemoDashboardService {
     );
   }
 
+  getTotalProductComparison(): Observable<any> {
+    return this.http.get<{ status: string; message: string; data: any[] }>(
+      `${this.apiUrl}/demo-dashboard/product-comparison-total`
+    ).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch total product comparison');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
   getProductGrowthData(): Observable<SalesData[]>{
     return this.http.get<{ status: string; message: string; data: SalesData[]}>(
       `${this.apiUrl}/demo-dashboard/product-growth`

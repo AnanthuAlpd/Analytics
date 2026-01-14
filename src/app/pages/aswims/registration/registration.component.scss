@@ -1,0 +1,116 @@
+.aswims-reg-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #d4e9e2 0%, #a9d1d1 50%, #e8f3f8 100%);
+    padding: 10px; // Reduced outer padding
+
+    .mobile-frame {
+        width: 100%;
+        max-width: 400px;
+        height: 750px; 
+        border-radius: 30px;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 20px; // Reduced from 30px 25px
+        background: rgba(255, 255, 255, 0.95);
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    /* ---------- HEADER ---------- */
+    .header-section {
+        text-align: center;
+        margin-bottom: 15px; // Reduced from 30px
+
+        .stethoscope-icon {
+            font-size: 45px; // Smaller icon to save space
+            height: 45px;
+            width: 45px;
+            color: #4db6ac;
+            margin-bottom: 5px;
+        }
+
+        .app-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.1;
+            color: #1a1a1a;
+            span { font-weight: 600; font-size: 0.9rem; }
+        }
+    }
+
+    /* ---------- SCROLLABLE FORM ---------- */
+    .reg-form {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+
+        .form-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            margin-bottom: 5px;
+
+            /* Custom Scrollbar */
+            &::-webkit-scrollbar { width: 4px; }
+            &::-webkit-scrollbar-thumb { 
+                background: #4db6ac; 
+                border-radius: 10px; 
+            }
+        }
+    }
+
+    /* ---------- MATERIAL FIELD DENSITY ---------- */
+    // This removes the large empty space at the bottom of Material fields used for hints/errors
+    ::ng-deep {
+        .mat-form-field-wrapper {
+            padding-bottom: 0.5em !important; 
+            margin-bottom: -5px !important;
+        }
+        .mat-form-field-appearance-outline .mat-form-field-infix {
+            padding: 0.8em 0 0.8em 0 !important; // Slimmer vertical height
+        }
+        .mat-form-field-appearance-outline .mat-form-field-label-wrapper {
+            top: -1.2em !important; // Re-aligns the label
+        }
+        // Shrinks the gap for the error message area
+        .mat-form-field-subscript-wrapper {
+            font-size: 70%; 
+            position: relative;
+        }
+    }
+
+    .full-width {
+        width: 100%;
+        margin-bottom: 2px; // Minimal gap between fields
+    }
+
+    /* ---------- SUBMIT BUTTON ---------- */
+    .submit-btn {
+        width: 100%;
+        height: 50px; // Slightly shorter button
+        background-color: #4ed9c1 !important;
+        color: white !important;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-radius: 12px;
+        flex-shrink: 0; // Prevents the button from being compressed
+        margin-top: 5px;
+    }
+}
+
+/* ---------- MOBILE RESPONSIVENESS ---------- */
+@media (max-width: 480px) {
+    .aswims-reg-page {
+        padding: 0;
+        .mobile-frame {
+            height: 100vh;
+            max-width: none;
+            border-radius: 0;
+            padding: 15px;
+        }
+    }
+}

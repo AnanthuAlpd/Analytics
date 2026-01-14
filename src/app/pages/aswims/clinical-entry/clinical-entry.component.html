@@ -1,0 +1,80 @@
+<div class="portal-container">
+    <div class="portal-header">
+      <h2>
+        <mat-icon>{{ data.mode === 'vitals-only' ? 'monitor_heart' : 'assignment' }}</mat-icon>
+        {{ data.mode === 'vitals-only' ? 'Quick Vitals' : 'Clinical Record' }}: {{ data.patient.name }}
+      </h2>
+      <span class="bed-chip">Bed: {{ data.patient.bed_no }}</span>
+    </div>
+  
+    <form [formGroup]="clinicalForm" (ngSubmit)="saveEntry()">
+      <mat-dialog-content>
+        
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>analytics</mat-icon> Vital Signs
+          </h3>
+          <div class="vitals-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>BP (Optional)</mat-label> <input matInput formControlName="bp" placeholder="120/80">
+              <mat-error *ngIf="clinicalForm.get('bp')?.hasError('pattern')">
+                Format must be 120/80
+              </mat-error>
+            </mat-form-field>
+          
+            <mat-form-field appearance="outline">
+              <mat-label>Temp (Optional)</mat-label> <input matInput type="number" formControlName="temp" step="0.1">
+              <span matSuffix>°C</span>
+              <mat-error *ngIf="clinicalForm.get('temp')?.invalid">
+                Valid range: 30 - 45°C
+              </mat-error>
+            </mat-form-field>
+          
+            <mat-form-field appearance="outline">
+              <mat-label>Pulse (Optional)</mat-label> <input matInput type="number" formControlName="pulse">
+              <mat-error *ngIf="clinicalForm.get('pulse')?.invalid">
+                Valid range: 30 - 250
+              </mat-error>
+            </mat-form-field>
+          
+            <mat-form-field appearance="outline">
+              <mat-label>SpO2 (Optional)</mat-label> <input matInput type="number" formControlName="spo2">
+              <span matSuffix>%</span>
+              <mat-error *ngIf="clinicalForm.get('spo2')?.invalid">
+                Valid range: 50 - 100%
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+  
+        <ng-container *ngIf="data.mode === 'full'">
+          <mat-divider class="section-divider"></mat-divider>
+  
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>history_edu</mat-icon> Progress Notes & Plan
+            </h3>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Clinical Notes (Findings, Wound Status, etc.)</mat-label>
+              <textarea matInput rows="4" formControlName="daily_notes"></textarea>
+            </mat-form-field>
+  
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Medicines / Treatment Plan</mat-label>
+              <textarea matInput rows="2" formControlName="medicines" 
+                        placeholder="Enter prescribed medications..."></textarea>
+            </mat-form-field>
+          </div>
+        </ng-container>
+  
+      </mat-dialog-content>
+  
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="clinicalForm.invalid">
+          <mat-icon>save</mat-icon>
+          {{ data.mode === 'vitals-only' ? 'Save Vitals Only' : 'Save Full Record' }}
+        </button>
+      </mat-dialog-actions>
+    </form>
+  </div>

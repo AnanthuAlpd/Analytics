@@ -5,7 +5,6 @@ import { BlankComponent } from './pages/blank/blank.component';
 import { SearchComponent } from './pages/search/search.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 import { ErrorComponent } from './pages/errors/error/error.component';
-import { SuperAdminModule } from './pages/super-admin/super-admin.module';
 
 export const routes: Routes = [
   {
@@ -34,13 +33,16 @@ export const routes: Routes = [
           { path: 'blank', component: BlankComponent, data: { breadcrumb: 'Blank page' } },
           { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } },
           { path: 'super-admin', loadChildren: () => import('./pages/super-admin/super-admin.module').then(m => m.SuperAdminModule), data: { breadcrumb: 'Admin' } },
+          
       ]
   },
   { path: 'landing', loadChildren: () => import('./pages/landing/landing.module').then(m => m.LandingModule) },
   { path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
   { path: 'register', loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterModule) },
+  { path: 'aswims',loadChildren: () => import('./pages/aswims/aswims.module').then(m => m.AswimsModule)},
   { path: 'error', component: ErrorComponent, data: { breadcrumb: 'Error' } },
-  { path: '**', component: NotFoundComponent }
+  { path: '**', component: NotFoundComponent },
+  
 ];
 
 @NgModule({
