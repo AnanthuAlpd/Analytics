@@ -31,7 +31,6 @@ export class ClinicalEntryComponent implements OnInit {
       
       // Clinical Section
       daily_notes: ['', Validators.required], // Required by default, modified in ngOnInit
-      medicines: ['']
     });
   }
 

@@ -1,0 +1,108 @@
+<div class="dashboard-wrapper" *ngIf="!isLoading">
+  <div class="header">
+    <div class="title-area">
+      <button mat-icon-button routerLink="/aswims/ward-overview">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1>{{ patientInfo?.name }}</h1>
+        <p class="subtitle">Bed: {{ patientInfo?.bed_no }} | Diagnosis: {{ patientInfo?.diagnosis }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="openHistory()">
+        <mat-icon>history</mat-icon> HISTORY
+      </button>
+      <button mat-flat-button color="primary" (click)="openVitalsForm()">
+        <mat-icon>add</mat-icon> VITALS/NOTES
+      </button>
+      <button mat-flat-button color="accent" (click)="openMedicationForm()">
+        <mat-icon>medication</mat-icon> TREATMENT
+      </button>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Temperature Trend (F°)</mat-card-title>
+      </mat-card-header>
+      <div class="chart-container">
+        <ngx-charts-line-chart
+          [results]="tempData"
+          [scheme]="tempScheme"
+          [xAxis]="true"
+          [yAxis]="true"
+          [yScaleMin]="90"
+          [yScaleMax]="110"
+          [showXAxisLabel]="true"
+          xAxisLabel="Date">
+        </ngx-charts-line-chart>
+      </div>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>BP & Pulse Trends</mat-card-title>
+      </mat-card-header>
+      <div class="chart-container">
+        <ngx-charts-line-chart
+          [results]="bpPulseData"
+          [scheme]="bpScheme"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [legendPosition]="'below'">
+        </ngx-charts-line-chart>
+      </div>
+    </mat-card>
+  </div>
+
+  <mat-card class="data-card">
+    <h3 class="section-title">Investigations Timeline</h3>
+    <div class="investigation-grid">
+      <div class="day-column" *ngFor="let day of investigations">
+        <div class="day-header">{{ day.date | date:'dd MMM' }}</div>
+        <div class="day-content">
+          <div *ngFor="let test of day.tests" class="test-item">{{ test }}</div>
+          <div *ngIf="day.tests.length === 0" class="nil-text">NIL</div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="data-card">
+    <h3 class="section-title">Active Treatment</h3>
+    <div class="med-table">
+      <div class="med-row" *ngFor="let med of activeMeds">
+        <div class="med-info">
+          <span class="category">{{ med.category }}</span>
+          <div class="details">
+            <strong>{{ med.medicine_name }}</strong>
+            <small>{{ med.dose }} - {{ med.frequency }}</small>
+          </div>
+        </div>
+        <div class="dosage-view">
+          <div class="time-row">
+            <span>6a</span><span>10a</span><span>2p</span><span>6p</span><span>10p</span><span>2a</span>
+          </div>
+          <div class="circle-row">
+            <div *ngFor="let c of [1,2,3,4,5,6]; let i = index" 
+                 class="dose-circle" 
+                 [class.filled]="i < med.daily_count">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="future-plans-footer">
+    <mat-icon>event</mat-icon>
+    <span><strong>Future Plans:</strong> {{ patientInfo?.future_plan || 'Planned Surgery on 10 Jan 26' }}</span>
+  </div>
+</div>
+
+<div class="loader" *ngIf="isLoading">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>

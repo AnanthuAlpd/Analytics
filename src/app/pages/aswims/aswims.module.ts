@@ -14,6 +14,8 @@ import { ClinicalHistoryComponent } from './clinical-history/clinical-history.co
 import { AuthGuard } from 'src/app/services/aswims/auth.guard';
 import { AuthInterceptor } from 'src/app/services/aswims/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { PatientDashbaordComponent } from './patient-dashbaord/patient-dashbaord.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 export const routes: Routes = [
     {
@@ -34,6 +36,7 @@ export const routes: Routes = [
                     // This will render at aswims/dashboard/user-management
                     { path: 'user-management', component: UserManagementComponent },
                     { path: 'patient-entry', component: PatientEntryComponent },
+                    { path: 'patient-dashboard/:id', component: PatientDashbaordComponent}
                 ]
             }
         ]
@@ -51,12 +54,14 @@ export const routes: Routes = [
         PatientEntryComponent,
         WardOverviewComponent,
         ClinicalEntryComponent,
-        ClinicalHistoryComponent
+        ClinicalHistoryComponent,
+        PatientDashbaordComponent
     ],
     imports: [
         CommonModule,
         SharedModule,
         ReactiveFormsModule,
+        NgxChartsModule,
         RouterModule.forChild(routes)
     ],
     providers: [

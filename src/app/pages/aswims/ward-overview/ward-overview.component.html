@@ -13,7 +13,9 @@
     </div>
 
     <div class="patient-grid" *ngIf="!isLoading">
-        <mat-card *ngFor="let patient of filteredPatients" class="patient-card admitted">
+        <mat-card *ngFor="let patient of filteredPatients" 
+          class="patient-card admitted clickable-card" 
+          (click)="goToPatientDetail(patient.id)">
             <div class="bed-chip">
                 <span class="prefix">Bed No:</span>
                 <span class="number">{{ patient.bed_no }}</span>
@@ -29,31 +31,13 @@
                     <small>DIAGNOSIS</small>
                     <p>{{ patient.diagnosis }}</p>
                 </div>
+                <div class="card-footer-info">
+                    <mat-icon class="tiny-icon" color="primary">visibility</mat-icon>
+                    <span>Click to view clinical dashboard</span>
+                </div>
             </mat-card-content>
-
-            <mat-card-actions align="end">
-                <button mat-icon-button color="accent" (click)="onAddVitals(patient)" matTooltip="Record Vitals">
-                    <mat-icon>monitor_heart</mat-icon>
-                </button>
-
-                <button mat-button color="primary" (click)="onEdit(patient)"
-                    matTooltip="Add Clinical Notes">EDIT</button>
-
-                <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{p: patient}">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
-            </mat-card-actions>
         </mat-card>
     </div>
-
-    <mat-menu #menu="matMenu">
-        <ng-template matMenuContent let-patient="p">
-            <button mat-menu-item (click)="onViewHistory(patient)">
-                <mat-icon color="primary">history</mat-icon>
-                <span>View Clinical History</span>
-            </button>
-        </ng-template>
-    </mat-menu>
 
     <div class="loader-container" *ngIf="isLoading">
         <mat-spinner diameter="40"></mat-spinner>
