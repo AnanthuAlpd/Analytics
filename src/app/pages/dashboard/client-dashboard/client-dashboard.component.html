@@ -1,0 +1,170 @@
+<div fxLayout="row wrap">
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Total Revenue in the month of April" color="primary">assessment
+        </mat-icon>
+        <mat-card-title>Total Revenue</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ totalRevenue | currency:'INR':'symbol':'1.2-2' }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which will be sold more quantity" color="warn">trending_up
+        </mat-icon>
+        <mat-card-title>Highest Selling Product</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ highestSellingProduct }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
+    <mat-card class="card-value">
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which was sold more quantity and get high revenue" color="accent">
+          insert_chart_outlined</mat-icon>
+        <mat-card-title>Top Revenue Generator</mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        {{ topRevenueProductLabel }} - {{ topRevenueValue | currency:'INR':'symbol':'1.2-2' }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap" class="flex-p">
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Monthly Trends - Revenue</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>  
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Filter by Product</mat-label>
+          <input type="text" matInput [formControl]="productCtrl" [matAutocomplete]="auto" placeholder="Type product name">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelected($event.option.value)">
+            <mat-option *ngFor="let product of filteredProducts" [value]="product.name">
+              {{ product.name }} ({{ product.hsn_no }})
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <div style="height: 300px;">
+          <ngx-charts-line-chart [results]="monthlyRevenueData" [scheme]="colorScheme" [legend]="true" [xAxis]="true"
+            [yAxis]="true" [autoScale]="true" [animations]="true">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Top 10 Selling Products</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="height: 380px;">
+          <ngx-charts-bar-vertical *ngIf="topSellingLoaded" [results]="topSellingProducts" [scheme]="colorScheme"
+          [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Units Sold"
+          [animations]="true">
+        </ngx-charts-bar-vertical>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap" class="flex-p">
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Top 10 Revenue Generator</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="height: 300px;">
+          <ngx-charts-pie-chart *ngIf="topRevenueLoaded" [results]="topRevenueProducts" [legend]="true" [labels]="true"
+          [doughnut]="true" [explodeSlices]="false" [animations]="true" [scheme]="colorScheme">
+        </ngx-charts-pie-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="50" style="padding: 1rem;">
+    <mat-card>
+      <mat-card-header fxLayoutAlign="center">
+        <mat-card-subtitle>
+          <h3>Monthly Trends - Unit Sold</h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="height: 300px;">
+          <ngx-charts-line-chart [results]="monthlyUnitsData" [scheme]="colorScheme" [legend]="true" [xAxis]="true"
+            [yAxis]="true" [autoScale]="true" [animations]="true">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap" fxLayoutGap="1rem">
+  <!-- Least Selling Table -->
+  <div fxFlex="100" fxFlex.gt-sm="calc(50% - 0.5rem)" style="padding-bottom: 10px;">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Least Selling Products</mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="overflow-x: auto;">
+        <mat-table [dataSource]="leastSellingProducts" style="width: 100%;">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Product</th>
+            <td mat-cell *matCellDef="let p">{{ p.name }} ({{ p.hsn }})</td>
+          </ng-container>
+
+          <ng-container matColumnDef="qty">
+            <th mat-header-cell *matHeaderCellDef>Qty Sold</th>
+            <td mat-cell *matCellDef="let p">{{ p.qty }} {{ p.unit }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['name', 'qty']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'qty']"></tr>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Unsold Table -->
+  <div fxFlex="100" fxFlex.gt-sm="calc(50% - 0.5rem)">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Top Rated Products</mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="overflow-x: auto;">
+        <mat-table [dataSource]="topRatedProducts" style="width: 100%;">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Product</th>
+            <td mat-cell *matCellDef="let p">{{ p.name }} ({{ p.hsn }})</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rate">
+            <th mat-header-cell *matHeaderCellDef>Rate</th>
+            <td mat-cell *matCellDef="let p">{{ p.rate }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['name', 'rate']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'rate']"></tr>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

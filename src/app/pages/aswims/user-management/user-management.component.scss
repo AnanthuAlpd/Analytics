@@ -1,0 +1,197 @@
+/* ================================
+   PAGE LAYOUT
+================================ */
+.page-container {
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================
+   HEADER
+================================ */
+.header-section {
+  margin-bottom: 24px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #00796b;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+}
+
+/* ================================
+   SEARCH BAR
+================================ */
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+
+  .search-field {
+    width: 400px;
+  }
+}
+
+/* ================================
+   COMMON STATUS CHIP STYLES
+================================ */
+.status-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+
+  &.pending {
+    background-color: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+  }
+
+  &.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+  }
+
+  &.inactive {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+  }
+}
+
+/* ================================
+   DESKTOP TABLE
+================================ */
+.table-container {
+  background: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  display: block;
+  -webkit-overflow-scrolling: touch;
+
+  table {
+    width: 100%;
+    min-width: 850px;
+
+    th.mat-header-cell {
+      font-weight: 600;
+      color: #333;
+      background-color: #fafafa;
+    }
+  }
+
+  .user-cell {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+
+    strong { font-size: 14px; color: #333; }
+    small { font-size: 12px; color: #888; }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+/* ================================
+   MOBILE CARD VIEW
+================================ */
+.mobile-card-view {
+  display: none; // Hidden on desktop
+
+  .user-mobile-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    margin-bottom: 8px;
+
+    mat-card-header {
+      align-items: center;
+      margin-bottom: 12px;
+
+      .user-avatar {
+        background: #00796b;
+        color: #ffffff;
+        font-weight: 600;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      mat-card-title { font-size: 15px; font-weight: 600; }
+      mat-card-subtitle { font-size: 12px; color: #666; }
+    }
+
+    mat-card-content {
+      font-size: 13px;
+      p { margin: 4px 0; }
+      
+      .status-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        font-weight: 500;
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      gap: 8px;
+
+      button {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+/* ================================
+   MOBILE RESPONSIVE OVERRIDES
+================================ */
+@media (max-width: 768px) {
+  .desktop-table-view {
+    display: none !important;
+  }
+
+  .mobile-card-view {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .page-container { padding: 16px; }
+
+  .header-section {
+    h2 { font-size: 1.1rem; }
+    p { font-size: 12px; }
+  }
+
+  .table-actions {
+    .search-field { width: 100% !important; }
+  }
+}

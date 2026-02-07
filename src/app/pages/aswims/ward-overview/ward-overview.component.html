@@ -1,0 +1,45 @@
+<div class="overview-wrapper">
+    <div class="header-section">
+        <div class="title-group">
+            <h2>Acute Surgical Ward</h2>
+            <span class="count-badge">{{ filteredPatients.length }} Patients</span>
+        </div>
+
+        <mat-form-field appearance="outline" class="search-box">
+            <mat-label>Search Bed or Name</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search...">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+    </div>
+
+    <div class="patient-grid" *ngIf="!isLoading">
+        <mat-card *ngFor="let patient of filteredPatients" 
+          class="patient-card admitted clickable-card" 
+          (click)="goToPatientDetail(patient.id)">
+            <div class="bed-chip">
+                <span class="prefix">Bed No:</span>
+                <span class="number">{{ patient.bed_no }}</span>
+            </div>
+
+            <mat-card-header>
+                <mat-card-title>{{ patient.name }}</mat-card-title>
+                <mat-card-subtitle>Admitted: {{ patient.doa | date:'dd/MM/yyyy' }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="diagnosis-brief">
+                    <small>DIAGNOSIS</small>
+                    <p>{{ patient.diagnosis }}</p>
+                </div>
+                <div class="card-footer-info">
+                    <mat-icon class="tiny-icon" color="primary">visibility</mat-icon>
+                    <span>Click to view clinical dashboard</span>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div class="loader-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+</div>

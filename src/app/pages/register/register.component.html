@@ -1,0 +1,84 @@
+<style>
+
+</style>
+<mat-toolbar color="primary" class="navbar">
+  <a class="logo" [href]="staticWebsiteUrl">POTHANSAI</a>
+  <span class="spacer"></span>
+  <a mat-raised-button color="accent" [href]="staticWebsiteUrl" class="small-logo">P</a>
+</mat-toolbar>
+<mat-sidenav-container>
+  <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">
+      <mat-card class="p-0 mat-elevation-z24 box register">
+        <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
+          <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit();">
+            <mat-icon>person_add</mat-icon>
+          </button>
+          <a mat-button routerLink="/login">Already have an account? Sign in!</a>
+        </div>
+        <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
+          <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
+            <span class="box-content-header">Register member</span>
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Full Name" formControlName="name">
+              <mat-error *ngIf="form.controls.name.errors?.required">Full Name is required</mat-error>
+              <mat-error *ngIf="form.controls.name.hasError('minlength')">Full Name isn't long enough, minimum of 3
+                characters</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Email" formControlName="email">
+              <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
+              <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Mob No" formControlName="mob_no">
+              <mat-error *ngIf="form.controls.mob_no.errors?.required">Mob No is required</mat-error>
+              <mat-error *ngIf="form.controls.mob_no.hasError('minlength')">Invalid Mob No address</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-100">
+              <mat-label>Refereed By</mat-label>
+              <mat-select formControlName="parent_id">
+                <mat-option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- Shown only for EMPLOYEE -->
+            <mat-form-field class="w-100" *ngIf="userType === 'EMPLOYEE'">
+              <mat-label>Department</mat-label>
+              <mat-select formControlName="department_id">
+                <mat-option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Shown only for CLIENT -->
+            <mat-form-field class="w-100" *ngIf="userType === 'CLIENT'">
+              <mat-label>Service</mat-label>
+              <mat-select formControlName="service_id">
+                <mat-option *ngFor="let s of services" [value]="s.id">{{ s.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Password" formControlName="password" type="password" minlength="6">
+              <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
+              <mat-error *ngIf="form.controls.password.hasError('minlength')">Password isn't long enough, minimum of 6
+                characters</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Confirm Password" formControlName="confirm_password" type="password">
+              <mat-error *ngIf="form.controls.confirm_password.errors?.required">Confirm Password is required
+              </mat-error>
+              <mat-error *ngIf="form.controls.confirm_password.hasError('mismatchedPasswords')">Passwords do not match
+              </mat-error>
+            </mat-form-field>
+          </mat-card>
+          <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">SIGN UP</button>
+        </mat-card-content>
+      </mat-card>
+
+    </form>
+
+  </div>
+
+</mat-sidenav-container>

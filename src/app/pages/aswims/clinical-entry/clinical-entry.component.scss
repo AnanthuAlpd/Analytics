@@ -1,0 +1,117 @@
+.portal-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; // Prevent dialog from bleeding off screen on small mobiles
+  
+    .portal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #e0f2f1;
+      padding: 16px 20px;
+      margin: -24px -24px 0 -24px; // Align to dialog edges
+      border-bottom: 2px solid #b2dfdb;
+  
+      h2 { 
+        margin: 0; 
+        color: #00796b; 
+        font-size: 1.1rem; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px;
+        font-weight: 600;
+  
+        mat-icon { color: #00796b; }
+      }
+  
+      .bed-chip { 
+        background: #00796b; 
+        color: white; 
+        padding: 4px 10px; 
+        border-radius: 4px; 
+        font-weight: 700;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+    }
+  
+    .form-section {
+      padding: 16px 0 8px 0;
+  
+      .section-title { 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        font-size: 0.85rem; 
+        text-transform: uppercase; 
+        color: #546e7a; 
+        margin-bottom: 16px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+  
+        mat-icon { font-size: 18px; height: 18px; width: 18px; }
+      }
+    }
+  
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); // Default 2 columns
+      gap: 12px;
+    }
+  
+    .full-width { 
+      width: 100%; 
+      margin-top: 8px;
+    }
+  
+    .section-divider {
+      margin: 8px 0;
+    }
+  
+    // Optimize dialog content scrolling
+    mat-dialog-content {
+      padding-top: 20px !important;
+      overflow-x: hidden;
+    }
+  
+    mat-dialog-actions {
+      padding: 12px 0;
+      
+      button {
+        padding: 0 20px;
+        height: 40px;
+        
+        mat-icon { margin-right: 4px; }
+      }
+    }
+  }
+  
+  /* --- Mobile Adjustments (max-width: 600px) --- */
+  @media (max-width: 600px) {
+    .portal-container {
+      .portal-header {
+        padding: 12px 16px;
+        flex-direction: row; // Keep name and bed on one line
+        
+        h2 { font-size: 1rem; }
+        .bed-chip { font-size: 0.75rem; }
+      }
+  
+      .vitals-grid { 
+        grid-template-columns: 1fr; // Stack vitals vertically for better touch targets
+        gap: 8px;
+      }
+  
+      .form-section {
+        .section-title { font-size: 0.8rem; }
+      }
+  
+      mat-dialog-actions {
+        flex-direction: column-reverse; // Stack buttons on mobile
+        align-items: stretch;
+        gap: 8px;
+  
+        button { width: 100%; margin: 0 !important; }
+      }
+    }
+  }

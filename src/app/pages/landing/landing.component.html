@@ -1,0 +1,97 @@
+<mat-toolbar color="primary" class="navbar">
+  <a class="logo" routerLink="/">PothansAI</a>
+  <span class="spacer"></span>
+  <nav>
+    <a mat-button (click)="openDialog('services', 'Our Services')">Services</a>
+    <a mat-button (click)="openDialog('history', 'The History and Evolution of Analytics')">About</a>
+    <a mat-button>Contact</a>
+  </nav>
+  <a mat-raised-button color="accent" routerLink="/" class="small-logo">P</a>
+</mat-toolbar>
+
+<div fxLayout="column" fxLayoutAlign="center center" class="landing-header">
+  <p class="intro-text1">We're Proudly Presenting Our Maiden Business Intelligent Tool</p>
+  <p class="logo">PRABHA ANALYTICS</p>
+  <p class="intro-text">Improve Your Business With The Power of Data</p>
+  <p class="desc">Turn raw data into actionable insights for smarter business decisions.</p>
+
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <a mat-raised-button color="primary" routerLink="/register">Register</a>
+    <a mat-raised-button color="accent" routerLink="/dashboard/demo">Demo</a>
+  </div>
+</div>
+
+<div class="container">
+  <h3 class="muted-text">"Without big data analytics, companies are blind and deaf,
+    wandering out onto the web like deer on a freeway"</h3>
+  <p class="muted-text desc">:-Geoffrey Moore</p>
+  <div fxLayout="row wrap" class="py-1">
+    <div fxFlex="100" fxFlex.gt-sm="30" class="demo">
+      <a routerLink="/" class="link">
+        <mat-card class="demo-card">
+          <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+            <mat-card-title>Our Services</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ul>
+              <li>Data Analytics</li>
+              <li>Business Intelligence</li>
+              <li>AI & Machine Learning</li>
+              <li>Data Visualization</li>
+              <li>Cloud Data Solutions</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-raised-button (click)="openDialog('services', 'Our Services')" color="primary">Learn More</a>
+          </mat-card-actions>
+        </mat-card>
+      </a>
+    </div>
+
+    <div fxFlex="100" fxFlex.gt-sm="30" class="demo">
+      <a routerLink="/" class="link">
+        <mat-card class="demo-card">
+          <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+            <mat-card-title>History & Evolution of Data Analytics</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Analytics has evolved over centuries, transforming from simple record-keeping to a sophisticated,
+              AI-driven
+              discipline that shapes modern decision-making. Its journey can be traced through key technological and
+              methodological advancements across different eras.</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-raised-button (click)="openDialog('history', 'The History and Evolution of Analytics')"
+              color="warn">Read More</a>
+          </mat-card-actions>
+        </mat-card>
+      </a>
+    </div>
+    <div fxFlex="100" fxFlex.gt-sm="30" class="demo">
+      <a routerLink="/" class="link">
+        <mat-card class="demo-card">
+          <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+            <mat-card-title>How It Works</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>PRABHA</strong> is a cutting-edge <strong> Intelligence (BI) Predictive Analytics Engine</strong> designed to deliver
+              high-precision sales and demand forecasting for retail and wholesale businesses. Leveraging <strong>statistical
+              modeling, machine learning (ML), deep learning (NN), and ensemble techniques</strong>, PRABHA transforms raw
+              historical sales data into actionable, data-driven insights with unparalleled accuracy</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-raised-button (click)="openDialog('how-it-works', 'Technical Overview')" color="accent">Get Started</a>
+          </mat-card-actions>
+        </mat-card>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<div class="bg-primary w-100">
+  <div fxLayout.xs="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" class="landing-footer">
+    <span>Copyright ©2025 All Rights Reserved</span>
+    <span>made by <a mat-button href="https://themeforest.net/user" target="_blank">Web Code Master</a></span>
+  </div>
+</div>

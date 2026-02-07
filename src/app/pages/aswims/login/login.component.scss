@@ -1,0 +1,49 @@
+.aswims-login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #d4e9e2 0%, #a9d1d1 50%, #e8f3f8 100%);
+
+  .mobile-frame {
+    width: 100%;
+    max-width: 400px;
+    height: 600px; // Login frame is shorter than registration
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 30px;
+    padding: 40px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 50px;
+    .stethoscope-icon { font-size: 60px; height: 60px; width: 60px; color: #4db6ac; }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    height: 55px;
+    background-color: #4ed9c1 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    margin-top: 20px;
+  }
+
+  .footer-links {
+    margin-top: auto;
+    text-align: center;
+    font-size: 0.9rem;
+    a { color: #4db6ac; text-decoration: none; font-weight: bold; }
+  }
+}

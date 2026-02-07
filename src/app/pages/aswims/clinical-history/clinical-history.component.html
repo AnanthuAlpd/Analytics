@@ -1,0 +1,56 @@
+<div class="history-container">
+    <div class="history-header">
+      <h2>Clinical History: {{ data.patient.name }}</h2>
+      <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+    </div>
+  
+    <mat-tab-group color="primary">
+      <mat-tab label="Progress Notes">
+        <div class="tab-content timeline">
+          <div *ngFor="let note of data.history.notes" class="timeline-item">
+            <div class="timestamp">
+              <strong>{{ note.entry_date | date:'dd MMM, HH:mm' }}</strong>
+            </div>
+            <div class="content-box">
+              <p class="notes-text">{{ note.daily_notes }}</p>
+              <div class="meds-box" *ngIf="note.medicines">
+                <strong>Meds:</strong> {{ note.medicines }}
+              </div>
+            </div>
+          </div>
+          <div *ngIf="data.history.notes.length === 0" class="empty-state">No notes found.</div>
+        </div>
+      </mat-tab>
+  
+      <mat-tab label="Vitals Log">
+        <div class="tab-content">
+          <table mat-table [dataSource]="data.history.vitals" class="vitals-table">
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Time</th>
+              <td mat-cell *matCellDef="let v">{{ v.recorded_at | date:'dd/MM, HH:mm' }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="bp">
+              <th mat-header-cell *matHeaderCellDef>BP</th>
+              <td mat-cell *matCellDef="let v">{{ v.bp || '-' }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="pulse">
+              <th mat-header-cell *matHeaderCellDef>HR</th>
+              <td mat-cell *matCellDef="let v">{{ v.pulse || '-' }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="temp">
+              <th mat-header-cell *matHeaderCellDef>Temp</th>
+              <td mat-cell *matCellDef="let v">{{ v.temp ? v.temp + '°C' : '-' }}</td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="['date', 'bp', 'pulse', 'temp']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['date', 'bp', 'pulse', 'temp'];"></tr>
+          </table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div> 
+
+

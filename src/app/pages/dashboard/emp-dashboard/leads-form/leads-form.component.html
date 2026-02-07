@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>Add New Lead</h2>
+<mat-dialog-content [formGroup]="leadForm" fxLayout="column" fxLayoutGap="16px">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Lead Category</mat-label>
+    <mat-select formControlName="lead_cat">
+      <mat-option *ngFor="let cat of leadCategories" [value]="cat">{{ cat }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Mobile Number</mat-label>
+    <input matInput type="text" formControlName="mob_no" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Lead Source</mat-label>
+    <input matInput formControlName="lead_source" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status">
+      <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Remarks</mat-label>
+    <textarea matInput formControlName="remarks" rows="3"></textarea>
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  
+    <button mat-flat-button color="primary"
+            (click)="onSubmit()"
+            [disabled]="leadForm.invalid || loading">
+      <mat-spinner *ngIf="loading" diameter="20" strokeWidth="3" style="margin-right: 8px;"></mat-spinner>
+      <span *ngIf="!loading">Save</span>
+    </button>
+  </mat-dialog-actions>
+  
+  
+

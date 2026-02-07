@@ -1,0 +1,44 @@
+<mat-card>
+  <mat-card-header fxLayoutAlign="center">
+    <mat-card-subtitle>
+      <h2>Actual - Prediction Sale Chart</h2>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="w-100 h-300p" #resizedDiv>
+      <div *ngIf="loading" class="loading-message">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Loading sales data...</span>
+      </div>
+      <div *ngIf="error" class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        <span>Failed to load sales data. Please try again later.</span>
+        <button mat-button color="primary" (click)="loadChartData()">Retry</button>
+      </div>
+      <div fxLayout="row wrap" fxLayoutGap="20px" style="margin-bottom: 20px;">
+        <mat-form-field appearance="outline">
+          <mat-label>Product</mat-label>
+          <mat-select [(value)]="selectedProduct" (selectionChange)="loadChartData()">
+            <mat-option *ngFor="let p of products" [value]="p.product_id">{{ p.product_name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- <mat-form-field appearance="outline">
+          <mat-label>Date Range</mat-label>
+          <mat-select [(value)]="selectedMonths" (selectionChange)="loadChartData()">
+            <mat-option *ngFor="let range of monthRanges" [value]="range.value">{{ range.label }}</mat-option>
+          </mat-select>
+        </mat-form-field> -->
+      </div>
+      <ngx-charts-line-chart *ngIf="!loading && !error" [results]="combinedData"
+      [scheme]="colorScheme"
+      [xAxis]="true"
+      [yAxis]="true"
+      [legend]="true"
+      [xAxisLabel]="'Month'"
+      [yAxisLabel]="'Sales'"
+      [autoScale]="true">
+      </ngx-charts-line-chart>
+    </div>
+  </mat-card-content>
+</mat-card>

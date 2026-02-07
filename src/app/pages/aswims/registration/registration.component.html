@@ -1,0 +1,89 @@
+<div class="aswims-reg-page">
+  <mat-card class="mobile-frame mat-elevation-z8">
+
+    <div class="header-section">
+      <mat-icon class="stethoscope-icon">medical_services</mat-icon>
+      <h1 class="app-title">
+        Acute Surgical Ward <br />
+        <span>Information and Management System</span>
+      </h1>
+    </div>
+
+    <form [formGroup]="regForm" (ngSubmit)="onSubmit()" class="reg-form">
+      <div class="form-scroll-area">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="first_name" placeholder="First Name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="last_name" placeholder="Last Name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput formControlName="mob_no" placeholder="10-digit number" type="tel" maxlength="10">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-hint>This will be your login ID</mat-hint>
+          <mat-error *ngIf="regForm.get('mob_no')?.hasError('pattern')">
+            Please enter a valid 10-digit mobile number.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Repeat Password</mat-label>
+          <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+          <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+            <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="regForm.get('confirmPassword')?.hasError('passwordMismatch')">
+            Passwords do not match.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Appointment</mat-label>
+          <mat-select formControlName="designation_id">
+            <mat-option *ngFor="let item of appointments" [value]="item.id">
+              {{item.designation_name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Speciality (Optional)</mat-label>
+          <mat-select formControlName="speciality_id" (selectionChange)="onSpecialityChange($event)">
+            <mat-option [value]="null">-- Not Applicable --</mat-option>
+            <mat-option *ngFor="let item of mainSpecialities" [value]="item.id">
+              {{item.speciality_name}}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Only for Clinical/Doctor Staff</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Super Speciality (Optional)</mat-label>
+          <mat-select formControlName="super_speciality_id">
+            <mat-option [value]="null">-- Not Applicable --</mat-option>
+            <mat-option *ngFor="let item of superSpecialities" [value]="item.id">
+              {{item.speciality_name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <button mat-flat-button class="submit-btn" type="submit" [disabled]="!regForm.valid">
+        SUBMIT REGISTRATION
+      </button>
+    </form>
+  </mat-card>
+</div>

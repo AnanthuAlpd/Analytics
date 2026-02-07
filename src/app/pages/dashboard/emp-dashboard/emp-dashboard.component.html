@@ -1,0 +1,183 @@
+<!-- Dashboard Container -->
+<div class="dashboard-container" fxLayout="column" fxLayoutGap="50px">
+
+    <!-- Stats Cards Section -->
+    <div class="stats-section">
+        <h2 class="section-title">Dashboard Overview</h2>
+        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+
+            <!-- Client Leads Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card client-leads" [class.has-data]="clientLeads > 0">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar primary-bg">
+                            <mat-icon>group_add</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">Client Leads</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">This month</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number" [attr.data-value]="clientLeads || 0">
+                            {{ clientLeads || 0 }}
+                        </div>
+                        <div class="stat-growth"
+                            [ngClass]="{'positive': clientLeadsGrowth > 0, 'negative': clientLeadsGrowth < 0}"
+                            *ngIf="clientLeadsGrowth !== null && clientLeadsGrowth !== undefined">
+                            <mat-icon>{{ clientLeadsGrowth >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                            <span>{{ clientLeadsGrowth >= 0 ? '+' : ''}}{{ clientLeadsGrowth }}%</span>
+                        </div>
+
+                    </mat-card-content>
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="primary">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
+            <!-- Employee Leads Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card employee-leads" [class.has-data]="employeeLeads > 0">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar warn-bg">
+                            <mat-icon>badge</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">Employee Leads</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">This Month</mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number" [attr.data-value]="employeeLeads || 0"
+                            [class.zero]="employeeLeads === 0">
+                            {{ employeeLeads || 0 }}
+                        </div>
+
+                        <div class="stat-growth" [ngClass]="{
+          positive: employeeLeadsGrowth > 0,
+          negative: employeeLeadsGrowth < 0,
+          neutral: employeeLeadsGrowth === 0
+        }" *ngIf="employeeLeadsGrowth !== null">
+                            <mat-icon>
+                                {{
+                                employeeLeadsGrowth > 0
+                                ? 'trending_up'
+                                : employeeLeadsGrowth < 0 ? 'trending_down' : 'trending_flat' }} </mat-icon>
+                                    <span>
+                                        {{
+                                        employeeLeadsGrowth > 0
+                                        ? '+' + employeeLeadsGrowth + '%'
+                                        : employeeLeadsGrowth < 0 ? employeeLeadsGrowth + '%' : '0%' }} </span>
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="warn">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
+
+            <!-- Total Earnings Card -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+                <mat-card class="stat-card earnings" [class.has-data]="totalEarnings > 0">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar accent-bg">
+                            <mat-icon>account_balance_wallet</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">Total Earnings</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">All time rewards</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number earnings-amount" [attr.data-value]="totalEarnings || 0">
+                            <span class="currency">₹</span>{{ (totalEarnings || 0) | number:'1.0-2' }}
+                        </div>
+                        <div class="stat-growth positive" *ngIf="earningsGrowth">
+                            <mat-icon>trending_up</mat-icon>
+                            <span>+{{ earningsGrowth }}%</span>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions class="card-actions">
+                        <button mat-button color="accent">
+                            <mat-icon>payment</mat-icon>
+                            View Earnings
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Section -->
+    <div class="video-section">
+        <mat-card class="video-card" elevation="2">
+            <mat-card-header class="video-header">
+                <div mat-card-avatar class="video-avatar">
+                    <mat-icon color="accent">play_circle_filled</mat-icon>
+                </div>
+                <mat-card-title class="video-title">About the Programme</mat-card-title>
+                <mat-card-subtitle class="video-subtitle">Learn more about our referral program</mat-card-subtitle>
+                <div class="header-actions">
+                    <button mat-icon-button matTooltip="Fullscreen" (click)="toggleFullscreen()">
+                        <mat-icon>fullscreen</mat-icon>
+                    </button>
+                </div>
+            </mat-card-header>
+
+            <mat-card-content class="video-content">
+                <div class="video-container" #videoContainer>
+                    <video #videoPlayer controls class="video-player" preload="metadata"
+                        [poster]="vidJpg">
+                        <source [attr.src]="vidSrc" type="video/mp4" />
+                        <p class="video-fallback">
+                            Your browser does not support the video tag.
+                            <a [href]="vidSrc" download>Download the video</a> instead.
+                        </p>
+                    </video>
+
+                    <!-- Loading overlay -->
+                    <div class="video-loading" *ngIf="videoLoading">
+                        <mat-spinner diameter="50"></mat-spinner>
+                        <p>Loading video...</p>
+                    </div>
+                </div>
+
+                <!-- Video Controls (if needed) -->
+                <div class="video-controls" fxLayout="row" fxLayoutAlign="space-between center">
+                    <div class="video-info">
+                        <span class="video-duration">Duration: 5:30</span>
+                    </div>
+                    <div class="video-actions">
+                        <button mat-stroked-button color="accent">
+                            <mat-icon>share</mat-icon>
+                            Share
+                        </button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Optional: Quick Actions Section -->
+    <div class="quick-actions-section" *ngIf="showQuickActions">
+        <h3 class="section-title">Quick Actions</h3>
+        <div fxLayout="row wrap" fxLayoutGap="12px">
+            <button mat-raised-button color="primary" (click)="openLeadFormDialog('Client')" class="action-btn">
+                <mat-icon>person_add</mat-icon>
+                Add Client Lead
+            </button>
+            <button mat-raised-button color="warn" (click)="openLeadFormDialog('Employee')" class="action-btn">
+                <mat-icon>work</mat-icon>
+                Add Employee Lead
+            </button>
+            <button mat-stroked-button color="accent" class="action-btn">
+                <mat-icon>analytics</mat-icon>
+                View Reports
+            </button>
+        </div>
+    </div>
+</div>

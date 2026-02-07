@@ -1,0 +1,64 @@
+<div class="dashboard-container">
+  <mat-toolbar color="primary" class="dashboard-header">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>ASWIMS - Surgical Ward</span>
+    <span class="spacer"></span>
+
+    <div class="user-info">
+      <span class="user-name">{{ currentUser?.full_name }}</span>
+      <small class="user-role">{{ currentUser?.role }}</small>
+    </div>
+
+    <button mat-icon-button (click)="onLogout()" matTooltip="Logout">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" class="dashboard-sidebar">
+      <mat-nav-list>
+
+        <div class="sidebar-header">
+          <mat-icon class="med-icon">medical_services</mat-icon>
+          <p>Main Menu</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="sidebar-label">General</div>
+
+        <a mat-list-item routerLink="/aswims/dashboard" routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{exact: true}" (click)="closeOnMobile()">
+          <mat-icon matListIcon>dashboard</mat-icon>
+          <span matLine>Ward Overview</span>
+        </a>
+
+        <ng-container *ngIf="canManageUsers">
+          <mat-divider></mat-divider>
+          <div class="sidebar-label">Administration</div>
+
+          <a mat-list-item routerLink="/aswims/dashboard/user-management" routerLinkActive="active-link"
+            (click)="closeOnMobile()">
+            <mat-icon matListIcon>manage_accounts</mat-icon>
+            <span matLine>User Management</span>
+          </a>
+        </ng-container>
+
+        <div class="sidebar-label">Clinical Operations</div>
+
+        <a mat-list-item routerLink="/aswims/dashboard/patient-entry" routerLinkActive="active-link"
+          (click)="closeOnMobile()">
+          <mat-icon matListIcon>person_add</mat-icon>
+          <span matLine>Patient Entry</span>
+        </a>
+
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
