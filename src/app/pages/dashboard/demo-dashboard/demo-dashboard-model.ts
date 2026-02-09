@@ -72,3 +72,10 @@ export interface TopPerformer {
   units_sold: number;
   revenue: number;
 }
+
+export interface InventoryHealth {
+  total_inventory_value_cost: number;
+  total_inventory_value_sale: number;
+  at_risk_products: { name: string; stock: number }[];
+  status: string;
+}

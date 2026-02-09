@@ -215,6 +215,55 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Inventory Health Section -->
+  <div *ngIf="inventoryHealth" fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" style="margin-top: 20px;">
+    <!-- Inventory Value Card -->
+    <mat-card fxFlex="40" class="health-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon [ngClass]="inventoryHealth.status === 'Healthy' ? 'positive' : 'negative'">
+            {{inventoryHealth.status === 'Healthy' ? 'check_circle' : 'inventory'}}
+          </mat-icon>
+          Inventory Health: {{inventoryHealth.status}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div fxLayout="column" fxLayoutGap="15px">
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="sub-label">Total Stock Value (Cost):</span>
+            <span class="sub-value">₹{{inventoryHealth.total_inventory_value_cost | number:'1.0-0'}}</span>
+          </div>
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="sub-label">Estimated Sale Value:</span>
+            <span class="sub-value">₹{{inventoryHealth.total_inventory_value_sale | number:'1.0-0'}}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- At-Risk Products List -->
+    <mat-card fxFlex="60" class="health-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="warning">warning</mat-icon>
+          Low Stock - Immediate Attention
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutGap="10px">
+          <div *ngFor="let product of inventoryHealth.at_risk_products" class="risk-badge" fxLayout="row"
+            fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span class="product-name">{{product.name}}</span>
+            <span class="stock-qty">{{product.stock}} left</span>
+          </div>
+          <div *ngIf="inventoryHealth.at_risk_products.length === 0" class="no-risk">
+            All key products are well-stocked.
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
   <!-- Rest of the template remains the same -->
   <!-- Filters -->
   <!-- <mat-card class="filter-section">
@@ -241,96 +290,95 @@
       </div>
     </mat-card-content>
   </mat-card> -->
-  <mat-card>
-    <mat-card-header fxLayoutAlign="center">
-      <mat-card-subtitle>
-        <h2>Actual - Prediction Sale Chart</h2>
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="w-100 h-300p">
-        <div *ngIf="isLoading" class="loading-message">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span>Loading sales data...</span>
+  <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-lg="column" style="margin-top: 20px;">
+    <!-- Actual - Prediction Sale Chart (Left Side) -->
+    <mat-card fxFlex="55" fxFlex.lt-lg="100">
+      <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
+        <mat-card-subtitle fxFlex>
+          <h2 style="margin: 0; font-weight: 500;">Actual - Prediction Sale Chart</h2>
+        </mat-card-subtitle>
+
+        <div class="chart-filter">
+          <mat-form-field appearance="outline" dense>
+            <mat-label>Filter by Product</mat-label>
+            <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
+              <mat-option value="all">All Products</mat-option>
+              <mat-option *ngFor="let product of productList" [value]="product.id">
+                {{product.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-        <!-- <div *ngIf="error" class="error-message">
-          <mat-icon>error_outline</mat-icon>
-          <span>Failed to load sales data. Please try again later.</span>
-          <button mat-button color="primary" (click)="loadChartData()">Retry</button>
-        </div> -->
-        <!-- <div fxLayout="row wrap" fxLayoutGap="20px" style="margin-bottom: 20px;">
-          <mat-form-field appearance="outline">
-            <mat-label>Product</mat-label>
-            <mat-select [(value)]="selectedProduct" (selectionChange)="loadChartData()">
-              <mat-option *ngFor="let p of products" [value]="p.product_id">{{ p.product_name }}</mat-option>
-            </mat-select>
-          </mat-form-field> -->
+      </mat-card-header>
+      <mat-card-content>
+        <div class="w-100 h-300p">
+          <div *ngIf="isSalesTrendLoading" class="loading-message">
+            <mat-spinner diameter="40"></mat-spinner>
+            <span>Loading sales data...</span>
+          </div>
 
-        <!-- <mat-form-field appearance="outline">
-            <mat-label>Date Range</mat-label>
-            <mat-select [(value)]="selectedMonths" (selectionChange)="loadChartData()">
-              <mat-option *ngFor="let range of monthRanges" [value]="range.value">{{ range.label }}</mat-option>
+          <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
+            [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
+            [autoScale]="true" (select)="onSelect($event)">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Comparison Section (Right Side) -->
+    <div fxFlex="45" fxFlex.lt-lg="100" fxLayout="column">
+      <!-- Comparison Header with Filter -->
+      <div fxLayout="row" fxLayoutAlign="space-between center" style="margin-bottom: 15px; padding: 0 10px;">
+        <h2 style="margin: 0; font-weight: 500;">Current vs Predicted Top 10 Products</h2>
+        <div class="chart-filter">
+          <mat-form-field appearance="outline" dense>
+            <mat-label>Filter Comparison</mat-label>
+            <mat-select [value]="selectedComparisonProductId"
+              (selectionChange)="onComparisonProductFilterChange($event.value)">
+              <mat-option value="all">All Products (Summary)</mat-option>
+              <mat-option *ngFor="let product of productList" [value]="product.id">
+                {{product.name}}
+              </mat-option>
             </mat-select>
-          </mat-form-field> -->
-        <!-- </div> -->
-        <ngx-charts-line-chart *ngIf="!isLoading" [results]="combinedData" [scheme]="colorScheme" [xAxis]="true"
-          [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Sales'" [autoScale]="true">
-        </ngx-charts-line-chart>
+          </mat-form-field>
+        </div>
       </div>
-    </mat-card-content>
-  </mat-card>
 
+      <div fxLayout="column" fxLayoutGap="20px">
+        <!-- Forecast Comparison -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Product Breakdown</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="isComparisonLoading" class="loading-overlay">
+              <mat-spinner diameter="30"></mat-spinner>
+            </div>
+            <ngx-charts-bar-vertical-2d *ngIf="!isComparisonLoading" [view]="undefined" [scheme]="colorScheme"
+              [results]="forecastComparisonData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
+              [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
+              (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-2d>
+          </mat-card-content>
+        </mat-card>
 
-
-  <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-lg="column">
-    <!-- Sales Trend Chart -->
-    <!-- <mat-card class="chart-card" fxFlex="50" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Sales Trend & Forecast</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-line-chart
-          [view]="undefined"
-          [scheme]="colorScheme"
-          [results]="salesChartData"
-          [gradient]="true"
-          [xAxis]="true"
-          [yAxis]="true"
-          [legend]="true"
-          [showXAxisLabel]="true"
-          [showYAxisLabel]="true"
-          [autoScale]="true"
-          xAxisLabel="Month"
-          yAxisLabel="Quantity Sold"
-          (select)="onSelect($event)">
-        </ngx-charts-line-chart>
-      </mat-card-content>
-    </mat-card> -->
-
-    <!-- Forecast Comparison -->
-    <mat-card class="chart-card" fxFlex="75" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Current vs Predicted Sales</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-bar-vertical-2d [view]="undefined" [scheme]="colorScheme" [results]="forecastComparisonData"
-          [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true"
-          [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity" (select)="onSelect($event)">
-        </ngx-charts-bar-vertical-2d>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="chart-card" fxFlex="25" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Current vs Predicted Sales</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-bar-vertical [view]="undefined" [scheme]="colorScheme" [results]="totalComparisonData"
-          [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true"
-          [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity" (select)="onSelect($event)">
-        </ngx-charts-bar-vertical>
-      </mat-card-content>
-    </mat-card>
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Total Impact</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="isComparisonLoading" class="loading-overlay">
+              <mat-spinner diameter="30"></mat-spinner>
+            </div>
+            <ngx-charts-bar-vertical *ngIf="!isComparisonLoading" [view]="undefined" [scheme]="colorScheme"
+              [results]="totalComparisonData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
+              [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Category" yAxisLabel="Quantity"
+              (select)="onSelect($event)">
+            </ngx-charts-bar-vertical>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
   </div>
 
   <!-- Enhanced Analytics Charts Row -->
@@ -412,9 +460,14 @@
         <mat-card-title>Growth Performance (%)</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <ngx-charts-bar-vertical-2d [view]="undefined" [scheme]="colorScheme" [results]="productGrowthData"
-          [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true"
-          [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity" (select)="onSelect($event)">
+        <div *ngIf="isGrowthDataLoading" class="loading-overlay"
+          style="height: 300px; display: flex; align-items: center; justify-content: center;">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+        <ngx-charts-bar-vertical-2d *ngIf="!isGrowthDataLoading" [view]="undefined" [scheme]="colorScheme"
+          [results]="productGrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
+          [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
+          (select)="onSelect($event)">
         </ngx-charts-bar-vertical-2d>
       </mat-card-content>
     </mat-card>
@@ -445,7 +498,11 @@
         <mat-card-title>Detailed Forecast Summary</mat-card-title>
       </mat-card-header>
       <mat-card-content class="forecast-table-container">
-        <table mat-table [dataSource]="productSummary" class="forecast-table">
+        <div *ngIf="isSummaryLoading" class="loading-overlay"
+          style="height: 200px; display: flex; align-items: center; justify-content: center;">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+        <table mat-table *ngIf="!isSummaryLoading" [dataSource]="productSummary" class="forecast-table">
 
           <!-- Product Column -->
           <ng-container matColumnDef="product_name">

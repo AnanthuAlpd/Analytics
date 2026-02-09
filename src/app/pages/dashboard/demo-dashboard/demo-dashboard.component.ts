@@ -12,7 +12,8 @@ import {
   RevenueMetrics,
   CategoryPerformance,
   BusinessAlert,
-  TopPerformer
+  TopPerformer,
+  InventoryHealth
 } from '../demo-dashboard/demo-dashboard-model';
 
 
@@ -43,10 +44,11 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   selectedProduct: number | 'all' = 'all';
   selectedTimeframe = '6months';
   // Removed: selectedProductId: number | null = null; (Replaced by selectedProduct)
-  selectedProduct1: number | null = null;
-  selectedMonths: number | null = null;
   totalComparisonData: any[]
   combinedData: any[] = [];
+  productList: any[] = [];
+  selectedChartProductId: number | 'all' = 'all';
+  selectedComparisonProductId: number | 'all' = 'all';
   // --- Chart Data ---
   salesChartData: SalesData[] = [];
   forecastComparisonData: SalesData[] = [];
@@ -54,7 +56,12 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   productSummary: ForecastSummary[] = []; // Data Source for the mat-table
 
   // --- Component State ---
-  isLoading: boolean;
+  isLoading: boolean; // General loading (e.g. for initial load or full refresh)
+  isSalesTrendLoading: boolean = false;
+  isComparisonLoading: boolean = false;
+  isGrowthDataLoading: boolean = false;
+  isSummaryLoading: boolean = false;
+
   errorMessage: any;
   kpiSummaryNew: KpiSummaryNew;
 
@@ -64,6 +71,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   revenueTrendData: SalesData[] = [];
   businessAlerts: BusinessAlert[] = [];
   topPerformers: TopPerformer[] = [];
+  inventoryHealth: InventoryHealth;
 
   // Removed: @ViewChild(DatatableComponent) table: DatatableComponent; (Unused ngx-datatable dependency)
 
@@ -78,7 +86,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // this.loadKpiData();
     this.loadKpiDataNew();
-    this.loadChartData();
     this.loadTotalComparison();
     this.loadSalesTrend(); // Loads sales trend for all products initially
     this.loadTopProducts();
@@ -91,6 +98,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.loadRevenueTrend();
     this.loadBusinessAlerts();
     this.loadTopPerformersData();
+    this.loadInventoryHealth();
+    this.loadProductList();
   }
 
   ngAfterViewInit(): void {
@@ -105,10 +114,17 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
   // --- Filter Handlers ---
 
-  onProductFilterChange(productId: number | 'all') {
-    this.selectedProduct = productId;
-    this.applyFilters();
-    this.loadSalesTrend(productId === 'all' ? undefined : productId); // Update sales trend chart
+  onProductFilterChange(productId: any): void {
+    this.selectedChartProductId = productId;
+    const filterId = productId === 'all' ? undefined : productId;
+    this.loadSalesTrend(filterId);
+  }
+
+  onComparisonProductFilterChange(productId: any): void {
+    this.selectedComparisonProductId = productId;
+    const filterId = productId === 'all' ? undefined : productId;
+    this.loadTopProducts(filterId);
+    this.loadTotalComparison(filterId);
   }
 
   onTimeframeChange(timeframe: string) {
@@ -138,25 +154,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
         this.errorMessage = error.message || 'Failed to load KPI data';
         this.isLoading = false;
       },
-    });
-  }
-
-  loadChartData() {
-    this.isLoading = true;
-    // this.error = false;
-
-    this.demoDashboardService.getSalesLineChart(this.selectedProduct1, this.selectedMonths).subscribe({
-      next: (response) => {
-        if (response.status === 'success') {
-          this.processChartData(response.data);
-        }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading chart data:', err);
-        // this.error = true;
-        this.isLoading = false;
-      }
     });
   }
 
@@ -193,84 +190,84 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
   // productId is optional, 'all' filter will pass undefined
   loadSalesTrend(productId?: number): void {
-    this.isLoading = true;
+    this.isSalesTrendLoading = true;
     this.demoDashboardService.getSalesTrendData(productId).subscribe({
       next: (data: SalesData[]) => {
         this.salesChartData = data;
-        this.isLoading = false;
+        this.isSalesTrendLoading = false;
       },
       error: (err) => {
         console.error('Error loading sales trend:', err);
-        this.isLoading = false;
+        this.isSalesTrendLoading = false;
       },
     });
   }
 
-  loadTopProducts(): void {
-    this.isLoading = true;
+  loadTopProducts(productId?: number): void {
+    this.isComparisonLoading = true;
     this.errorMessage = null;
 
-    this.demoDashboardService.getTopProductComparison().subscribe({
+    this.demoDashboardService.getTopProductComparison(productId).subscribe({
       next: (data: SalesData[]) => {
         this.forecastComparisonData = data;
-        this.isLoading = false;
+        this.isComparisonLoading = false;
       },
       error: (err) => {
         console.error('Error fetching top product data:', err);
         this.errorMessage = err.message || 'Failed to load data';
-        this.isLoading = false;
+        this.isComparisonLoading = false;
       },
     });
   }
 
-  loadTotalComparison() {
-    this.isLoading = true;
+  loadTotalComparison(productId?: number) {
+    this.isComparisonLoading = true;
     this.errorMessage = null;
 
-    this.demoDashboardService.getTotalProductComparison().subscribe({
+    this.demoDashboardService.getTotalProductComparison(productId).subscribe({
       next: (data: any[]) => {
         this.totalComparisonData = data;
-        this.isLoading = false;
+        this.isComparisonLoading = false;
       },
       error: (err) => {
         console.error('Error fetching top product data:', err);
         this.errorMessage = err.message || 'Failed to load data';
-        this.isLoading = false;
+        this.isComparisonLoading = false;
       },
     });
 
   }
 
   loadProductGrowthData(): void {
-    this.isLoading = true;
+    this.isGrowthDataLoading = true;
     this.errorMessage = null;
 
     this.demoDashboardService.getProductGrowthData().subscribe({
       next: (data: SalesData[]) => {
         this.productGrowthData = data;
-        this.isLoading = false;
+        this.isGrowthDataLoading = false;
       },
       error: (err) => {
         console.error('Error fetching product growth data:', err);
         this.errorMessage = err.message || 'Failed to load data';
-        this.isLoading = false;
+        this.isGrowthDataLoading = false;
       },
     });
   }
 
   loadProductSummary(): void {
-    this.isLoading = true;
+    this.isSummaryLoading = true;
     this.errorMessage = null;
 
     this.demoDashboardService.getForecastSummary().subscribe({
       next: (data: ForecastSummary[]) => {
         this.productSummary = data;
-        this.isLoading = false;
+        this.isSummaryLoading = false;
       },
       error: (err) => {
         console.error('Error fetching product summary data:', err);
         this.errorMessage = err.message || 'Failed to load data';
-        this.isLoading = false;
+        this.isSummaryLoading = false;
       },
     });
   }
@@ -332,6 +329,27 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loadInventoryHealth(): void {
+    this.demoDashboardService.getInventoryHealth().subscribe({
+      next: (data) => {
+        this.inventoryHealth = data;
+      },
+      error: (err) => {
+        console.error('Error loading inventory health:', err);
+      }
+    });
+  }
+
+  loadProductList(): void {
+    this.demoDashboardService.getProducts().subscribe({
+      next: (products) => {
+        this.productList = products;
+      },
+      error: (err) => {
+        console.error('Error loading product list:', err);
+      }
+    });
+  }
 
   onSelect(event: any): void {
     console.log('Item clicked', event);

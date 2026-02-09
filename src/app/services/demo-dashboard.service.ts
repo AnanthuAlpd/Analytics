@@ -80,9 +80,13 @@ export class DemoDashboardService {
       );
   }
 
-  getTopProductComparison(): Observable<SalesData[]> {
+  getTopProductComparison(productId?: number): Observable<SalesData[]> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
     return this.http.get<{ status: string; message: string; data: SalesData[] }>(
-      `${this.apiUrl}/demo-dashboard/product-comparison`
+      `${this.apiUrl}/demo-dashboard/product-comparison`, { params }
     ).pipe(
       map(response => {
         if (response.status !== 'success') {
@@ -94,9 +98,13 @@ export class DemoDashboardService {
     );
   }
 
-  getTotalProductComparison(): Observable<any> {
+  getTotalProductComparison(productId?: number): Observable<any> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
     return this.http.get<{ status: string; message: string; data: any[] }>(
-      `${this.apiUrl}/demo-dashboard/product-comparison-total`
+      `${this.apiUrl}/demo-dashboard/product-comparison-total`, { params }
     ).pipe(
       map(response => {
         if (response.status !== 'success') {
@@ -128,6 +136,32 @@ export class DemoDashboardService {
       map(response => {
         if (response.status !== 'success') {
           throw new Error(response.message || 'Failed to fetch forecast summary');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch inventory health metrics */
+  getInventoryHealth(): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/business-analytics/inventory-health`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch inventory health');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch list of products for filtering */
+  getProducts(): Observable<any[]> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/demo-dashboard/products`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch products');
         }
         return response.data;
       }),
