@@ -3,7 +3,10 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppSettings } from '../app.settings';
-import { KpiSummary, SalesData, ForecastSummary,KpiSummaryNew } from '../pages/dashboard/demo-dashboard/demo-dashboard-model';
+import {
+  KpiSummary, SalesData, ForecastSummary, KpiSummaryNew,
+  RevenueMetrics, CategoryPerformance, BusinessAlert, TopPerformer
+} from '../pages/dashboard/demo-dashboard/demo-dashboard-model';
 
 interface ApiResponse<T> {
   status: string;
@@ -17,8 +20,8 @@ interface ApiResponse<T> {
 export class DemoDashboardService {
   private apiUrl: string;
 
-  constructor(private http: HttpClient, private appSettings: AppSettings) { 
-    this.apiUrl = this.appSettings.settings.baseUrl; 
+  constructor(private http: HttpClient, private appSettings: AppSettings) {
+    this.apiUrl = this.appSettings.settings.baseUrl;
   }
 
   /** Fetch KPI summary data */
@@ -60,7 +63,6 @@ export class DemoDashboardService {
   /** Fetch sales trend (Historical + Predicted) */
   getSalesTrendData(productId?: number): Observable<SalesData[]> {
     const params: any = productId ? { product_id: productId } : {};
-  
     return this.http
       .get<{ status: string; message: string; data: SalesData[] }>(
         `${this.apiUrl}/demo-dashboard/sales-trend`,
@@ -77,9 +79,13 @@ export class DemoDashboardService {
       );
   }
 
-  getTopProductComparison(): Observable<SalesData[]> {
+  getTopProductComparison(productId?: number): Observable<SalesData[]> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
     return this.http.get<{ status: string; message: string; data: SalesData[] }>(
-      `${this.apiUrl}/demo-dashboard/product-comparison`
+      `${this.apiUrl}/demo-dashboard/product-comparison`, { params }
     ).pipe(
       map(response => {
         if (response.status !== 'success') {
@@ -91,9 +97,13 @@ export class DemoDashboardService {
     );
   }
 
-  getTotalProductComparison(): Observable<any> {
+  getTotalProductComparison(productId?: number): Observable<any> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
     return this.http.get<{ status: string; message: string; data: any[] }>(
-      `${this.apiUrl}/demo-dashboard/product-comparison-total`
+      `${this.apiUrl}/demo-dashboard/product-comparison-total`, { params }
     ).pipe(
       map(response => {
         if (response.status !== 'success') {
@@ -104,12 +114,12 @@ export class DemoDashboardService {
       catchError(this.handleError)
     );
   }
-  getProductGrowthData(): Observable<SalesData[]>{
-    return this.http.get<{ status: string; message: string; data: SalesData[]}>(
+  getProductGrowthData(): Observable<SalesData[]> {
+    return this.http.get<{ status: string; message: string; data: SalesData[] }>(
       `${this.apiUrl}/demo-dashboard/product-growth`
     ).pipe(
       map(response => {
-        if(response.status !== 'success'){
+        if (response.status !== 'success') {
           throw new Error(response.message || 'Failed to fetch product growth data');
         }
         return response.data;
@@ -125,6 +135,103 @@ export class DemoDashboardService {
       map(response => {
         if (response.status !== 'success') {
           throw new Error(response.message || 'Failed to fetch forecast summary');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch inventory health metrics */
+  getInventoryHealth(): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/business-analytics/inventory-health`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch inventory health');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch list of products for filtering */
+  getProducts(): Observable<any[]> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/demo-dashboard/products`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch products');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // ===== Enhanced Business Analytics Methods =====
+
+  /** Fetch revenue and profit metrics */
+  getRevenueMetrics(): Observable<RevenueMetrics> {
+    return this.http.get<ApiResponse<RevenueMetrics>>(`${this.apiUrl}/business-analytics/revenue-metrics`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch revenue metrics');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch category performance data */
+  getCategoryPerformance(): Observable<CategoryPerformance[]> {
+    return this.http.get<ApiResponse<CategoryPerformance[]>>(`${this.apiUrl}/business-analytics/category-performance`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch category performance');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch revenue trend (revenue vs profit over time) */
+  getRevenueTrend(months: number = 12): Observable<SalesData[]> {
+    return this.http.get<ApiResponse<SalesData[]>>(
+      `${this.apiUrl}/business-analytics/revenue-trend?months=${months}`
+    ).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch revenue trend');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch business alerts */
+  getBusinessAlerts(): Observable<BusinessAlert[]> {
+    return this.http.get<ApiResponse<BusinessAlert[]>>(`${this.apiUrl}/business-analytics/alerts`).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch business alerts');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Fetch top performing products */
+  getTopPerformers(limit: number = 5): Observable<TopPerformer[]> {
+    return this.http.get<ApiResponse<TopPerformer[]>>(
+      `${this.apiUrl}/business-analytics/top-performers?limit=${limit}`
+    ).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch top performers');
         }
         return response.data;
       }),
