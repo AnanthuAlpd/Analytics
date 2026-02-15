@@ -84,9 +84,10 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   salesChartData: SalesData[] = [];
   forecastComparisonData: SalesData[] = [];
   productGrowthData: SalesData[] = [];
-  productGrowthDataOne: SalesData[] = [];
+  productGrowthDataOne: SalesData[] = []; // Used for old logic if needed, but we'll use top10GrowthData for left chart
+  top10GrowthData: SalesData[] = []; // New data for left chart
   productSummary: ForecastSummary[] = [];
-  placeholderChartData: any[] = []; // Mock data for right chart
+  futureProjectionData: any[] = []; // Real API data for right chart
 
   // --- Card Data Properties ---
   kpiCards: KpiCard[] = [];
@@ -122,15 +123,12 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.forecastComparisonData = [];
     this.productGrowthData = [];
     this.productGrowthDataOne = [];
+    this.top10GrowthData = [];
     this.revenueTrendData = [];
 
     // Mock data for the placeholder chart
-    this.placeholderChartData = [
-      { name: 'Q1 2024', value: 50000 },
-      { name: 'Q2 2024', value: 55000 },
-      { name: 'Q3 2024', value: 62000 },
-      { name: 'Q4 2024', value: 70000 }
-    ];
+    // Initialize real data for right chart
+    this.futureProjectionData = [];
 
     this.loadKpiDataNew();
     this.loadTotalComparison();
@@ -147,7 +145,9 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.loadBusinessAlerts();
     this.loadTopPerformersData();
     this.loadInventoryHealth();
+    this.loadInventoryHealth();
     this.loadProductList();
+    this.loadFutureProjectionData(); // Initial load for right chart
   }
 
   ngAfterViewInit(): void {
@@ -164,19 +164,22 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   onFutureProjectionFilterChange(productId: any): void {
     this.selectedFutureProductId = productId;
     this.isFutureProjectionLoading = true;
+    const filterId = productId === 'all' ? undefined : productId;
 
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Generate random mock data based on selection
-      const baseValue = productId === 'all' ? 50000 : 10000 + Math.random() * 40000;
-      this.placeholderChartData = [
-        { name: 'Q1 2024', value: baseValue + Math.random() * 5000 },
-        { name: 'Q2 2024', value: baseValue * 1.1 + Math.random() * 5000 },
-        { name: 'Q3 2024', value: baseValue * 1.2 + Math.random() * 5000 },
-        { name: 'Q4 2024', value: baseValue * 1.4 + Math.random() * 5000 }
-      ];
-      this.isFutureProjectionLoading = false;
-    }, 800);
+    this.demoDashboardService.getProductGrowthData(filterId).subscribe({
+      next: (data) => {
+        this.futureProjectionData = this.validateChartData(data);
+        this.isFutureProjectionLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading future projection:', err);
+        this.isFutureProjectionLoading = false;
+      }
+    });
+  }
+
+  loadFutureProjectionData() {
+    this.onFutureProjectionFilterChange('all');
   }
 
   validateChartData(data: any[], defaultSeriesName: string = 'Overview'): any[] {
@@ -298,7 +301,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
       // Predicted Sales
       cards.push({
         label: 'Predicted Sales',
-        value: this.kpiSummaryNew.predictedSales,
+        value: (this.kpiSummaryNew.predictedSales || 0).toLocaleString('en-IN'),
         isCurrency: false,
         subValue: 'Next month forecast',
         icon: 'insights',
@@ -321,12 +324,12 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
         splitData: [
           {
             label: 'Current',
-            value: (this.kpiSummaryNew.currentMonthSales || 0).toLocaleString(),
+            value: (this.kpiSummaryNew.currentMonthSales || 0).toLocaleString('en-IN'),
             class: ''
           },
           {
             label: 'Predicted',
-            value: (this.kpiSummaryNew.predictedSales || 0).toLocaleString(),
+            value: (this.kpiSummaryNew.predictedSales || 0).toLocaleString('en-IN'),
             class: growthRate > 0 ? 'positive-text' : 'negative-text'
           }
         ]
@@ -479,8 +482,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
   onProductFilterChange2(productId: any): void {
     const filterId = productId === 'all' ? undefined : productId;
-    this.demoDashboardService.getProductGrowthData(filterId).subscribe((data) => {
-      this.productGrowthDataOne = this.validateChartData(data);
+    this.demoDashboardService.getTop10ProductGrowthData(filterId).subscribe((data) => {
+      this.top10GrowthData = this.validateChartData(data);
     });
   }
 
@@ -488,18 +491,29 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.isGrowthDataLoading = true;
     this.errorMessage = null;
 
+    // Load standard product growth data (maybe for other purposes or if needed)
     this.demoDashboardService.getProductGrowthData().subscribe({
       next: (data: SalesData[]) => {
         const validatedData = this.validateChartData(data);
         this.productGrowthData = validatedData;
-        this.productGrowthDataOne = validatedData;
+        this.productGrowthDataOne = validatedData; // Keep legacy populated just in case
         this.isGrowthDataLoading = false;
       },
       error: (err) => {
         console.error('Error fetching product growth data:', err);
-        this.errorMessage = err.message || 'Failed to load data';
+        // this.errorMessage = err.message || 'Failed to load data'; // Don't block UI if this one fails
         this.isGrowthDataLoading = false;
       },
+    });
+
+    // Load Top 10 data for the left chart
+    this.demoDashboardService.getTop10ProductGrowthData().subscribe({
+      next: (data: SalesData[]) => {
+        this.top10GrowthData = this.validateChartData(data);
+      },
+      error: (err) => {
+        console.error('Error fetching top 10 product growth data:', err);
+      }
     });
   }
 

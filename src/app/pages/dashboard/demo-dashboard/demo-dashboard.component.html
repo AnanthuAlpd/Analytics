@@ -105,10 +105,45 @@
               <mat-card-title>Sales by Category</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0"
-                [view]="[500, 500]" [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="false"
-                [legend]="false" [labels]="true" [doughnut]="true" (select)="onSelect($event)">
-              </ngx-charts-pie-chart>
+              <div class="chart-wrapper">
+                <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0"
+                  [view]="undefined" [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="false"
+                  [legend]="false" [labels]="true" [doughnut]="true" (select)="onSelect($event)">
+                </ngx-charts-pie-chart>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Missing Chart: Actual - Prediction Sale Chart -->
+        <div class="chart-row" style="margin-top: 20px;">
+          <mat-card class="chart-card col-100 enhanced-chart">
+            <div class="chart-header-flex">
+              <h3>Actual - Prediction Sale Chart</h3>
+              <div class="chart-filter">
+                <mat-form-field appearance="outline" dense>
+                  <mat-label>Filter by Product</mat-label>
+                  <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
+                    <mat-option value="all">All Products</mat-option>
+                    <mat-option *ngFor="let product of productList" [value]="product.id">
+                      {{product.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-card-content>
+              <div class="chart-wrapper">
+                <div *ngIf="isSalesTrendLoading" class="loading-message">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <span>Loading sales data...</span>
+                </div>
+
+                <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
+                  [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
+                  [autoScale]="true" (select)="onSelect($event)">
+                </ngx-charts-line-chart>
+              </div>
             </mat-card-content>
           </mat-card>
         </div>
@@ -312,11 +347,12 @@
         <!-- Product Growth Charts Split Row -->
         <div class="chart-row" style="margin-top: 10px;">
           <!-- Left Chart: Product Growth (Multi-Series Bar) -->
+          <!-- Left Chart: Product Growth (Multi-Series Bar) -->
           <mat-card class="chart-card col-75 enhanced-chart">
             <div class="chart-header-grid">
               <h3>
                 <mat-icon class="chart-icon">trending_up</mat-icon>
-                Product Growth
+                Top 10 Product Growth Performance
               </h3>
             </div>
             <mat-card-content>
@@ -325,7 +361,7 @@
               </div>
               <div class="chart-wrapper">
                 <ngx-charts-bar-vertical-2d *ngIf="!isGrowthDataLoading" [view]="undefined" [scheme]="growthColorScheme"
-                  [results]="productGrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
+                  [results]="top10GrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
                   [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
                   (select)="onSelect($event)">
                 </ngx-charts-bar-vertical-2d>
@@ -338,7 +374,7 @@
             <div class="chart-header-grid">
               <h3>
                 <mat-icon class="chart-icon">bar_chart</mat-icon>
-                Future Projection
+                Total Product Growth Performance
               </h3>
               <div class="chart-filter">
                 <mat-form-field appearance="outline">
@@ -356,11 +392,19 @@
                 <mat-spinner diameter="40"></mat-spinner>
               </div>
               <div class="chart-wrapper">
-                <ngx-charts-bar-vertical *ngIf="!isFutureProjectionLoading" [view]="undefined"
-                  [scheme]="forecastColorScheme" [results]="placeholderChartData" [gradient]="false" [xAxis]="true"
-                  [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Quarter"
-                  yAxisLabel="Projected Sales" (select)="onSelect($event)">
-                </ngx-charts-bar-vertical>
+                <ngx-charts-bar-vertical-2d
+                  *ngIf="!isFutureProjectionLoading && futureProjectionData && futureProjectionData.length > 0"
+                  [view]="undefined" [scheme]="forecastColorScheme" [results]="futureProjectionData" [gradient]="false"
+                  [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                  [xAxisLabel]="'Period'" [yAxisLabel]="'Growth'" [legendPosition]="'below'" [groupPadding]="16"
+                  (select)="onSelect($event)">
+                </ngx-charts-bar-vertical-2d>
+
+                <div *ngIf="!isFutureProjectionLoading && (!futureProjectionData || futureProjectionData.length === 0)"
+                  class="chart-empty-state">
+                  <mat-icon>bar_chart</mat-icon>
+                  <p>No projection data available</p>
+                </div>
               </div>
             </mat-card-content>
           </mat-card>
