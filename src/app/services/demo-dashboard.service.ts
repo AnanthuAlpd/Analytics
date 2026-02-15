@@ -114,9 +114,13 @@ export class DemoDashboardService {
       catchError(this.handleError)
     );
   }
-  getProductGrowthData(): Observable<SalesData[]> {
+  getProductGrowthData(productId?: number): Observable<SalesData[]> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
     return this.http.get<{ status: string; message: string; data: SalesData[] }>(
-      `${this.apiUrl}/demo-dashboard/product-growth`
+      `${this.apiUrl}/demo-dashboard/product-growth`, { params }
     ).pipe(
       map(response => {
         if (response.status !== 'success') {

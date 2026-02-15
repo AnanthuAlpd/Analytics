@@ -8,10 +8,14 @@ export interface KpiSummary {
 }
 
 export interface KpiSummaryNew {
+  growthRate: any;
+  currentMonthSales: any;
   totalProducts: number;
   totalPredictedSales: number;
+  predictedSales?: number; // Added to match usage
   currentGrowthRate: number;
   predictedGrowthRate: number;
+  averageGrowth?: number; // Added to match usage
   monthly_avg_backorder: number;
   predictionAccuracy: number;
 }
@@ -35,8 +39,19 @@ export interface ForecastSummary {
   backlog_count: number;
   confidence_score: number;
 }
+// Vibrant palette from Expenses Component
 export const COLOR_SCHEME = {
-  domain: ['#667eea', '#ff7e5f', '#4CAF50', '#FFC107', '#F44336', '#9C27B0']
+  domain: ['#6366f1', '#a855f7', '#ec4899', '#f43f5e', '#f59e0b', '#10b981']
+};
+
+// Premium Blue-Teal Palette for Forecasts (Professional & Trustworthy)
+export const FORECAST_COLOR_SCHEME = {
+  domain: ['#2563eb', '#06b6d4', '#4ade80', '#6366f1', '#8b5cf6']
+};
+
+// Purple-Finance Palette for Growth (Modern & Tech)
+export const GROWTH_COLOR_SCHEME = {
+  domain: ['#7209b7', '#3a0ca3', '#4361ee', '#4cc9f0', '#f72585']
 };
 
 // Enhanced Business Analytics Interfaces

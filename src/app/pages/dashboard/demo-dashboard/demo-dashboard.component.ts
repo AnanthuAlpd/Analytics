@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable'; // Keeping if planned for future use, but removed unused imports
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { MatDialog } from '@angular/material/dialog';
 import { DemoPopupComponent } from '../demo-dashboard/demo-popup/demo-popup.component';
 import { DemoDashboardService } from 'src/app/services/demo-dashboard.service';
@@ -9,6 +9,8 @@ import {
   SalesData,
   ForecastSummary,
   COLOR_SCHEME,
+  FORECAST_COLOR_SCHEME,
+  GROWTH_COLOR_SCHEME,
   RevenueMetrics,
   CategoryPerformance,
   BusinessAlert,
@@ -16,7 +18,33 @@ import {
   InventoryHealth
 } from '../demo-dashboard/demo-dashboard-model';
 
-
+export interface KpiCard {
+  label: string;
+  value: number | string;
+  isCurrency: boolean;
+  subValue: string;
+  icon: string;
+  iconClass: string;
+  cardClass: string;
+  type?: 'standard' | 'split' | 'progress' | 'alert' | 'custom';
+  trend?: number;
+  badge?: number | string;
+  badgeIcon?: string;
+  badgeClass?: string;
+  progress?: number;
+  progressClass?: string;
+  splitData?: {
+    label: string;
+    value: any;
+    class: string;
+  }[];
+  footer?: {
+    icon: string;
+    value: any;
+    class: string;
+  };
+  alertType?: 'warning' | 'success';
+}
 
 @Component({
   selector: 'app-demo-dashboard',
@@ -25,11 +53,13 @@ import {
 })
 export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
-
   // --- Core Dashboard Data & Config ---
 
-  colorScheme = COLOR_SCHEME; // Used by ngx-charts
-  // Table configuration (used for the 'Detailed Forecast Summary' table)
+  colorScheme = COLOR_SCHEME;
+  forecastColorScheme = FORECAST_COLOR_SCHEME;
+  growthColorScheme = GROWTH_COLOR_SCHEME;
+
+  // Table configuration
   displayedColumns: string[] = [
     'product_name',
     'current_sales',
@@ -42,22 +72,32 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   // --- Filters State ---
   selectedProduct: number | 'all' = 'all';
   selectedTimeframe = '6months';
-  // Removed: selectedProductId: number | null = null; (Replaced by selectedProduct)
   totalComparisonData: any[]
   combinedData: any[] = [];
+  totalForecastPieData: any[] = [];
   productList: any[] = [];
   selectedChartProductId: number | 'all' = 'all';
   selectedComparisonProductId: number | 'all' = 'all';
+  selectedFutureProductId: number | 'all' = 'all'; // New filter state
+
   // --- Chart Data ---
   salesChartData: SalesData[] = [];
   forecastComparisonData: SalesData[] = [];
   productGrowthData: SalesData[] = [];
-  productSummary: ForecastSummary[] = []; // Data Source for the mat-table
+  productGrowthDataOne: SalesData[] = [];
+  productSummary: ForecastSummary[] = [];
+  placeholderChartData: any[] = []; // Mock data for right chart
+
+  // --- Card Data Properties ---
+  kpiCards: KpiCard[] = [];
+  forecastCards: KpiCard[] = [];
 
   // --- Component State ---
-  isLoading: boolean; // General loading (e.g. for initial load or full refresh)
+  isLoading: boolean;
   isSalesTrendLoading: boolean = false;
   isComparisonLoading: boolean = false;
+  isTotalComparisonLoading: boolean = false;
+  isFutureProjectionLoading: boolean = false; // New loading state
   isGrowthDataLoading: boolean = false;
   isSummaryLoading: boolean = false;
 
@@ -72,24 +112,33 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   topPerformers: TopPerformer[] = [];
   inventoryHealth: InventoryHealth;
 
-  // Removed: @ViewChild(DatatableComponent) table: DatatableComponent; (Unused ngx-datatable dependency)
-
   constructor(
-    // Removed: public appSettings: AppSettings, public dashBoardService: DashBoardService
     private dialog: MatDialog,
     private demoDashboardService: DemoDashboardService
-  ) {
-    // Removed: this.settings = this.appSettings.settings;
-  }
+  ) { }
 
   ngOnInit() {
-    // this.loadKpiData();
+    this.salesChartData = [];
+    this.forecastComparisonData = [];
+    this.productGrowthData = [];
+    this.productGrowthDataOne = [];
+    this.revenueTrendData = [];
+
+    // Mock data for the placeholder chart
+    this.placeholderChartData = [
+      { name: 'Q1 2024', value: 50000 },
+      { name: 'Q2 2024', value: 55000 },
+      { name: 'Q3 2024', value: 62000 },
+      { name: 'Q4 2024', value: 70000 }
+    ];
+
     this.loadKpiDataNew();
     this.loadTotalComparison();
-    this.loadSalesTrend(); // Loads sales trend for all products initially
+    this.loadSalesTrend();
     this.loadTopProducts();
     this.loadProductGrowthData();
     this.loadProductSummary();
+
 
     // Load enhanced business analytics
     this.loadRevenueMetrics();
@@ -102,7 +151,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Keeping the logic for the demo popup as it is active in the original code
     setTimeout(() => {
       this.dialog.open(DemoPopupComponent, {
         width: '600px',
@@ -113,6 +161,45 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
   // --- Filter Handlers ---
 
+  onFutureProjectionFilterChange(productId: any): void {
+    this.selectedFutureProductId = productId;
+    this.isFutureProjectionLoading = true;
+
+    // Simulate API call with timeout
+    setTimeout(() => {
+      // Generate random mock data based on selection
+      const baseValue = productId === 'all' ? 50000 : 10000 + Math.random() * 40000;
+      this.placeholderChartData = [
+        { name: 'Q1 2024', value: baseValue + Math.random() * 5000 },
+        { name: 'Q2 2024', value: baseValue * 1.1 + Math.random() * 5000 },
+        { name: 'Q3 2024', value: baseValue * 1.2 + Math.random() * 5000 },
+        { name: 'Q4 2024', value: baseValue * 1.4 + Math.random() * 5000 }
+      ];
+      this.isFutureProjectionLoading = false;
+    }, 800);
+  }
+
+  validateChartData(data: any[], defaultSeriesName: string = 'Overview'): any[] {
+    if (!data || !Array.isArray(data)) return [];
+
+    // Check if it's already MultiSeries (checking first item is usually enough)
+    const isMultiSeries = data.length > 0 && data[0].hasOwnProperty('series');
+    if (isMultiSeries) {
+      return data.filter(item => item && Array.isArray(item.series));
+    }
+
+    // Check if it's SingleSeries (has value) and wrap it
+    const isSingleSeries = data.length > 0 && data[0].hasOwnProperty('value');
+    if (isSingleSeries) {
+      return [{
+        name: defaultSeriesName,
+        series: data
+      }];
+    }
+
+    return [];
+  }
+
   onProductFilterChange(productId: any): void {
     this.selectedChartProductId = productId;
     const filterId = productId === 'all' ? undefined : productId;
@@ -122,7 +209,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   onComparisonProductFilterChange(productId: any): void {
     this.selectedComparisonProductId = productId;
     const filterId = productId === 'all' ? undefined : productId;
-    this.loadTopProducts(filterId);
+    // this.loadTopProducts(filterId); // Keep Left Chart static
     this.loadTotalComparison(filterId);
   }
 
@@ -132,12 +219,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters() {
-    // Note: For a live application, this method would trigger API calls 
-    // to reload all dashboard data (KPIs, Charts, Table) based on the new filters.
-    // For now, it only regenerates dummy data and the actual data loading 
-    // is managed by specific methods like loadSalesTrend().
+    // Trigger data reload based on filters
   }
-
 
   private loadKpiDataNew(): void {
     this.isLoading = true;
@@ -147,7 +230,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.kpiSummaryNew = kpiData;
         console.log(this.kpiSummaryNew);
-        //this.setTrends();
+        this.updateKpiCards();
+        this.updateForecastCards();
       },
       error: (error) => {
         this.errorMessage = error.message || 'Failed to load KPI data';
@@ -156,8 +240,142 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  updateKpiCards() {
+    const cards: KpiCard[] = [];
+
+    if (this.revenueMetrics) {
+      cards.push({
+        label: 'Total Revenue',
+        value: this.revenueMetrics.total_revenue,
+        isCurrency: true,
+        subValue: `${this.revenueMetrics.total_units_sold ? this.revenueMetrics.total_units_sold.toLocaleString() : '0'} units`,
+        icon: 'payments',
+        iconClass: 'revenue',
+        cardClass: 'revenue-card',
+        trend: this.revenueMetrics.revenue_growth_yoy
+      });
+
+      cards.push({
+        label: 'Gross Profit',
+        value: this.revenueMetrics.gross_profit,
+        isCurrency: true,
+        subValue: 'Profit margin',
+        icon: 'account_balance_wallet',
+        iconClass: 'profit',
+        cardClass: 'profit-card',
+        badge: this.revenueMetrics.profit_margin
+      });
+
+      cards.push({
+        label: 'Avg Order Value',
+        value: this.revenueMetrics.avg_order_value,
+        isCurrency: true,
+        subValue: 'Per transaction',
+        icon: 'shopping_cart',
+        iconClass: 'aov',
+        cardClass: 'aov-card'
+      });
+    }
+
+    if (this.kpiSummaryNew) {
+      cards.push({
+        label: 'Total Products',
+        value: this.kpiSummaryNew.totalProducts,
+        isCurrency: false,
+        subValue: 'In catalog',
+        icon: 'inventory_2',
+        iconClass: 'products',
+        cardClass: 'products-card'
+      });
+    }
+
+    this.kpiCards = cards;
+  }
+
+  updateForecastCards() {
+    const cards: KpiCard[] = [];
+    if (this.kpiSummaryNew) {
+      // Predicted Sales
+      cards.push({
+        label: 'Predicted Sales',
+        value: this.kpiSummaryNew.predictedSales,
+        isCurrency: false,
+        subValue: 'Next month forecast',
+        icon: 'insights',
+        iconClass: 'prediction',
+        cardClass: 'prediction-card',
+        type: 'standard'
+      });
+
+      // Growth Rate
+      const growthRate = this.kpiSummaryNew.growthRate || 0;
+      cards.push({
+        label: 'Growth Rate',
+        value: `${growthRate.toFixed(1)}%`,
+        isCurrency: false,
+        subValue: 'Month-over-month',
+        icon: 'trending_up',
+        iconClass: 'growth',
+        cardClass: 'growth-card',
+        type: 'split',
+        splitData: [
+          {
+            label: 'Current',
+            value: (this.kpiSummaryNew.currentMonthSales || 0).toLocaleString(),
+            class: ''
+          },
+          {
+            label: 'Predicted',
+            value: (this.kpiSummaryNew.predictedSales || 0).toLocaleString(),
+            class: growthRate > 0 ? 'positive-text' : 'negative-text'
+          }
+        ]
+      });
+
+      // Prediction Accuracy
+      const accuracy = this.kpiSummaryNew.predictionAccuracy;
+      let accuracyStatus = 'Poor';
+      let accuracyClass = 'poor';
+      if (accuracy >= 90) { accuracyStatus = 'Excellent'; accuracyClass = 'excellent'; }
+      else if (accuracy >= 75) { accuracyStatus = 'Good'; accuracyClass = 'good'; }
+      else if (accuracy >= 60) { accuracyStatus = 'Fair'; accuracyClass = 'fair'; }
+
+      cards.push({
+        label: 'Model Accuracy',
+        value: `${accuracy.toFixed(1)}%`,
+        isCurrency: false,
+        subValue: '',
+        icon: 'psychology',
+        iconClass: 'accuracy',
+        cardClass: 'accuracy-card',
+        type: 'progress',
+        progress: accuracy,
+        badge: accuracyStatus,
+        badgeClass: `status-badge-compact ${accuracyClass}`
+      });
+
+      // Backorder Alert
+      const backorders = this.kpiSummaryNew.monthly_avg_backorder;
+      const isSafe = backorders === 0;
+      cards.push({
+        label: 'Avg Backorder',
+        value: backorders,
+        isCurrency: false,
+        subValue: isSafe ? 'All clear' : 'Action needed',
+        icon: isSafe ? 'check_circle' : 'error_outline',
+        iconClass: `backorder ${isSafe ? 'success' : 'warning'}`,
+        cardClass: `backorder-card ${isSafe ? 'healthy-state' : 'alert-state'}`,
+        type: 'alert',
+        alertType: isSafe ? 'success' : 'warning',
+        badgeIcon: isSafe ? 'check' : 'warning',
+        badgeClass: isSafe ? 'success-badge-compact' : 'alert-badge-compact',
+        progressClass: isSafe ? 'success-text' : 'warning-text'
+      });
+    }
+    this.forecastCards = cards;
+  }
+
   processChartData(data: any) {
-    // Process actual data
     const actualSeries = data.actual.map((item: any) => ({
       name: item.month,
       value: item.total_quantity_sold,
@@ -165,7 +383,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
       extra: { isActual: true }
     }));
 
-    // Process predicted data
     const predictedSeries = data.predicted.map((item: any) => ({
       name: item.month,
       value: item.forecasted_quantity,
@@ -174,7 +391,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
       extra: { isActual: false }
     }));
 
-    // Combine data for the chart
     this.combinedData = [
       {
         name: 'Actual Qty Sold',
@@ -187,12 +403,11 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  // productId is optional, 'all' filter will pass undefined
   loadSalesTrend(productId?: number): void {
     this.isSalesTrendLoading = true;
     this.demoDashboardService.getSalesTrendData(productId).subscribe({
       next: (data: SalesData[]) => {
-        this.salesChartData = data;
+        this.salesChartData = this.validateChartData(data);
         this.isSalesTrendLoading = false;
       },
       error: (err) => {
@@ -208,7 +423,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
     this.demoDashboardService.getTopProductComparison(productId).subscribe({
       next: (data: SalesData[]) => {
-        this.forecastComparisonData = data;
+        this.forecastComparisonData = this.validateChartData(data);
         this.isComparisonLoading = false;
       },
       error: (err) => {
@@ -219,22 +434,54 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadTotalComparison(productId?: number) {
-    this.isComparisonLoading = true;
-    this.errorMessage = null;
+  processToSingleSeries(data: any[]): any[] {
+    if (!data || !Array.isArray(data)) return [];
 
+    const isMultiSeries = data.length > 0 && data[0].hasOwnProperty('series');
+    if (isMultiSeries) {
+      // Aggregate multi-series into single series (sum of values)
+      return data.map(group => ({
+        name: group.name,
+        value: group.series.reduce((sum, item) => sum + (item.value || 0), 0)
+      }));
+    }
+
+    // Single series, use as is
+    return data;
+  }
+
+  loadTotalComparison(productId?: number) {
+    this.isTotalComparisonLoading = true; // Use separate flag
+    this.errorMessage = null;
     this.demoDashboardService.getTotalProductComparison(productId).subscribe({
       next: (data: any[]) => {
-        this.totalComparisonData = data;
-        this.isComparisonLoading = false;
+        this.totalComparisonData = this.validateChartData(data);
+        // Process for Doughnut Chart
+        this.totalForecastPieData = this.processToSingleSeries(data);
+        this.isTotalComparisonLoading = false;
       },
       error: (err) => {
         console.error('Error fetching top product data:', err);
         this.errorMessage = err.message || 'Failed to load data';
-        this.isComparisonLoading = false;
+        this.isTotalComparisonLoading = false;
       },
     });
+  }
 
+  onProductFilterChange1(productId) {
+    this.selectedChartProductId = productId;
+    const filterId = productId === 'all' ? undefined : productId;
+    this.demoDashboardService.getTotalProductComparison(filterId).subscribe((data: any[]) => {
+      this.totalComparisonData = this.validateChartData(data);
+      this.totalForecastPieData = this.processToSingleSeries(data);
+    });
+  }
+
+  onProductFilterChange2(productId: any): void {
+    const filterId = productId === 'all' ? undefined : productId;
+    this.demoDashboardService.getProductGrowthData(filterId).subscribe((data) => {
+      this.productGrowthDataOne = this.validateChartData(data);
+    });
   }
 
   loadProductGrowthData(): void {
@@ -243,7 +490,9 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
 
     this.demoDashboardService.getProductGrowthData().subscribe({
       next: (data: SalesData[]) => {
-        this.productGrowthData = data;
+        const validatedData = this.validateChartData(data);
+        this.productGrowthData = validatedData;
+        this.productGrowthDataOne = validatedData;
         this.isGrowthDataLoading = false;
       },
       error: (err) => {
@@ -277,6 +526,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.demoDashboardService.getRevenueMetrics().subscribe({
       next: (data) => {
         this.revenueMetrics = data;
+        this.updateKpiCards();
       },
       error: (err) => {
         console.error('Error loading revenue metrics:', err);
@@ -298,7 +548,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   loadRevenueTrend(): void {
     this.demoDashboardService.getRevenueTrend(12).subscribe({
       next: (data) => {
-        this.revenueTrendData = data;
+        this.revenueTrendData = this.validateChartData(data);
       },
       error: (err) => {
         console.error('Error loading revenue trend:', err);
