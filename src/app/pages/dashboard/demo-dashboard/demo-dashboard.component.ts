@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Subject, forkJoin } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { MatDialog } from '@angular/material/dialog';
 import { DemoPopupComponent } from '../demo-dashboard/demo-popup/demo-popup.component';
@@ -51,7 +53,8 @@ export interface KpiCard {
   templateUrl: './demo-dashboard.component.html',
   styleUrls: ['./demo-dashboard.component.scss'],
 })
-export class DemoDashboardComponent implements OnInit, AfterViewInit {
+export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   // --- Core Dashboard Data & Config ---
 
@@ -73,7 +76,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   selectedProduct: number | 'all' = 'all';
   selectedTimeframe = '6months';
   totalComparisonData: any[]
-  combinedData: any[] = [];
   totalForecastPieData: any[] = [];
   productList: any[] = [];
   selectedChartProductId: number | 'all' = 'all';
@@ -84,7 +86,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   salesChartData: SalesData[] = [];
   forecastComparisonData: SalesData[] = [];
   productGrowthData: SalesData[] = [];
-  productGrowthDataOne: SalesData[] = []; // Used for old logic if needed, but we'll use top10GrowthData for left chart
   top10GrowthData: SalesData[] = []; // New data for left chart
   productSummary: ForecastSummary[] = [];
   futureProjectionData: any[] = []; // Real API data for right chart
@@ -122,7 +123,6 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.salesChartData = [];
     this.forecastComparisonData = [];
     this.productGrowthData = [];
-    this.productGrowthDataOne = [];
     this.top10GrowthData = [];
     this.revenueTrendData = [];
 
@@ -151,12 +151,17 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.dialog.open(DemoPopupComponent, {
-        width: '600px',
-        height: 'auto',
-      });
-    });
+    // setTimeout(() => {
+    //   this.dialog.open(DemoPopupComponent, {
+    //     width: '600px',
+    //     height: 'auto',
+    //   });
+    // });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // --- Filter Handlers ---
@@ -166,16 +171,18 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.isFutureProjectionLoading = true;
     const filterId = productId === 'all' ? undefined : productId;
 
-    this.demoDashboardService.getProductGrowthData(filterId).subscribe({
-      next: (data) => {
-        this.futureProjectionData = this.validateChartData(data);
-        this.isFutureProjectionLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading future projection:', err);
-        this.isFutureProjectionLoading = false;
-      }
-    });
+    this.demoDashboardService.getProductGrowthData(filterId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.futureProjectionData = this.validateChartData(data);
+          this.isFutureProjectionLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading future projection:', err);
+          this.isFutureProjectionLoading = false;
+        }
+      });
   }
 
   loadFutureProjectionData() {
@@ -228,19 +235,23 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   private loadKpiDataNew(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    this.demoDashboardService.getKpiDataNew().subscribe({
-      next: (kpiData) => {
-        this.isLoading = false;
-        this.kpiSummaryNew = kpiData;
-        console.log(this.kpiSummaryNew);
-        this.updateKpiCards();
-        this.updateForecastCards();
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Failed to load KPI data';
-        this.isLoading = false;
-      },
-    });
+    this.isLoading = true;
+    this.errorMessage = null;
+    this.demoDashboardService.getKpiDataNew()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (kpiData) => {
+          this.isLoading = false;
+          this.kpiSummaryNew = kpiData;
+          console.log(this.kpiSummaryNew);
+          this.updateKpiCards();
+          this.updateForecastCards();
+        },
+        error: (error) => {
+          this.errorMessage = error.message || 'Failed to load KPI data';
+          this.isLoading = false;
+        },
+      });
   }
 
   updateKpiCards() {
@@ -378,63 +389,42 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.forecastCards = cards;
   }
 
-  processChartData(data: any) {
-    const actualSeries = data.actual.map((item: any) => ({
-      name: item.month,
-      value: item.total_quantity_sold,
-      type: item.type,
-      extra: { isActual: true }
-    }));
 
-    const predictedSeries = data.predicted.map((item: any) => ({
-      name: item.month,
-      value: item.forecasted_quantity,
-      type: item.type,
-      models: item.models,
-      extra: { isActual: false }
-    }));
-
-    this.combinedData = [
-      {
-        name: 'Actual Qty Sold',
-        series: actualSeries
-      },
-      {
-        name: 'Predicted Qty',
-        series: predictedSeries
-      }
-    ];
-  }
 
   loadSalesTrend(productId?: number): void {
     this.isSalesTrendLoading = true;
-    this.demoDashboardService.getSalesTrendData(productId).subscribe({
-      next: (data: SalesData[]) => {
-        this.salesChartData = this.validateChartData(data);
-        this.isSalesTrendLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading sales trend:', err);
-        this.isSalesTrendLoading = false;
-      },
-    });
+    this.isSalesTrendLoading = true;
+    this.demoDashboardService.getSalesTrendData(productId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: SalesData[]) => {
+          this.salesChartData = this.validateChartData(data);
+          this.isSalesTrendLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading sales trend:', err);
+          this.isSalesTrendLoading = false;
+        },
+      });
   }
 
   loadTopProducts(productId?: number): void {
     this.isComparisonLoading = true;
     this.errorMessage = null;
 
-    this.demoDashboardService.getTopProductComparison(productId).subscribe({
-      next: (data: SalesData[]) => {
-        this.forecastComparisonData = this.validateChartData(data);
-        this.isComparisonLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching top product data:', err);
-        this.errorMessage = err.message || 'Failed to load data';
-        this.isComparisonLoading = false;
-      },
-    });
+    this.demoDashboardService.getTopProductComparison(productId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: SalesData[]) => {
+          this.forecastComparisonData = this.validateChartData(data);
+          this.isComparisonLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching top product data:', err);
+          this.errorMessage = err.message || 'Failed to load data';
+          this.isComparisonLoading = false;
+        },
+      });
   }
 
   processToSingleSeries(data: any[]): any[] {
@@ -456,35 +446,32 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
   loadTotalComparison(productId?: number) {
     this.isTotalComparisonLoading = true; // Use separate flag
     this.errorMessage = null;
-    this.demoDashboardService.getTotalProductComparison(productId).subscribe({
-      next: (data: any[]) => {
-        this.totalComparisonData = this.validateChartData(data);
-        // Process for Doughnut Chart
-        this.totalForecastPieData = this.processToSingleSeries(data);
-        this.isTotalComparisonLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching top product data:', err);
-        this.errorMessage = err.message || 'Failed to load data';
-        this.isTotalComparisonLoading = false;
-      },
-    });
+    this.demoDashboardService.getTotalProductComparison(productId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any[]) => {
+          this.totalComparisonData = this.validateChartData(data);
+          // Process for Doughnut Chart
+          this.totalForecastPieData = this.processToSingleSeries(data);
+          this.isTotalComparisonLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching top product data:', err);
+          this.errorMessage = err.message || 'Failed to load data';
+          this.isTotalComparisonLoading = false;
+        },
+      });
   }
 
-  onProductFilterChange1(productId) {
-    this.selectedChartProductId = productId;
-    const filterId = productId === 'all' ? undefined : productId;
-    this.demoDashboardService.getTotalProductComparison(filterId).subscribe((data: any[]) => {
-      this.totalComparisonData = this.validateChartData(data);
-      this.totalForecastPieData = this.processToSingleSeries(data);
-    });
-  }
+
 
   onProductFilterChange2(productId: any): void {
     const filterId = productId === 'all' ? undefined : productId;
-    this.demoDashboardService.getTop10ProductGrowthData(filterId).subscribe((data) => {
-      this.top10GrowthData = this.validateChartData(data);
-    });
+    this.demoDashboardService.getTop10ProductGrowthData(filterId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        this.top10GrowthData = this.validateChartData(data);
+      });
   }
 
   loadProductGrowthData(): void {
@@ -492,126 +479,145 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit {
     this.errorMessage = null;
 
     // Load standard product growth data (maybe for other purposes or if needed)
-    this.demoDashboardService.getProductGrowthData().subscribe({
-      next: (data: SalesData[]) => {
-        const validatedData = this.validateChartData(data);
-        this.productGrowthData = validatedData;
-        this.productGrowthDataOne = validatedData; // Keep legacy populated just in case
-        this.isGrowthDataLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching product growth data:', err);
-        // this.errorMessage = err.message || 'Failed to load data'; // Don't block UI if this one fails
-        this.isGrowthDataLoading = false;
-      },
-    });
+    this.demoDashboardService.getProductGrowthData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: SalesData[]) => {
+          const validatedData = this.validateChartData(data);
+          this.productGrowthData = validatedData;
+          this.isGrowthDataLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching product growth data:', err);
+          // this.errorMessage = err.message || 'Failed to load data'; // Don't block UI if this one fails
+          this.isGrowthDataLoading = false;
+        },
+      });
 
     // Load Top 10 data for the left chart
-    this.demoDashboardService.getTop10ProductGrowthData().subscribe({
-      next: (data: SalesData[]) => {
-        this.top10GrowthData = this.validateChartData(data);
-      },
-      error: (err) => {
-        console.error('Error fetching top 10 product growth data:', err);
-      }
-    });
+    this.demoDashboardService.getTop10ProductGrowthData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: SalesData[]) => {
+          this.top10GrowthData = this.validateChartData(data);
+        },
+        error: (err) => {
+          console.error('Error fetching top 10 product growth data:', err);
+        }
+      });
   }
 
   loadProductSummary(): void {
     this.isSummaryLoading = true;
     this.errorMessage = null;
 
-    this.demoDashboardService.getForecastSummary().subscribe({
-      next: (data: ForecastSummary[]) => {
-        this.productSummary = data;
-        this.isSummaryLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching product summary data:', err);
-        this.errorMessage = err.message || 'Failed to load data';
-        this.isSummaryLoading = false;
-      },
-    });
+    this.demoDashboardService.getForecastSummary()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: ForecastSummary[]) => {
+          this.productSummary = data;
+          this.isSummaryLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching product summary data:', err);
+          this.errorMessage = err.message || 'Failed to load data';
+          this.isSummaryLoading = false;
+        },
+      });
   }
 
   // ===== Enhanced Business Analytics Methods =====
 
   loadRevenueMetrics(): void {
-    this.demoDashboardService.getRevenueMetrics().subscribe({
-      next: (data) => {
-        this.revenueMetrics = data;
-        this.updateKpiCards();
-      },
-      error: (err) => {
-        console.error('Error loading revenue metrics:', err);
-      }
-    });
+    this.demoDashboardService.getRevenueMetrics()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.revenueMetrics = data;
+          this.updateKpiCards();
+        },
+        error: (err) => {
+          console.error('Error loading revenue metrics:', err);
+        }
+      });
   }
 
   loadCategoryPerformance(): void {
-    this.demoDashboardService.getCategoryPerformance().subscribe({
-      next: (data) => {
-        this.categoryPerformanceData = data;
-      },
-      error: (err) => {
-        console.error('Error loading category performance:', err);
-      }
-    });
+    this.demoDashboardService.getCategoryPerformance()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.categoryPerformanceData = data;
+        },
+        error: (err) => {
+          console.error('Error loading category performance:', err);
+        }
+      });
   }
 
   loadRevenueTrend(): void {
-    this.demoDashboardService.getRevenueTrend(12).subscribe({
-      next: (data) => {
-        this.revenueTrendData = this.validateChartData(data);
-      },
-      error: (err) => {
-        console.error('Error loading revenue trend:', err);
-      }
-    });
+    this.demoDashboardService.getRevenueTrend(12)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.revenueTrendData = this.validateChartData(data);
+        },
+        error: (err) => {
+          console.error('Error loading revenue trend:', err);
+        }
+      });
   }
 
   loadBusinessAlerts(): void {
-    this.demoDashboardService.getBusinessAlerts().subscribe({
-      next: (data) => {
-        this.businessAlerts = data;
-      },
-      error: (err) => {
-        console.error('Error loading business alerts:', err);
-      }
-    });
+    this.demoDashboardService.getBusinessAlerts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.businessAlerts = data;
+        },
+        error: (err) => {
+          console.error('Error loading business alerts:', err);
+        }
+      });
   }
 
   loadTopPerformersData(): void {
-    this.demoDashboardService.getTopPerformers(5).subscribe({
-      next: (data) => {
-        this.topPerformers = data;
-      },
-      error: (err) => {
-        console.error('Error loading top performers:', err);
-      }
-    });
+    this.demoDashboardService.getTopPerformers(5)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.topPerformers = data;
+        },
+        error: (err) => {
+          console.error('Error loading top performers:', err);
+        }
+      });
   }
 
   loadInventoryHealth(): void {
-    this.demoDashboardService.getInventoryHealth().subscribe({
-      next: (data) => {
-        this.inventoryHealth = data;
-      },
-      error: (err) => {
-        console.error('Error loading inventory health:', err);
-      }
-    });
+    this.demoDashboardService.getInventoryHealth()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.inventoryHealth = data;
+        },
+        error: (err) => {
+          console.error('Error loading inventory health:', err);
+        }
+      });
   }
 
   loadProductList(): void {
-    this.demoDashboardService.getProducts().subscribe({
-      next: (products) => {
-        this.productList = products;
-      },
-      error: (err) => {
-        console.error('Error loading product list:', err);
-      }
-    });
+    this.demoDashboardService.getProducts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (products) => {
+          this.productList = products;
+        },
+        error: (err) => {
+          console.error('Error loading product list:', err);
+        }
+      });
   }
 
   onSelect(event: any): void {
