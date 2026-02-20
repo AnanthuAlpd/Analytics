@@ -1,0 +1,175 @@
+<div class="page-container" fxLayout="column">
+
+    <div class="main-card" fxFlex="auto">
+
+        <!-- ================= HEADER ================= -->
+        <div class="header-section bg-primary">
+            <div fxLayout="row" fxLayoutAlign="space-between start">
+                <div fxLayout="column">
+
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+                        <button mat-raised-button class="back-btn primary-color" routerLink="/dashboard/demo">
+                            <mat-icon>arrow_back</mat-icon>
+                            Back to Dashboard
+                        </button>
+                    </div>
+
+                    <div class="header-content">
+                        <h2>Budget Optimizer</h2>
+                        <p class="header-desc">
+                            Maximize your inventory turnover with AI-driven purchasing recommendations.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CONTROLS ================= -->
+        <div class="controls-section">
+            <div fxLayout="column" fxLayoutGap="8px">
+                <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="24px" fxLayoutAlign="start flex-start">
+
+                    <mat-form-field appearance="outline" class="budget-input-field" fxFlex="1 1 300px">
+                        <mat-label>Enter Your Budget</mat-label>
+                        <span matPrefix class="rupee-symbol">₹</span>
+                        <input matInput type="number" [(ngModel)]="budget" placeholder="100000">
+                        <mat-hint *ngIf="budget"><strong>₹ {{ formattedBudgetHelper }}</strong></mat-hint>
+                    </mat-form-field>
+
+                    <button mat-raised-button color="primary" class="generate-btn" (click)="generateList()"
+                        [disabled]="!budget || budget <= 0">
+
+                        <mat-icon class="btn-icon">auto_awesome</mat-icon>
+                        <span class="btn-text">Optimize Budget</span>
+
+                    </button>
+
+                </div>
+
+                <div class="quick-chips" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center"
+                    style="margin-top: -16px;">
+                    <span class="muted-text" style="font-size: 13px; margin-right: 4px;">Quick Select:</span>
+                    <button mat-stroked-button (click)="setBudget(50000)" class="chip-btn">₹50K</button>
+                    <button mat-stroked-button (click)="setBudget(100000)" class="chip-btn">₹1 Lakh</button>
+                    <button mat-stroked-button (click)="setBudget(500000)" class="chip-btn">₹5 Lakhs</button>
+                    <button mat-stroked-button (click)="setBudget(1000000)" class="chip-btn">₹10 Lakhs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SUMMARY ================= -->
+        <div *ngIf="shoppingList.length > 0" class="summary-container">
+
+            <div class="summary-card">
+                <div class="icon-box cost">
+                    <mat-icon>payments</mat-icon>
+                </div>
+                <div>
+                    <label>Total Investment</label>
+                    <div class="value">
+                        ₹{{totalCost | number:'1.0-0'}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="icon-box savings">
+                    <mat-icon>savings</mat-icon>
+                </div>
+                <div>
+                    <label>Remaining Budget</label>
+                    <div class="value">
+                        ₹{{remainingBudget | number:'1.0-0'}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="icon-box count">
+                    <mat-icon>inventory_2</mat-icon>
+                </div>
+                <div>
+                    <label>Total Items</label>
+                    <div class="value">
+                        {{shoppingList.length}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TABLE ================= -->
+        <div *ngIf="shoppingList.length > 0" class="table-container">
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="table-header-bar">
+                <h3>Recommended Purchases</h3>
+                <div fxLayout="row" fxLayoutGap="8px">
+                    <button mat-flat-button color="accent" class="export-btn excel-btn" (click)="exportToExcel()">
+                        <mat-icon>table_view</mat-icon> <span class="hide-mobile">Export Excel</span>
+                    </button>
+                    <button mat-flat-button color="warn" class="export-btn pdf-btn" (click)="exportToPdf()">
+                        <mat-icon>picture_as_pdf</mat-icon> <span class="hide-mobile">Export PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <table id="budget-table" class="premium-table">
+
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th class="text-right">Cost</th>
+                        <th class="text-right">Avg Sales</th>
+                        <th class="text-right">Score</th>
+                        <th class="text-center">Rec. Qty</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let item of shoppingList">
+
+                        <td>{{item.name}}</td>
+
+                        <td class="text-right">
+                            ₹{{item.unit_cost | number:'1.0-0'}}
+                        </td>
+
+                        <td class="text-right">
+                            {{item.avg_monthly_sales}} units
+                        </td>
+
+                        <td class="text-right">
+                            {{item.score | number:'1.2-2'}}
+                        </td>
+
+                        <td class="text-center">
+                            {{item.recommended_qty}}
+                        </td>
+
+                        <td class="text-right total-cell">
+                            ₹{{item.subtotal | number:'1.0-0'}}
+                        </td>
+
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- ================= EMPTY STATE ================= -->
+        <div *ngIf="shoppingList.length === 0" class="empty-state">
+            <mat-icon class="empty-icon">
+                account_balance_wallet
+            </mat-icon>
+            <h3>Ready to Optimize?</h3>
+            <p>
+                Enter your budget above and let our AI calculate the best stock mix.
+            </p>
+        </div>
+
+    </div>
+</div>

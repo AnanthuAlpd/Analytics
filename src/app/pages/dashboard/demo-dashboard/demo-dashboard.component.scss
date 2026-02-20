@@ -1009,8 +1009,8 @@ $chart-axis: #9ca3af;
 
 // Flex Utilities
 .col-20 {
-  flex: 0 0 20%;
-  max-width: 20%;
+  flex: 0 0 calc(20% - 16px);
+  max-width: calc(20% - 16px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1019,8 +1019,8 @@ $chart-axis: #9ca3af;
 }
 
 .col-40 {
-  flex: 0 0 40%;
-  max-width: 40%;
+  flex: 0 0 calc(40% - 10px);
+  max-width: calc(40% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1036,8 +1036,8 @@ $chart-axis: #9ca3af;
 }
 
 .col-50 {
-  flex: 0 0 50%;
-  max-width: 50%;
+  flex: 0 0 calc(50% - 10px);
+  max-width: calc(50% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1046,8 +1046,8 @@ $chart-axis: #9ca3af;
 }
 
 .col-60 {
-  flex: 0 0 60%;
-  max-width: 60%;
+  flex: 0 0 calc(60% - 10px);
+  max-width: calc(60% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1063,8 +1063,8 @@ $chart-axis: #9ca3af;
 }
 
 .col-75 {
-  flex: 0 0 75%;
-  max-width: 75%;
+  flex: 0 0 calc(75% - 10px);
+  max-width: calc(75% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1078,8 +1078,28 @@ $chart-axis: #9ca3af;
 }
 
 .col-25 {
-  flex: 0 0 25%;
-  max-width: 25%;
+  flex: 0 0 calc(25% - 10px);
+  max-width: calc(25% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-30 {
+  flex: 0 0 calc(30% - 10px);
+  max-width: calc(30% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-70 {
+  flex: 0 0 calc(70% - 10px);
+  max-width: calc(70% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1088,8 +1108,8 @@ $chart-axis: #9ca3af;
 }
 
 .col-80 {
-  flex: 0 0 80%;
-  max-width: 80%;
+  flex: 0 0 calc(80% - 10px);
+  max-width: calc(80% - 10px);
 
   @media (max-width: 1279px) {
     flex: 0 0 100%;
@@ -1306,7 +1326,7 @@ $chart-axis: #9ca3af;
 }
 
 .tab-content {
-  padding: 16px 4px 24px 4px;
+  padding: 16px 24px 24px 24px;
   animation: fadeEffect 0.4s ease-out;
 }
 

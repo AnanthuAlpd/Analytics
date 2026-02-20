@@ -9,8 +9,12 @@
 
         <!-- Enhanced KPI Cards with Icons -->
         <div class="kpi-dashboard-compact">
-          <div class="section-header-compact">
+          <div class="section-header-compact"
+            style="display: flex; justify-content: space-between; align-items: center;">
             <h2>Business Overview</h2>
+            <button mat-raised-button color="primary" routerLink="/budget-shopper">
+              <mat-icon>shopping_cart</mat-icon> Budget Shopper Tool
+            </button>
           </div>
           <div class="kpi-grid-compact primary-metrics">
             <mat-card *ngFor="let card of kpiCards" class="kpi-card-compact" [ngClass]="card.cardClass">
@@ -108,7 +112,7 @@
               <div class="chart-wrapper">
                 <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0"
                   [view]="undefined" [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="false"
-                  [legend]="false" [labels]="true" [doughnut]="true" (select)="onSelect($event)">
+                  [legend]="true" [labels]="false" [doughnut]="true" (select)="onSelect($event)">
                 </ngx-charts-pie-chart>
               </div>
             </mat-card-content>
@@ -300,8 +304,8 @@
                 <ngx-charts-bar-vertical-2d
                   *ngIf="!isComparisonLoading && forecastComparisonData && forecastComparisonData.length > 0"
                   [view]="undefined" [scheme]="forecastColorScheme" [results]="forecastComparisonData"
-                  [gradient]="false" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true"
-                  [showYAxisLabel]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'" [animations]="true"
+                  [gradient]="false" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="false"
+                  [showYAxisLabel]="false" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'" [animations]="true"
                   [showGridLines]="true" [barPadding]="2" [groupPadding]="4" (select)="onSelect($event)"
                   class="enhanced-bar-chart">
                 </ngx-charts-bar-vertical-2d>
@@ -335,7 +339,7 @@
                 <ngx-charts-pie-chart
                   *ngIf="!isTotalComparisonLoading && totalForecastPieData && totalForecastPieData.length > 0"
                   [view]="undefined" [scheme]="forecastColorScheme" [results]="totalForecastPieData" [gradient]="false"
-                  [legend]="true" [legendPosition]="'below'" [labels]="true" [doughnut]="true" [arcWidth]="0.25"
+                  [legend]="true" [legendPosition]="'below'" [labels]="false" [doughnut]="true" [arcWidth]="0.25"
                   (select)="onSelect($event)" class="enhanced-pie-chart">
                 </ngx-charts-pie-chart>
               </div>
@@ -361,8 +365,8 @@
               </div>
               <div class="chart-wrapper">
                 <ngx-charts-bar-vertical-2d *ngIf="!isGrowthDataLoading" [view]="undefined" [scheme]="growthColorScheme"
-                  [results]="top10GrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
-                  [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
+                  [results]="top10GrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="false"
+                  [showXAxisLabel]="false" [showYAxisLabel]="false" xAxisLabel="Product" yAxisLabel="Quantity"
                   (select)="onSelect($event)">
                 </ngx-charts-bar-vertical-2d>
               </div>

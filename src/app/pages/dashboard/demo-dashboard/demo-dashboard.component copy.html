@@ -2,8 +2,9 @@
   <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
     <mat-card class="card-value">
       <mat-card-header fxLayoutAlign="space-between center">
-        <mat-icon class="icon-lg" matTooltip="Total predicted revenue of 2023 as per the historical data (2018-2022)" color="primary">assessment</mat-icon>
-        <mat-card-title >Total Predicted Revenue</mat-card-title>
+        <mat-icon class="icon-lg" matTooltip="Total predicted revenue of 2023 as per the historical data (2018-2022)"
+          color="primary">assessment</mat-icon>
+        <mat-card-title>Total Predicted Revenue</mat-card-title>
       </mat-card-header>
       <mat-card-content fxLayoutAlign="center center">
         {{ totalRevenue | currency:'INR':'symbol' }}
@@ -12,9 +13,10 @@
   </div>
   <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
     <mat-card class="card-value">
-      <mat-card-header  fxLayoutAlign="space-between center">
-        <mat-icon class="icon-lg" matTooltip="Product which will be sold more quantity" color="warn">trending_up</mat-icon>
-        <mat-card-title >Highest Selling Product</mat-card-title>
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which will be sold more quantity"
+          color="warn">trending_up</mat-icon>
+        <mat-card-title>Highest Selling Product</mat-card-title>
       </mat-card-header>
       <mat-card-content fxLayoutAlign="center center">
         {{ highestSellingProduct }}
@@ -23,9 +25,10 @@
   </div>
   <div fxFlex="100" fxFlex.gt-sm="33" fxFlex.sm="50" class="flex-p">
     <mat-card class="card-value">
-      <mat-card-header  fxLayoutAlign="space-between center">
-        <mat-icon class="icon-lg" matTooltip="Product which was sold more quantity and get high revenue" color="accent">insert_chart_outlined</mat-icon>
-        <mat-card-title >Top Revenue Generator</mat-card-title>
+      <mat-card-header fxLayoutAlign="space-between center">
+        <mat-icon class="icon-lg" matTooltip="Product which was sold more quantity and get high revenue"
+          color="accent">insert_chart_outlined</mat-icon>
+        <mat-card-title>Top Revenue Generator</mat-card-title>
       </mat-card-header>
       <mat-card-content fxLayoutAlign="center center">
         {{ mostValuableProduct }}
@@ -93,7 +96,3 @@
     <app-analytics></app-analytics>
   </div>
 </div>
-
-
-
-
