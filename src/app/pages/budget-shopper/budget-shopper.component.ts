@@ -12,6 +12,8 @@ interface Product {
     subtotal?: number;
 }
 
+import { BudgetShopperService, OptimizedProduct } from './budget-shopper.service';
+
 @Component({
     selector: 'app-budget-shopper',
     templateUrl: './budget-shopper.component.html',
@@ -20,9 +22,11 @@ interface Product {
 export class BudgetShopperComponent implements OnInit {
 
     budget: number = 0;
-    shoppingList: Product[] = [];
+    shoppingList: OptimizedProduct[] = [];
     totalCost: number = 0;
     remainingBudget: number = 0;
+    isLoading: boolean = false;
+    monthsCoverage: number = 6;
 
     // Mock Data
     allProducts: Product[] = [
@@ -38,7 +42,7 @@ export class BudgetShopperComponent implements OnInit {
         { id: 10, name: 'HDMI Cable', unit_cost: 300, avg_monthly_sales: 100 }
     ];
 
-    constructor() { }
+    constructor(private budgetShopperService: BudgetShopperService) { }
 
     ngOnInit(): void {
     }
@@ -53,54 +57,42 @@ export class BudgetShopperComponent implements OnInit {
         this.budget = amount;
     }
 
+    get monthsInWords(): string {
+        const words = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+        return words[this.monthsCoverage] || this.monthsCoverage.toString();
+    }
+
+    formatLabel(value: number): string {
+        return value + 'm';
+    }
+
     generateList() {
+        if (this.budget <= 0) return;
+
+        this.isLoading = true;
         this.shoppingList = [];
         this.totalCost = 0;
-        let currentBudget = this.budget;
 
-        // 1. Calculate Score (Sales Velocity / Unit Cost)
-        let analyzedProducts = this.allProducts.map(p => ({
-            ...p,
-            score: (p.avg_monthly_sales / p.unit_cost),
-            recommended_qty: 0,
-            subtotal: 0
-        }));
+        // Temporarily reset remaining budget while loading
+        this.remainingBudget = this.budget;
 
-        // 2. Sort by Score Descending
-        analyzedProducts.sort((a, b) => b.score - a.score);
-
-        // 3. Greedy Allocation
-        for (let product of analyzedProducts) {
-            if (currentBudget <= 0) break;
-
-            if (currentBudget >= product.unit_cost) {
-                // Strategy: Try to stock for 1 month of sales
-                let targetQty = Math.ceil(product.avg_monthly_sales);
-                if (targetQty < 1) targetQty = 1;
-
-                let cost = targetQty * product.unit_cost;
-
-                if (currentBudget >= cost) {
-                    product.recommended_qty = targetQty;
-                    product.subtotal = cost;
-                    currentBudget -= cost;
+        this.budgetShopperService.getOptimizedList(this.budget, this.monthsCoverage).subscribe({
+            next: (response) => {
+                if (response.status === 'success' && response.data) {
+                    this.shoppingList = response.data.shopping_list;
+                    this.totalCost = response.data.total_investment;
+                    this.remainingBudget = response.data.remaining_budget;
                 } else {
-                    let possibleQty = Math.floor(currentBudget / product.unit_cost);
-                    if (possibleQty > 0) {
-                        product.recommended_qty = possibleQty;
-                        product.subtotal = possibleQty * product.unit_cost;
-                        currentBudget -= product.subtotal;
-                    }
+                    console.error("Optimization failed:", response.message);
                 }
-
-                if (product.recommended_qty > 0) {
-                    this.shoppingList.push(product);
-                    this.totalCost += product.subtotal;
-                }
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error("Error fetching optimization:", err);
+                // Fallback or error handling logic here
+                this.isLoading = false;
             }
-        }
-
-        this.remainingBudget = currentBudget;
+        });
     }
 
     exportToExcel() {
@@ -110,11 +102,12 @@ export class BudgetShopperComponent implements OnInit {
         let csvContent = "data:text/csv;charset=utf-8,";
 
         // Headers
-        csvContent += "Product Name,Unit Cost (INR),Avg Monthly Sales,Velocity Score,Recommended Qty,Total Cost (INR)\n";
+        csvContent += "Product Name,Unit Cost (INR),Profit/Unit (INR),Avg Monthly Sales,EBO Score,Recommended Qty,Total Cost (INR)\n";
 
         // Rows
         this.shoppingList.forEach((item) => {
-            let row = `${item.name},${item.unit_cost},${item.avg_monthly_sales},${item.score.toFixed(2)},${item.recommended_qty},${item.subtotal}`;
+            const safeScore = (typeof item.score === 'number' && !isNaN(item.score)) ? item.score.toFixed(2) : '0.00';
+            let row = `${item.name},${item.unit_cost},${item.unit_profit},${item.avg_monthly_sales},${safeScore},${item.recommended_qty},${item.subtotal}`;
             csvContent += row + "\n";
         });
 
@@ -126,7 +119,7 @@ export class BudgetShopperComponent implements OnInit {
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Budget_Optimization_${new Date().getTime()}.csv`);
+        link.setAttribute("download", `${this.monthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -140,7 +133,7 @@ export class BudgetShopperComponent implements OnInit {
         // --- Header Section ---
         doc.setFontSize(18);
         doc.setTextColor(63, 81, 181); // Indigo color matching theme (#3f51b5)
-        doc.text("Budget Optimization Report", 14, 22);
+        doc.text(`${this.monthsCoverage}-Month Budget Optimization Report`, 14, 22);
 
         doc.setFontSize(10);
         doc.setTextColor(119, 119, 119); // Gray
@@ -155,15 +148,17 @@ export class BudgetShopperComponent implements OnInit {
         doc.text(`Total Items: ${this.shoppingList.length}`, 110, 48);
 
         // --- Table Section ---
-        const tableColumn = ["Product", "Unit Cost (Rs)", "Avg Sales", "Score", "Rec. Qty", "Total (Rs)"];
+        const tableColumn = ["Product", "Cost (Rs)", "Profit (Rs)", "Avg Sales", "EBO Score", "Rec. Qty", "Total (Rs)"];
         const tableRows: any[] = [];
 
         this.shoppingList.forEach(item => {
+            const safeScore = (typeof item.score === 'number' && !isNaN(item.score)) ? item.score.toFixed(2) : '0.00';
             const rowData = [
                 item.name,
                 item.unit_cost.toLocaleString('en-IN'),
+                '+' + item.unit_profit.toLocaleString('en-IN'),
                 item.avg_monthly_sales.toString(),
-                item.score.toFixed(2),
+                safeScore,
                 item.recommended_qty.toString(),
                 item.subtotal.toLocaleString('en-IN')
             ];
@@ -188,7 +183,7 @@ export class BudgetShopperComponent implements OnInit {
         });
 
         // Trigger Download
-        doc.save(`Budget_Optimization_${new Date().getTime()}.pdf`);
+        doc.save(`${this.monthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.pdf`);
     }
 
 }

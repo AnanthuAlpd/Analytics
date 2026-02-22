@@ -38,13 +38,23 @@
                     </mat-form-field>
 
                     <button mat-raised-button color="primary" class="generate-btn" (click)="generateList()"
-                        [disabled]="!budget || budget <= 0">
+                        [disabled]="!budget || budget <= 0 || isLoading">
 
                         <mat-icon class="btn-icon">auto_awesome</mat-icon>
                         <span class="btn-text">Optimize Budget</span>
-
                     </button>
 
+                </div>
+
+                <!-- Coverage Slider -->
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" class="slider-container"
+                    style="margin-top: 8px;">
+                    <span class="muted-text" style="font-size: 14px; font-weight: 500;">Forecast Coverage:</span>
+                    <mat-slider min="1" max="12" step="1" thumbLabel tickInterval="1" [(ngModel)]="monthsCoverage"
+                        fxFlex="1 1 auto" style="max-width: 300px;">
+                    </mat-slider>
+                    <span class="coverage-value primary-color" style="font-weight: 600;">{{monthsCoverage}}
+                        {{monthsCoverage === 1 ? 'Month' : 'Months'}}</span>
                 </div>
 
                 <div class="quick-chips" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center"
@@ -58,10 +68,18 @@
             </div>
         </div>
 
-        <!-- ================= SUMMARY ================= -->
-        <div *ngIf="shoppingList.length > 0" class="summary-container">
+        <!-- ================= SUMMARY & LOADING ================= -->
+        <div class="summary-container" *ngIf="remainingBudget > 0 || shoppingList.length > 0 || isLoading">
 
-            <div class="summary-card">
+            <!-- Loading Indicator -->
+            <div *ngIf="isLoading" class="summary-card" style="justify-content: center; color: #3f51b5;">
+                <mat-spinner diameter="30"></mat-spinner>
+                <div style="margin-left: 16px; font-weight: 500;">Analyzing {{monthsCoverage}}-Month Optimal Stock...
+                </div>
+            </div>
+
+            <!-- Total Investment -->
+            <div *ngIf="!isLoading && shoppingList.length > 0" class="summary-card">
                 <div class="icon-box cost">
                     <mat-icon>payments</mat-icon>
                 </div>
@@ -73,7 +91,8 @@
                 </div>
             </div>
 
-            <div class="summary-card">
+            <!-- Remaining Budget -->
+            <div *ngIf="!isLoading && shoppingList.length > 0" class="summary-card">
                 <div class="icon-box savings">
                     <mat-icon>savings</mat-icon>
                 </div>
@@ -85,7 +104,8 @@
                 </div>
             </div>
 
-            <div class="summary-card">
+            <!-- Total Items -->
+            <div *ngIf="!isLoading && shoppingList.length > 0" class="summary-card">
                 <div class="icon-box count">
                     <mat-icon>inventory_2</mat-icon>
                 </div>
@@ -103,7 +123,7 @@
         <div *ngIf="shoppingList.length > 0" class="table-container">
 
             <div fxLayout="row" fxLayoutAlign="space-between center" class="table-header-bar">
-                <h3>Recommended Purchases</h3>
+                <h3>Recommended Purchases for {{ monthsInWords }} {{ monthsCoverage === 1 ? 'month' : 'months' }}</h3>
                 <div fxLayout="row" fxLayoutGap="8px">
                     <button mat-flat-button color="accent" class="export-btn excel-btn" (click)="exportToExcel()">
                         <mat-icon>table_view</mat-icon> <span class="hide-mobile">Export Excel</span>
@@ -115,53 +135,34 @@
             </div>
 
             <table id="budget-table" class="premium-table">
-
                 <thead>
                     <tr>
                         <th>Product</th>
                         <th class="text-right">Cost</th>
+                        <th class="text-right">Profit</th>
                         <th class="text-right">Avg Sales</th>
-                        <th class="text-right">Score</th>
+                        <th class="text-right">EBO Score</th>
                         <th class="text-center">Rec. Qty</th>
                         <th class="text-right">Total</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     <tr *ngFor="let item of shoppingList">
-
                         <td>{{item.name}}</td>
-
-                        <td class="text-right">
-                            ₹{{item.unit_cost | number:'1.0-0'}}
-                        </td>
-
-                        <td class="text-right">
-                            {{item.avg_monthly_sales}} units
-                        </td>
-
-                        <td class="text-right">
-                            {{item.score | number:'1.2-2'}}
-                        </td>
-
-                        <td class="text-center">
-                            {{item.recommended_qty}}
-                        </td>
-
-                        <td class="text-right total-cell">
-                            ₹{{item.subtotal | number:'1.0-0'}}
-                        </td>
-
+                        <td class="text-right">₹{{item.unit_cost | number:'1.0-0'}}</td>
+                        <td class="text-right text-success">+₹{{item.unit_profit | number:'1.0-0'}}</td>
+                        <td class="text-right">{{item.avg_monthly_sales}} units</td>
+                        <td class="text-right">{{item.score | number:'1.2-2'}}</td>
+                        <td class="text-center">{{item.recommended_qty}}</td>
+                        <td class="text-right total-cell">₹{{item.subtotal | number:'1.0-0'}}</td>
                     </tr>
                 </tbody>
-
             </table>
 
         </div>
 
-
         <!-- ================= EMPTY STATE ================= -->
-        <div *ngIf="shoppingList.length === 0" class="empty-state">
+        <div *ngIf="shoppingList.length === 0 && !isLoading" class="empty-state">
             <mat-icon class="empty-icon">
                 account_balance_wallet
             </mat-icon>
