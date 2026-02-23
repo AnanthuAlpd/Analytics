@@ -28,9 +28,11 @@
         <!-- ================= CONTROLS ================= -->
         <div class="controls-section">
             <div fxLayout="column" fxLayoutGap="8px">
-                <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="24px" fxLayoutAlign="start flex-start">
+                <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="24px" fxLayoutGap.lt-md="0px"
+                    fxLayoutAlign="start flex-start">
 
-                    <mat-form-field appearance="outline" class="budget-input-field" fxFlex="1 1 300px">
+                    <mat-form-field appearance="outline" class="budget-input-field" fxFlex="1 1 300px"
+                        fxFlex.lt-md="1 1 100%">
                         <mat-label>Enter Your Budget</mat-label>
                         <span matPrefix class="rupee-symbol">₹</span>
                         <input matInput type="number" [(ngModel)]="budget" placeholder="100000">
@@ -39,7 +41,6 @@
 
                     <button mat-raised-button color="primary" class="generate-btn" (click)="generateList()"
                         [disabled]="!budget || budget <= 0 || isLoading">
-
                         <mat-icon class="btn-icon">auto_awesome</mat-icon>
                         <span class="btn-text">Optimize Budget</span>
                     </button>
@@ -47,18 +48,31 @@
                 </div>
 
                 <!-- Coverage Slider -->
-                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" class="slider-container"
-                    style="margin-top: 8px;">
-                    <span class="muted-text" style="font-size: 14px; font-weight: 500;">Forecast Coverage:</span>
+                <div class="slider-container" fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="start center"
+                    fxLayoutAlign.lt-sm="start start" fxLayoutGap="16px" fxLayoutGap.lt-sm="6px">
+
+                    <span class="muted-text" style="font-size: 14px; font-weight: 500; white-space: nowrap;">
+                        Forecast Coverage:
+                    </span>
+
                     <mat-slider min="1" max="12" step="1" thumbLabel tickInterval="1" [(ngModel)]="monthsCoverage"
-                        fxFlex="1 1 auto" style="max-width: 300px;">
+                        fxFlex="1 1 auto">
                     </mat-slider>
-                    <span class="coverage-value primary-color" style="font-weight: 600;">{{monthsCoverage}}
-                        {{monthsCoverage === 1 ? 'Month' : 'Months'}}</span>
+
+                    <span class="coverage-value primary-color" style="font-weight: 600; white-space: nowrap;">
+                        {{monthsCoverage}} {{monthsCoverage === 1 ? 'Month' : 'Months'}}
+                    </span>
+
+                    <span *ngIf="shoppingList.length > 0 && monthsCoverage !== appliedMonthsCoverage"
+                        class="update-hint"
+                        style="color: #ed6c02; font-size: 13px; font-weight: 500; display: flex; align-items: center;">
+                        <mat-icon style="font-size: 18px; width: 18px; height: 18px; margin-right: 4px;">info</mat-icon>
+                        Click Optimize Budget to apply
+                    </span>
                 </div>
 
                 <div class="quick-chips" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center"
-                    style="margin-top: -16px;">
+                    style="margin-top: -8px;">
                     <span class="muted-text" style="font-size: 13px; margin-right: 4px;">Quick Select:</span>
                     <button mat-stroked-button (click)="setBudget(50000)" class="chip-btn">₹50K</button>
                     <button mat-stroked-button (click)="setBudget(100000)" class="chip-btn">₹1 Lakh</button>
@@ -72,9 +86,11 @@
         <div class="summary-container" *ngIf="remainingBudget > 0 || shoppingList.length > 0 || isLoading">
 
             <!-- Loading Indicator -->
-            <div *ngIf="isLoading" class="summary-card" style="justify-content: center; color: #3f51b5;">
+            <div *ngIf="isLoading" class="summary-card"
+                style="justify-content: center; color: #3f51b5; flex: 1 1 100%;">
                 <mat-spinner diameter="30"></mat-spinner>
-                <div style="margin-left: 16px; font-weight: 500;">Analyzing {{monthsCoverage}}-Month Optimal Stock...
+                <div style="margin-left: 16px; font-weight: 500;">
+                    Analyzing {{monthsCoverage}}-Month Optimal Stock...
                 </div>
             </div>
 
@@ -85,9 +101,7 @@
                 </div>
                 <div>
                     <label>Total Investment</label>
-                    <div class="value">
-                        ₹{{totalCost | number:'1.0-0'}}
-                    </div>
+                    <div class="value">₹{{totalCost | number:'1.0-0'}}</div>
                 </div>
             </div>
 
@@ -98,9 +112,7 @@
                 </div>
                 <div>
                     <label>Remaining Budget</label>
-                    <div class="value">
-                        ₹{{remainingBudget | number:'1.0-0'}}
-                    </div>
+                    <div class="value">₹{{remainingBudget | number:'1.0-0'}}</div>
                 </div>
             </div>
 
@@ -111,9 +123,7 @@
                 </div>
                 <div>
                     <label>Total Items</label>
-                    <div class="value">
-                        {{shoppingList.length}}
-                    </div>
+                    <div class="value">{{shoppingList.length}}</div>
                 </div>
             </div>
 
@@ -122,54 +132,113 @@
         <!-- ================= TABLE ================= -->
         <div *ngIf="shoppingList.length > 0" class="table-container">
 
-            <div fxLayout="row" fxLayoutAlign="space-between center" class="table-header-bar">
+            <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-between center"
+                fxLayoutAlign.lt-sm="start start" fxLayoutGap.lt-sm="10px" class="table-header-bar">
                 <h3>Recommended Purchases for {{ monthsInWords }} {{ monthsCoverage === 1 ? 'month' : 'months' }}</h3>
                 <div fxLayout="row" fxLayoutGap="8px">
                     <button mat-flat-button color="accent" class="export-btn excel-btn" (click)="exportToExcel()">
-                        <mat-icon>table_view</mat-icon> <span class="hide-mobile">Export Excel</span>
+                        <mat-icon>table_view</mat-icon>
+                        <span class="hide-mobile">Export Excel</span>
                     </button>
                     <button mat-flat-button color="warn" class="export-btn pdf-btn" (click)="exportToPdf()">
-                        <mat-icon>picture_as_pdf</mat-icon> <span class="hide-mobile">Export PDF</span>
+                        <mat-icon>picture_as_pdf</mat-icon>
+                        <span class="hide-mobile">Export PDF</span>
                     </button>
                 </div>
             </div>
 
-            <table id="budget-table" class="premium-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th class="text-right">Cost</th>
-                        <th class="text-right">Profit</th>
-                        <th class="text-right">Avg Sales</th>
-                        <th class="text-right">EBO Score</th>
-                        <th class="text-center">Rec. Qty</th>
-                        <th class="text-right">Total</th>
+            <div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 16px;">
+                <mat-form-field appearance="outline" style="width: 100%; max-width: 320px;">
+                    <mat-label>Filter Products</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Wireless Mouse" #input>
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!--
+                IMPORTANT: Only ONE overflow-x: auto here (table-scroll-wrapper).
+                Removed the duplicate from the parent .table-container.
+                The mat-elevation-z2 shadow is combined into this single div.
+            -->
+            <div class="mat-elevation-z2 table-scroll-wrapper">
+                <table mat-table [dataSource]="dataSource" matSort class="premium-table">
+
+                    <!-- Product Name Column -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Product </th>
+                        <td mat-cell *matCellDef="let item"> {{item.name}} </td>
+                    </ng-container>
+
+                    <!-- Cost Column -->
+                    <ng-container matColumnDef="unit_cost">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> Cost </th>
+                        <td mat-cell *matCellDef="let item" class="text-right">
+                            ₹{{item.unit_cost | number:'1.0-0'}}
+                        </td>
+                    </ng-container>
+
+                    <!-- Profit Column -->
+                    <ng-container matColumnDef="unit_profit">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> Profit </th>
+                        <td mat-cell *matCellDef="let item" class="text-right text-success">
+                            +₹{{item.unit_profit | number:'1.0-0'}}
+                        </td>
+                    </ng-container>
+
+                    <!-- Avg Sales Column -->
+                    <ng-container matColumnDef="avg_monthly_sales">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> Avg Sales </th>
+                        <td mat-cell *matCellDef="let item" class="text-right">
+                            {{item.avg_monthly_sales}} units
+                        </td>
+                    </ng-container>
+
+                    <!-- Score Column -->
+                    <ng-container matColumnDef="score">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> EBO Score </th>
+                        <td mat-cell *matCellDef="let item" class="text-right">
+                            {{item.score | number:'1.2-2'}}
+                        </td>
+                    </ng-container>
+
+                    <!-- Rec. Qty Column -->
+                    <ng-container matColumnDef="recommended_qty">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center"> Rec. Qty </th>
+                        <td mat-cell *matCellDef="let item" class="text-center" style="font-weight: 600;">
+                            {{item.recommended_qty}}
+                        </td>
+                    </ng-container>
+
+                    <!-- Total Cost Column -->
+                    <ng-container matColumnDef="subtotal">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> Total </th>
+                        <td mat-cell *matCellDef="let item" class="text-right total-cell">
+                            ₹{{item.subtotal | number:'1.0-0'}}
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell text-center" colspan="7" style="padding: 24px;">
+                            No data matching the filter "{{input.value}}"
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of shoppingList">
-                        <td>{{item.name}}</td>
-                        <td class="text-right">₹{{item.unit_cost | number:'1.0-0'}}</td>
-                        <td class="text-right text-success">+₹{{item.unit_profit | number:'1.0-0'}}</td>
-                        <td class="text-right">{{item.avg_monthly_sales}} units</td>
-                        <td class="text-right">{{item.score | number:'1.2-2'}}</td>
-                        <td class="text-center">{{item.recommended_qty}}</td>
-                        <td class="text-right total-cell">₹{{item.subtotal | number:'1.0-0'}}</td>
-                    </tr>
-                </tbody>
-            </table>
+                </table>
+
+                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons
+                    aria-label="Select page of products">
+                </mat-paginator>
+            </div>
 
         </div>
 
         <!-- ================= EMPTY STATE ================= -->
         <div *ngIf="shoppingList.length === 0 && !isLoading" class="empty-state">
-            <mat-icon class="empty-icon">
-                account_balance_wallet
-            </mat-icon>
+            <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
             <h3>Ready to Optimize?</h3>
-            <p>
-                Enter your budget above and let our AI calculate the best stock mix.
-            </p>
+            <p>Enter your budget above and let our AI calculate the best stock mix.</p>
         </div>
 
     </div>

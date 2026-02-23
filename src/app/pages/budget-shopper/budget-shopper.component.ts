@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -13,20 +13,38 @@ interface Product {
 }
 
 import { BudgetShopperService, OptimizedProduct } from './budget-shopper.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-budget-shopper',
     templateUrl: './budget-shopper.component.html',
     styleUrls: ['./budget-shopper.component.scss']
 })
-export class BudgetShopperComponent implements OnInit {
+export class BudgetShopperComponent implements OnInit, AfterViewInit {
 
     budget: number = 0;
     shoppingList: OptimizedProduct[] = [];
+    dataSource: MatTableDataSource<OptimizedProduct> = new MatTableDataSource<OptimizedProduct>();
+    displayedColumns: string[] = ['name', 'unit_cost', 'unit_profit', 'avg_monthly_sales', 'score', 'recommended_qty', 'subtotal'];
+
+    private _paginator!: MatPaginator;
+    @ViewChild(MatPaginator) set paginator(mp: MatPaginator) {
+        this._paginator = mp;
+        this.dataSource.paginator = this._paginator;
+    }
+
+    private _sort!: MatSort;
+    @ViewChild(MatSort) set sort(ms: MatSort) {
+        this._sort = ms;
+        this.dataSource.sort = this._sort;
+    }
     totalCost: number = 0;
     remainingBudget: number = 0;
     isLoading: boolean = false;
-    monthsCoverage: number = 6;
+    monthsCoverage: number = 6; // Live slider position
+    appliedMonthsCoverage: number = 6; // Actual data in table
 
     // Mock Data
     allProducts: Product[] = [
@@ -47,6 +65,19 @@ export class BudgetShopperComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    ngAfterViewInit() {
+        // Assignments are now handled automatically by ViewChild setters
+    }
+
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue.trim().toLowerCase();
+
+        if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+        }
+    }
+
     get formattedBudgetHelper(): string {
         if (!this.budget) return '';
         // Format to Indian numbering system (e.g., 1,00,000)
@@ -59,7 +90,7 @@ export class BudgetShopperComponent implements OnInit {
 
     get monthsInWords(): string {
         const words = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
-        return words[this.monthsCoverage] || this.monthsCoverage.toString();
+        return words[this.appliedMonthsCoverage] || this.appliedMonthsCoverage.toString();
     }
 
     formatLabel(value: number): string {
@@ -80,8 +111,18 @@ export class BudgetShopperComponent implements OnInit {
             next: (response) => {
                 if (response.status === 'success' && response.data) {
                     this.shoppingList = response.data.shopping_list;
+                    this.dataSource.data = this.shoppingList;
                     this.totalCost = response.data.total_investment;
                     this.remainingBudget = response.data.remaining_budget;
+                    this.appliedMonthsCoverage = this.monthsCoverage; // Lock in the coverage used for this math
+
+                    // Pagination & Sorting are handled auto-magically by the ViewChild setters 
+                    // once *ngIf renders the elements onto the page.
+                    setTimeout(() => {
+                        if (this.dataSource.paginator) {
+                            this.dataSource.paginator.firstPage();
+                        }
+                    });
                 } else {
                     console.error("Optimization failed:", response.message);
                 }
@@ -119,7 +160,7 @@ export class BudgetShopperComponent implements OnInit {
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `${this.monthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.csv`);
+        link.setAttribute("download", `${this.appliedMonthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -133,7 +174,7 @@ export class BudgetShopperComponent implements OnInit {
         // --- Header Section ---
         doc.setFontSize(18);
         doc.setTextColor(63, 81, 181); // Indigo color matching theme (#3f51b5)
-        doc.text(`${this.monthsCoverage}-Month Budget Optimization Report`, 14, 22);
+        doc.text(`${this.appliedMonthsCoverage}-Month Budget Optimization Report`, 14, 22);
 
         doc.setFontSize(10);
         doc.setTextColor(119, 119, 119); // Gray
@@ -183,7 +224,7 @@ export class BudgetShopperComponent implements OnInit {
         });
 
         // Trigger Download
-        doc.save(`${this.monthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.pdf`);
+        doc.save(`${this.appliedMonthsCoverage}_Month_Budget_Optimization_${new Date().getTime()}.pdf`);
     }
 
 }
