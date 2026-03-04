@@ -10,6 +10,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { SharedModule } from '../../shared/shared.module';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { BudgetShopperComponent } from './budget-shopper.component';
 
 export const routes: Routes = [
@@ -29,7 +30,8 @@ export const routes: Routes = [
         MatPaginatorModule,
         MatSortModule,
         MatInputModule,
-        SharedModule
+        SharedModule,
+        NgApexchartsModule
     ],
     declarations: [
         BudgetShopperComponent

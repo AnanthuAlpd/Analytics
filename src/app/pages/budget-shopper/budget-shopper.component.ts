@@ -16,6 +16,38 @@ import { BudgetShopperService, OptimizedProduct } from './budget-shopper.service
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import {
+    ApexAxisChartSeries,
+    ApexChart,
+    ApexXAxis,
+    ApexYAxis,
+    ApexDataLabels,
+    ApexStroke,
+    ApexTooltip,
+    ApexLegend,
+    ApexGrid,
+    ApexTheme,
+    ApexNonAxisChartSeries,
+    ApexResponsive,
+    ApexFill
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+    series: ApexAxisChartSeries | ApexNonAxisChartSeries;
+    chart: ApexChart;
+    xaxis: ApexXAxis;
+    yaxis: ApexYAxis;
+    stroke: ApexStroke;
+    tooltip: ApexTooltip;
+    dataLabels: ApexDataLabels;
+    legend: ApexLegend;
+    grid: ApexGrid;
+    theme: ApexTheme;
+    colors: string[];
+    labels: string[];
+    responsive: ApexResponsive[];
+    fill: ApexFill;
+};
 
 @Component({
     selector: 'app-budget-shopper',
@@ -46,6 +78,11 @@ export class BudgetShopperComponent implements OnInit, AfterViewInit {
     monthsCoverage: number = 6; // Live slider position
     appliedMonthsCoverage: number = 6; // Actual data in table
 
+    // Sparkline Options
+    investmentSparklineOptions: Partial<ChartOptions>;
+    budgetSparklineOptions: Partial<ChartOptions>;
+    itemsSparklineOptions: Partial<ChartOptions>;
+
     // Mock Data
     allProducts: Product[] = [
         { id: 1, name: 'Wireless Mouse', unit_cost: 450, avg_monthly_sales: 120 },
@@ -63,6 +100,63 @@ export class BudgetShopperComponent implements OnInit, AfterViewInit {
     constructor(private budgetShopperService: BudgetShopperService) { }
 
     ngOnInit(): void {
+        this.initSparklines();
+    }
+
+    private initSparklines() {
+        // Initialize with default or generic data to show the trend
+        this.investmentSparklineOptions = this.getSparklineOptions([10, 25, 45, 30, 60, 55, 80], '#3f51b5'); // Primary Indigo
+        this.budgetSparklineOptions = this.getSparklineOptions([80, 75, 60, 65, 40, 45, 20], '#2ecc71'); // Green savings
+        this.itemsSparklineOptions = this.getSparklineOptions([5, 12, 10, 25, 22, 35, 40], '#f39c12'); // Orange count 
+    }
+
+    private getSparklineOptions(data: number[], color: string): Partial<ChartOptions> {
+        return {
+            series: [{
+                name: 'Trend',
+                data: data
+            }],
+            chart: {
+                type: 'area',
+                width: 100,
+                height: 35,
+                sparkline: {
+                    enabled: true
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.05,
+                    stops: [0, 100]
+                }
+            },
+            colors: [color],
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function (seriesName) {
+                            return ''
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            }
+        };
     }
 
     ngAfterViewInit() {

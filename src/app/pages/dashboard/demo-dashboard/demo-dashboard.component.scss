@@ -557,6 +557,18 @@ $chart-axis: #9ca3af;
     width: 100%;
     height: 100%;
   }
+
+  /* ApexCharts Hybrid Fix */
+  &.apex-wrapper {
+    width: 100%;
+    min-height: 350px;
+    display: block;
+
+    apx-chart {
+      display: block;
+      width: 100%;
+    }
+  }
 }
 
 // Empty State

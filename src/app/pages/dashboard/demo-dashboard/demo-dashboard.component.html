@@ -37,7 +37,18 @@
                   <div class="kpi-value-compact">
                     <ng-container *ngIf="card.isCurrency">₹</ng-container>{{card.value | number:'1.0-0'}}
                   </div>
-                  <div class="kpi-meta-compact">{{card.subValue}}</div>
+
+                  <div class="kpi-meta-compact"
+                    style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <span>{{card.subValue}}</span>
+                    <div style="flex-shrink: 0;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
+
                 </div>
               </mat-card-content>
             </mat-card>
@@ -72,18 +83,21 @@
                 </div>
               </div>
 
-              <!-- Enhanced Line Chart -->
-              <div class="chart-wrapper">
-                <ngx-charts-line-chart *ngIf="revenueTrendData && revenueTrendData.length > 0" [view]="undefined"
-                  [scheme]="colorScheme" [results]="revenueTrendData" [gradient]="false" [xAxis]="true" [yAxis]="true"
-                  [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="'Month'"
-                  [yAxisLabel]="'Amount (₹)'" [autoScale]="true" [timeline]="false" [animations]="true"
-                  [roundDomains]="true" [showGridLines]="true" [tooltipDisabled]="false" (select)="onSelect($event)"
-                  class="enhanced-line-chart">
-                </ngx-charts-line-chart>
+              <!-- Enhanced Line Chart (ApexCharts Hybrid) -->
+              <div class="chart-wrapper apex-wrapper">
+                <apx-chart
+                  *ngIf="revenueChartOptions && revenueChartOptions.series && revenueChartOptions.series.length > 0"
+                  [series]="revenueChartOptions.series" [chart]="revenueChartOptions.chart"
+                  [xaxis]="revenueChartOptions.xaxis" [yaxis]="revenueChartOptions.yaxis"
+                  [dataLabels]="revenueChartOptions.dataLabels" [grid]="revenueChartOptions.grid"
+                  [stroke]="revenueChartOptions.stroke" [colors]="revenueChartOptions.colors"
+                  [tooltip]="revenueChartOptions.tooltip" [legend]="revenueChartOptions.legend">
+                </apx-chart>
 
                 <!-- Loading state -->
-                <div *ngIf="!revenueTrendData || revenueTrendData.length === 0" class="chart-empty-state">
+                <div
+                  *ngIf="!revenueChartOptions || !revenueChartOptions.series || revenueChartOptions.series.length === 0"
+                  class="chart-empty-state">
                   <mat-icon>insights</mat-icon>
                   <p>Loading revenue data...</p>
                 </div>
@@ -112,41 +126,15 @@
               <div class="chart-wrapper">
                 <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0"
                   [view]="undefined" [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="false"
-                  [legend]="true" [labels]="false" [doughnut]="true" (select)="onSelect($event)">
+                  [legend]="true" [legendPosition]="'below'" [labels]="false" [doughnut]="true" [arcWidth]="0.25"
+                  (select)="onSelect($event)" class="enhanced-pie-chart">
                 </ngx-charts-pie-chart>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
 
-        <!-- Missing Chart: Actual - Prediction Sale Chart -->
-        <div class="chart-row" style="margin-top: 20px;">
-          <mat-card class="chart-card col-100 enhanced-chart">
-            <div class="chart-header-flex">
-              <h3>Actual - Prediction Sale Chart</h3>
-              <div class="chart-filter">
-                <mat-form-field appearance="outline" dense>
-                  <mat-label>Filter by Product</mat-label>
-                  <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
-                    <mat-option value="all">All Products</mat-option>
-                    <mat-option *ngFor="let product of productList" [value]="product.id">
-                      {{product.name}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-            <mat-card-content>
-              <div class="chart-wrapper">
-                <div *ngIf="isSalesTrendLoading" class="loading-message">
+                <!-- Loading state -->
+                <div *ngIf="!categoryPerformanceData || categoryPerformanceData.length === 0" class="chart-empty-state">
                   <mat-spinner diameter="40"></mat-spinner>
-                  <span>Loading sales data...</span>
+                  <p>Loading category data...</p>
                 </div>
-
-                <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
-                  [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
-                  [autoScale]="true" (select)="onSelect($event)">
-                </ngx-charts-line-chart>
               </div>
             </mat-card-content>
           </mat-card>
@@ -240,7 +228,16 @@
                 <div class="card-body-compact">
                   <div class="kpi-label-compact">{{card.label}}</div>
                   <div class="kpi-value-compact" [ngClass]="card.progressClass">{{card.value}}</div>
-                  <div class="kpi-meta-compact">{{card.subValue}}</div>
+                  <div class="kpi-meta-compact"
+                    style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <span>{{card.subValue}}</span>
+                    <div style="flex-shrink: 0;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
                   <div *ngIf="card.footer" class="card-footer-compact">
                     <div class="growth-delta-compact" [ngClass]="card.footer.class">
                       <mat-icon>{{card.footer.icon}}</mat-icon>{{card.footer.value}}
@@ -274,7 +271,15 @@
                 </div>
                 <div class="card-body-compact">
                   <div class="kpi-label-compact">{{card.label}}</div>
-                  <div class="kpi-value-compact">{{card.value}}</div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div class="kpi-value-compact">{{card.value}}</div>
+                    <div style="flex-shrink: 0; margin-bottom: 5px;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
                   <div *ngIf="card.progress !== undefined" class="progress-bar-compact">
                     <div class="progress-fill-compact" [ngClass]="card.progressClass" [style.width.%]="card.progress">
                     </div>
@@ -284,6 +289,39 @@
             </mat-card>
 
           </ng-container>
+        </div>
+
+        <!-- Missing Chart: Actual - Prediction Sale Chart -->
+        <div class="chart-row" style="margin-top: 20px;">
+          <mat-card class="chart-card col-100 enhanced-chart">
+            <div class="chart-header-flex">
+              <h3>Actual - Prediction Sale Chart</h3>
+              <div class="chart-filter">
+                <mat-form-field appearance="outline" dense>
+                  <mat-label>Filter by Product</mat-label>
+                  <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
+                    <mat-option value="all">All Products</mat-option>
+                    <mat-option *ngFor="let product of productList" [value]="product.id">
+                      {{product.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-card-content>
+              <div class="chart-wrapper">
+                <div *ngIf="isSalesTrendLoading" class="loading-message">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <span>Loading sales data...</span>
+                </div>
+
+                <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
+                  [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
+                  [autoScale]="true" (select)="onSelect($event)">
+                </ngx-charts-line-chart>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
 
         <!-- IMPROVED Forecast Comparison Chart -->

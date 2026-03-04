@@ -20,6 +20,39 @@ import {
   InventoryHealth
 } from '../demo-dashboard/demo-dashboard-model';
 
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexYAxis,
+  ApexDataLabels,
+  ApexStroke,
+  ApexTooltip,
+  ApexLegend,
+  ApexGrid,
+  ApexTheme,
+  ApexNonAxisChartSeries,
+  ApexResponsive,
+  ApexFill
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries | ApexNonAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  stroke: ApexStroke;
+  tooltip: ApexTooltip;
+  dataLabels: ApexDataLabels;
+  legend: ApexLegend;
+  grid: ApexGrid;
+  theme: ApexTheme;
+  colors: string[];
+  labels: string[];
+  responsive: ApexResponsive[];
+  fill: ApexFill;
+};
+
 export interface KpiCard {
   label: string;
   value: number | string;
@@ -46,6 +79,7 @@ export interface KpiCard {
     class: string;
   };
   alertType?: 'warning' | 'success';
+  sparklineOptions?: Partial<ChartOptions>;
 }
 
 @Component({
@@ -89,6 +123,10 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
   top10GrowthData: SalesData[] = []; // New data for left chart
   productSummary: ForecastSummary[] = [];
   futureProjectionData: any[] = []; // Real API data for right chart
+
+  // --- ApexCharts Options ---
+  public revenueChartOptions: Partial<ChartOptions>;
+  public categoryChartOptions: Partial<ChartOptions>;
 
   // --- Card Data Properties ---
   kpiCards: KpiCard[] = [];
@@ -145,9 +183,153 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.loadBusinessAlerts();
     this.loadTopPerformersData();
     this.loadInventoryHealth();
-    this.loadInventoryHealth();
     this.loadProductList();
     this.loadFutureProjectionData(); // Initial load for right chart
+
+    // Initialize ApexCharts Options with defaults
+    this.initRevenueChartOptions();
+    this.initCategoryChartOptions();
+  }
+
+  private initRevenueChartOptions() {
+    this.revenueChartOptions = {
+      series: [],
+      chart: {
+        type: 'area',
+        height: 350,
+        animations: {
+          enabled: true,
+          speed: 800,
+          animateGradually: {
+            enabled: true,
+            delay: 150
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350
+          }
+        },
+        toolbar: {
+          show: false
+        },
+        parentHeightOffset: 0
+      },
+      colors: ['#2ecc71', '#3498db'], // Match existing revenue and profit colors (COLOR_SCHEME index 0, 1)
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 3
+      },
+      xaxis: {
+        type: 'category',
+        categories: [],
+        labels: {
+          style: {
+            colors: '#9aa0ac',
+          }
+        },
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        }
+      },
+      yaxis: {
+        labels: {
+          formatter: (value) => {
+            return value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value.toString();
+          },
+          style: {
+            colors: '#9aa0ac',
+          }
+        }
+      },
+      legend: {
+        show: false // We use custom HTML legend instead
+      },
+      grid: {
+        borderColor: '#f1f1f1',
+        strokeDashArray: 4,
+        xaxis: {
+          lines: {
+            show: true
+          }
+        },
+        yaxis: {
+          lines: {
+            show: true
+          }
+        },
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 10
+        }
+      },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function (val) {
+            return "₹" + val.toLocaleString();
+          }
+        }
+      }
+    };
+  }
+
+  private initCategoryChartOptions() {
+    this.categoryChartOptions = {
+      series: [],
+      labels: [],
+      chart: {
+        type: 'donut',
+        height: 350
+      },
+      colors: ['#667eea', '#f5576c', '#43e97b', '#f8b425', '#fa709a', '#30cfd0'], // Matching the dashboard's palette
+      legend: {
+        position: 'bottom',
+        fontSize: '13px',
+        markers: {
+          radius: 12
+        },
+        itemMargin: {
+          horizontal: 10,
+          vertical: 5
+        }
+      },
+      dataLabels: {
+        enabled: false // Assuming we want it clean like the old doughnut chart
+      },
+      stroke: {
+        width: 2,
+        colors: ['#ffffff']
+      },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function (val) {
+            return "₹" + val.toLocaleString();
+          }
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              height: 300
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      ]
+    };
   }
 
   ngAfterViewInit(): void {
@@ -266,7 +448,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         icon: 'payments',
         iconClass: 'revenue',
         cardClass: 'revenue-card',
-        trend: this.revenueMetrics.revenue_growth_yoy
+        trend: this.revenueMetrics.revenue_growth_yoy,
+        sparklineOptions: this.getSparklineOptions([10, 25, 15, 30, 45, 35, 60], '#2ecc71')
       });
 
       cards.push({
@@ -277,7 +460,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         icon: 'account_balance_wallet',
         iconClass: 'profit',
         cardClass: 'profit-card',
-        badge: this.revenueMetrics.profit_margin
+        badge: this.revenueMetrics.profit_margin,
+        sparklineOptions: this.getSparklineOptions([5, 12, 8, 15, 22, 18, 30], '#3498db')
       });
 
       cards.push({
@@ -287,7 +471,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         subValue: 'Per transaction',
         icon: 'shopping_cart',
         iconClass: 'aov',
-        cardClass: 'aov-card'
+        cardClass: 'aov-card',
+        sparklineOptions: this.getSparklineOptions([20, 18, 25, 22, 30, 28, 35], '#f39c12')
       });
     }
 
@@ -306,6 +491,55 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.kpiCards = cards;
   }
 
+  private getSparklineOptions(data: number[], color: string): Partial<ChartOptions> {
+    return {
+      series: [{
+        name: 'Trend',
+        data: data
+      }],
+      chart: {
+        type: 'area',
+        width: 100,
+        height: 35,
+        sparkline: {
+          enabled: true
+        }
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 2
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.4,
+          opacityTo: 0.05,
+          stops: [0, 100]
+        }
+      },
+      colors: [color],
+      tooltip: {
+        fixed: {
+          enabled: false
+        },
+        x: {
+          show: false
+        },
+        y: {
+          title: {
+            formatter: function (seriesName) {
+              return ''
+            }
+          }
+        },
+        marker: {
+          show: false
+        }
+      }
+    };
+  }
+
   updateForecastCards() {
     const cards: KpiCard[] = [];
     if (this.kpiSummaryNew) {
@@ -318,7 +552,8 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         icon: 'insights',
         iconClass: 'prediction',
         cardClass: 'prediction-card',
-        type: 'standard'
+        type: 'standard',
+        sparklineOptions: this.getSparklineOptions([20, 35, 25, 45, 60, 50, 80], '#8e44ad') // Purple
       });
 
       // Growth Rate
@@ -561,11 +796,45 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe({
         next: (data) => {
           this.revenueTrendData = this.validateChartData(data);
+          this.updateRevenueApexChartData(this.revenueTrendData);
         },
         error: (err) => {
           console.error('Error loading revenue trend:', err);
         }
       });
+  }
+
+  private updateRevenueApexChartData(ngxData: any[]) {
+    // ngxData format: [{ name: 'Revenue', series: [{name: 'Jan', value: 100}, ...] }, ...]
+    if (!ngxData || ngxData.length === 0) return;
+
+    const series = [];
+    let categories = [];
+
+    ngxData.forEach((group: any) => {
+      const dataPoints = [];
+      const currentCategories = [];
+
+      if (group.series) {
+        group.series.forEach((point: any) => {
+          dataPoints.push(point.value);
+          currentCategories.push(point.name);
+        });
+      }
+
+      series.push({
+        name: group.name,
+        data: dataPoints
+      });
+
+      // Assuming all groups share the same categories (months), grab from the first one
+      if (categories.length === 0 && currentCategories.length > 0) {
+        categories = currentCategories;
+      }
+    });
+
+    this.revenueChartOptions.series = series;
+    this.revenueChartOptions.xaxis = { ...this.revenueChartOptions.xaxis, categories: categories };
   }
 
   loadBusinessAlerts(): void {

@@ -274,10 +274,20 @@
 
 .premium-table .text-right {
     text-align: right !important;
+    padding-right: 64px !important;
+
+    ::ng-deep .mat-sort-header-container {
+        justify-content: flex-end;
+    }
 }
 
 .premium-table .text-center {
     text-align: center !important;
+    padding-right: 64px !important;
+
+    ::ng-deep .mat-sort-header-container {
+        justify-content: center;
+    }
 }
 
 .total-cell {

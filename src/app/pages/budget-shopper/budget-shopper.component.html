@@ -102,6 +102,13 @@
                 <div>
                     <label>Total Investment</label>
                     <div class="value">₹{{totalCost | number:'1.0-0'}}</div>
+                    <div style="margin-top: 8px;" *ngIf="investmentSparklineOptions">
+                        <apx-chart [series]="investmentSparklineOptions.series"
+                            [chart]="investmentSparklineOptions.chart" [stroke]="investmentSparklineOptions.stroke"
+                            [colors]="investmentSparklineOptions.colors" [fill]="investmentSparklineOptions.fill"
+                            [tooltip]="investmentSparklineOptions.tooltip">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
 
@@ -113,6 +120,12 @@
                 <div>
                     <label>Remaining Budget</label>
                     <div class="value">₹{{remainingBudget | number:'1.0-0'}}</div>
+                    <div style="margin-top: 8px;" *ngIf="budgetSparklineOptions">
+                        <apx-chart [series]="budgetSparklineOptions.series" [chart]="budgetSparklineOptions.chart"
+                            [stroke]="budgetSparklineOptions.stroke" [colors]="budgetSparklineOptions.colors"
+                            [fill]="budgetSparklineOptions.fill" [tooltip]="budgetSparklineOptions.tooltip">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
 
@@ -124,6 +137,12 @@
                 <div>
                     <label>Total Items</label>
                     <div class="value">{{shoppingList.length}}</div>
+                    <div style="margin-top: 8px;" *ngIf="itemsSparklineOptions">
+                        <apx-chart [series]="itemsSparklineOptions.series" [chart]="itemsSparklineOptions.chart"
+                            [stroke]="itemsSparklineOptions.stroke" [colors]="itemsSparklineOptions.colors"
+                            [fill]="itemsSparklineOptions.fill" [tooltip]="itemsSparklineOptions.tooltip">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
 
