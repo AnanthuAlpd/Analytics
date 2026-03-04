@@ -21,6 +21,9 @@ export interface OptimizationData {
     total_investment: number;
     remaining_budget: number;
     shopping_list: OptimizedProduct[];
+    investment_trend?: number[];
+    budget_trend?: number[];
+    items_trend?: number[];
 }
 
 export interface BaseResponse<T> {

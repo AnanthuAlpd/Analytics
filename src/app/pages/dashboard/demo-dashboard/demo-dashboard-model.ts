@@ -18,6 +18,7 @@ export interface KpiSummaryNew {
   averageGrowth?: number; // Added to match usage
   monthly_avg_backorder: number;
   predictionAccuracy: number;
+  predicted_sales_trend?: number[];
 }
 
 export interface SalesSeries {
@@ -63,6 +64,9 @@ export interface RevenueMetrics {
   avg_order_value: number;
   total_units_sold: number;
   revenue_growth_yoy: number;
+  revenue_trend?: number[];
+  profit_trend?: number[];
+  aov_trend?: number[];
 }
 
 export interface CategoryPerformance {

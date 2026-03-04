@@ -449,7 +449,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         iconClass: 'revenue',
         cardClass: 'revenue-card',
         trend: this.revenueMetrics.revenue_growth_yoy,
-        sparklineOptions: this.getSparklineOptions([10, 25, 15, 30, 45, 35, 60], '#2ecc71')
+        sparklineOptions: this.getSparklineOptions(this.revenueMetrics.revenue_trend || [10, 25, 15, 30, 45, 35, 60], '#2ecc71')
       });
 
       cards.push({
@@ -461,7 +461,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         iconClass: 'profit',
         cardClass: 'profit-card',
         badge: this.revenueMetrics.profit_margin,
-        sparklineOptions: this.getSparklineOptions([5, 12, 8, 15, 22, 18, 30], '#3498db')
+        sparklineOptions: this.getSparklineOptions(this.revenueMetrics.profit_trend || [5, 12, 8, 15, 22, 18, 30], '#3498db')
       });
 
       cards.push({
@@ -472,7 +472,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         icon: 'shopping_cart',
         iconClass: 'aov',
         cardClass: 'aov-card',
-        sparklineOptions: this.getSparklineOptions([20, 18, 25, 22, 30, 28, 35], '#f39c12')
+        sparklineOptions: this.getSparklineOptions(this.revenueMetrics.aov_trend || [20, 18, 25, 22, 30, 28, 35], '#f39c12')
       });
     }
 
@@ -544,6 +544,10 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     const cards: KpiCard[] = [];
     if (this.kpiSummaryNew) {
       // Predicted Sales
+      const salesGrowth = this.kpiSummaryNew?.predictedGrowthRate || 0;
+      const salesGrowthClass = salesGrowth >= 0 ? 'text-success' : 'text-danger';
+      const salesGrowthIcon = salesGrowth >= 0 ? 'trending_up' : 'trending_down';
+
       cards.push({
         label: 'Predicted Sales',
         value: (this.kpiSummaryNew.predictedSales || 0).toLocaleString('en-IN'),
@@ -553,7 +557,7 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
         iconClass: 'prediction',
         cardClass: 'prediction-card',
         type: 'standard',
-        sparklineOptions: this.getSparklineOptions([20, 35, 25, 45, 60, 50, 80], '#8e44ad') // Purple
+        sparklineOptions: this.getSparklineOptions(this.kpiSummaryNew?.predicted_sales_trend || [12, 18, 25, 30, 45, 60, 80], '#7209b7') // Vibrant purple
       });
 
       // Growth Rate

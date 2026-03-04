@@ -34,7 +34,7 @@ export const routes: Routes = [
             { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } },
             { path: 'super-admin', loadChildren: () => import('./pages/super-admin/super-admin.module').then(m => m.SuperAdminModule), data: { breadcrumb: 'Admin' } },
             { path: 'expenses', loadChildren: () => import('./pages/expenses/expenses.module').then(m => m.ExpensesModule), data: { breadcrumb: 'Expenses' } },
-            { path: 'budget-shopper', loadChildren: () => import('./pages/budget-shopper/budget-shopper.module').then(m => m.BudgetShopperModule), data: { breadcrumb: 'Budget Shopper' } },
+            { path: 'dashboard/budget-shopper', loadChildren: () => import('./pages/budget-shopper/budget-shopper.module').then(m => m.BudgetShopperModule), data: { breadcrumb: 'Budget Shopper' } },
 
         ]
     },

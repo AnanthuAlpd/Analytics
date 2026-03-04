@@ -210,6 +210,13 @@ export class BudgetShopperComponent implements OnInit, AfterViewInit {
                     this.remainingBudget = response.data.remaining_budget;
                     this.appliedMonthsCoverage = this.monthsCoverage; // Lock in the coverage used for this math
 
+                    // Update Sparklines with API data if available, else keep generic data
+                    if (response.data.investment_trend) {
+                        this.investmentSparklineOptions = this.getSparklineOptions(response.data.investment_trend, '#3f51b5');
+                        this.budgetSparklineOptions = this.getSparklineOptions(response.data.budget_trend || [], '#2ecc71');
+                        this.itemsSparklineOptions = this.getSparklineOptions(response.data.items_trend || [], '#f39c12');
+                    }
+
                     // Pagination & Sorting are handled auto-magically by the ViewChild setters 
                     // once *ngIf renders the elements onto the page.
                     setTimeout(() => {

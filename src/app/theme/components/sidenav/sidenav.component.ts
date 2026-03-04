@@ -72,11 +72,9 @@ export class SidenavComponent implements OnInit {
     localStorage.removeItem('userType'); // optional if you want to reset type completely
 
     // Decide redirect URL
-    let redirectUrl = '/login';
+    let redirectUrl = '/login/employee'; // Default fallback since plain /login doesn't exist
     if (userType === 'CLIENT') {
       redirectUrl = '/login/client';
-    } else if (userType === 'EMPLOYEE') {
-      redirectUrl = '/login/employee';
     }
 
     // Navigate using Angular Router
