@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface OptimizedProduct {
     product_id: number;
@@ -36,9 +37,7 @@ export interface BaseResponse<T> {
     providedIn: 'root'
 })
 export class BudgetShopperService {
-
-    // Pointing to your local Flask Backend
-    private apiUrl = 'http://localhost:5000/api/optimize-budget';
+    private apiUrl = environment.baseUrl;
 
     constructor(private http: HttpClient) { }
 
@@ -48,6 +47,6 @@ export class BudgetShopperService {
             months_coverage: monthsCoverage
         };
 
-        return this.http.post<BaseResponse<OptimizationData>>(this.apiUrl, payload);
+        return this.http.post<BaseResponse<OptimizationData>>(`${this.apiUrl}/optimize-budget`, payload);
     }
 }
