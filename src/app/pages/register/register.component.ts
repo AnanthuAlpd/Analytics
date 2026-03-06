@@ -20,7 +20,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   employees: any;
   departments: any;
   services: any;
-  staticWebsiteUrl:any;
+  public staticWebsiteUrl: any;
+  public hide = true;
+  public loading = false;
   constructor(
     public appSettings: AppSettings,
     public fb: UntypedFormBuilder,
@@ -44,7 +46,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     const type = this.route.snapshot.paramMap.get('userType');
     this.userType = (type?.toUpperCase() === 'CLIENT') ? 'CLIENT' : 'EMPLOYEE';
-    this.staticWebsiteUrl=environment.staticWebSiteUrl;
+    this.staticWebsiteUrl = environment.staticWebSiteUrl;
     this.addDynamicControls();
   }
 
@@ -81,16 +83,19 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       this.snackBar.open('Please fill in all required fields correctly.', 'Close', { duration: 3000 });
       return;
     }
-  
+
+    this.loading = true;
     const userData = this.form.value;
-  
+
     if (this.userType === 'EMPLOYEE') {
       this.authService.register(userData).subscribe({
         next: () => {
+          this.loading = false;
           this.snackBar.open('Employee registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
           this.router.navigate(['/login']);
         },
         error: (error) => {
+          this.loading = false;
           this.snackBar.open(error?.error?.message || 'Employee registration failed!', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
@@ -100,10 +105,12 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     } else if (this.userType === 'CLIENT') {
       this.authService.registerClient(userData).subscribe({
         next: () => {
+          this.loading = false;
           this.snackBar.open('Client registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
           this.router.navigate(['/login']);
         },
         error: (error) => {
+          this.loading = false;
           this.snackBar.open(error?.error?.message || 'Client registration failed!', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
@@ -112,5 +119,5 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  
+
 }

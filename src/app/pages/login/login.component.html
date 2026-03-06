@@ -1,54 +1,62 @@
-<style>
-    .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-.spacer {
-  flex: 1;
-}
-</style>
-<mat-toolbar color="primary" class="navbar">
-    <a class="logo" [href]="staticWebsiteUrl">POTHANSAI</a>
-    <span class="spacer"></span>
-    <a mat-raised-button color="accent" [href]="staticWebsiteUrl" class="small-logo">P</a>
-  </mat-toolbar>
-<mat-sidenav-container>
-  <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
-       <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">
-            <mat-card class="p-0 mat-elevation-z24 box">
-                <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
-                    <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit(form.value);">
-                        <mat-icon>exit_to_app</mat-icon>
+<div class="login-container">
+    <mat-toolbar class="navbar">
+        <a class="logo" [href]="staticWebsiteUrl">
+            <img src="assets/img/logo/logo.jpeg" alt="POTHANSAI Logo">
+            <span class="logo-text">PothansAI</span>
+        </a>
+        <span class="flex-spacer"></span>
+        <a mat-icon-button class="logo-mobile" [href]="staticWebsiteUrl" color="primary">
+            <mat-icon>home</mat-icon>
+        </a>
+    </mat-toolbar>
+
+    <div class="login-card mat-elevation-z12">
+        <div class="login-header">
+            <div class="logo-icon">
+                <mat-icon>lock</mat-icon>
+            </div>
+            <h2>{{userType | lowercase}} Login</h2>
+        </div>
+
+        <div class="login-content">
+            <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
+                <mat-form-field appearance="outline" class="w-100 form-field">
+                    <mat-label>Email Address</mat-label>
+                    <input matInput formControlName="email" type="email" placeholder="Enter your email">
+                    <mat-icon matPrefix>email</mat-icon>
+                    <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
+                    <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100 form-field">
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" [type]="hide ? 'password' : 'text'"
+                        placeholder="Enter your password">
+                    <mat-icon matPrefix>lock</mat-icon>
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hide" type="button">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </button>
-                    <a mat-button [routerLink]="['/register', 'employee']">Don't have an account? Sign up now!</a>
+                    <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
+                    <mat-error *ngIf="form.controls.password.hasError('minlength')">
+                        Password must be at least 6 characters
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="login-actions">
+                    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading">
+                        {{ loading ? 'SIGNING IN...' : 'SIGN IN' }}
+                    </button>
+                    <button mat-button type="button" class="forgot-btn" (click)="forgotPwd()" [disabled]="loading">
+                        Forgot Password?
+                    </button>
                 </div>
-                <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
-    
-                    <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
-                        <span class="box-content-header">{{userType}} login</span>
-                        <mat-form-field class="w-100">
-                            <input matInput placeholder="Email" formControlName="email">
-                            <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
-                            <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
-                        </mat-form-field>
-                        <mat-form-field class="w-100">
-                            <input matInput placeholder="Password" formControlName="password" type="password">
-                            <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
-                            <mat-error *ngIf="form.controls.password.hasError('minlength')">Password isn't long enough, minimum of 6 characters</mat-error>
-                        </mat-form-field>
-                    </mat-card>
-                
-                    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px" class="w-100 mt-3">
-                        <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">Sign In</button>
-                        <button mat-raised-button color="warn" class="mat-elevation-z12 box-button" type="button" (click)='forgotPwd()'>Forgot Password</button>
-                    </div>
-                    </mat-card-content>
-            </mat-card>
 
-        </form>
-
-  </div>
-
-</mat-sidenav-container>
+                <div class="signup-footer">
+                    <span>Don't have an account? </span>
+                    <a [routerLink]="['/register', userType.toLowerCase()]">Sign up now!</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

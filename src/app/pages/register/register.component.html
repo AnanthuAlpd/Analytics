@@ -1,84 +1,118 @@
-<style>
+<div class="login-container">
+  <mat-toolbar class="navbar">
+    <a class="logo" [href]="staticWebsiteUrl">
+      <img src="assets/img/logo/logo.jpeg" alt="POTHANSAI Logo">
+      <span class="logo-text">PothansAI</span>
+    </a>
+    <span class="flex-spacer"></span>
+    <a mat-icon-button class="logo-mobile" [href]="staticWebsiteUrl" color="primary">
+      <mat-icon>home</mat-icon>
+    </a>
+  </mat-toolbar>
 
-</style>
-<mat-toolbar color="primary" class="navbar">
-  <a class="logo" [href]="staticWebsiteUrl">POTHANSAI</a>
-  <span class="spacer"></span>
-  <a mat-raised-button color="accent" [href]="staticWebsiteUrl" class="small-logo">P</a>
-</mat-toolbar>
-<mat-sidenav-container>
-  <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
+  <div class="login-card mat-elevation-z12">
+    <div class="login-header">
+      <div class="logo-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h2>Register {{userType | lowercase}}</h2>
+    </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60">
-      <mat-card class="p-0 mat-elevation-z24 box register">
-        <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
-          <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit();">
-            <mat-icon>person_add</mat-icon>
-          </button>
-          <a mat-button routerLink="/login">Already have an account? Sign in!</a>
+    <div class="login-content">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter your full name">
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="form.controls.name.errors?.required">Full Name is required</mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('minlength')">
+              Full Name must be at least 3 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="Enter your email">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
+            <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
+          </mat-form-field>
         </div>
-        <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
-          <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
-            <span class="box-content-header">Register member</span>
-            <mat-form-field class="w-100">
-              <input matInput placeholder="Full Name" formControlName="name">
-              <mat-error *ngIf="form.controls.name.errors?.required">Full Name is required</mat-error>
-              <mat-error *ngIf="form.controls.name.hasError('minlength')">Full Name isn't long enough, minimum of 3
-                characters</mat-error>
-            </mat-form-field>
-            <mat-form-field class="w-100">
-              <input matInput placeholder="Email" formControlName="email">
-              <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
-              <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
-            </mat-form-field>
-            <mat-form-field class="w-100">
-              <input matInput placeholder="Mob No" formControlName="mob_no">
-              <mat-error *ngIf="form.controls.mob_no.errors?.required">Mob No is required</mat-error>
-              <mat-error *ngIf="form.controls.mob_no.hasError('minlength')">Invalid Mob No address</mat-error>
-            </mat-form-field>
-            <mat-form-field class="w-100">
-              <mat-label>Refereed By</mat-label>
-              <mat-select formControlName="parent_id">
-                <mat-option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <!-- Shown only for EMPLOYEE -->
-            <mat-form-field class="w-100" *ngIf="userType === 'EMPLOYEE'">
-              <mat-label>Department</mat-label>
-              <mat-select formControlName="department_id">
-                <mat-option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
 
-            <!-- Shown only for CLIENT -->
-            <mat-form-field class="w-100" *ngIf="userType === 'CLIENT'">
-              <mat-label>Service</mat-label>
-              <mat-select formControlName="service_id">
-                <mat-option *ngFor="let s of services" [value]="s.id">{{ s.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput formControlName="mob_no" type="tel" placeholder="Enter your mobile number">
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-error *ngIf="form.controls.mob_no.errors?.required">Mobile number is required</mat-error>
+            <mat-error *ngIf="form.controls.mob_no.hasError('minlength')">Invalid mobile number</mat-error>
+          </mat-form-field>
 
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Referred By</mat-label>
+            <mat-select formControlName="parent_id">
+              <mat-option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>group</mat-icon>
+          </mat-form-field>
+        </div>
 
-            <mat-form-field class="w-100">
-              <input matInput placeholder="Password" formControlName="password" type="password" minlength="6">
-              <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
-              <mat-error *ngIf="form.controls.password.hasError('minlength')">Password isn't long enough, minimum of 6
-                characters</mat-error>
-            </mat-form-field>
-            <mat-form-field class="w-100">
-              <input matInput placeholder="Confirm Password" formControlName="confirm_password" type="password">
-              <mat-error *ngIf="form.controls.confirm_password.errors?.required">Confirm Password is required
-              </mat-error>
-              <mat-error *ngIf="form.controls.confirm_password.hasError('mismatchedPasswords')">Passwords do not match
-              </mat-error>
-            </mat-form-field>
-          </mat-card>
-          <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">SIGN UP</button>
-        </mat-card-content>
-      </mat-card>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field" *ngIf="userType === 'EMPLOYEE'">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="department_id">
+              <mat-option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>business</mat-icon>
+          </mat-form-field>
 
-    </form>
+          <mat-form-field appearance="outline" class="form-field" *ngIf="userType === 'CLIENT'">
+            <mat-label>Service</mat-label>
+            <mat-select formControlName="service_id">
+              <mat-option *ngFor="let s of services" [value]="s.id">{{ s.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>assignment</mat-icon>
+          </mat-form-field>
 
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hide ? 'password' : 'text'"
+              placeholder="Choose a password">
+            <mat-icon matPrefix>lock</mat-icon>
+            <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
+            <mat-error *ngIf="form.controls.password.hasError('minlength')">
+              Password must be at least 6 characters
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName="confirm_password" [type]="hide ? 'password' : 'text'"
+              placeholder="Confirm your password">
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <mat-error *ngIf="form.controls.confirm_password.errors?.required">Confirm Password is required</mat-error>
+            <mat-error *ngIf="form.controls.confirm_password.hasError('mismatchedPasswords')">
+              Passwords do not match
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="login-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading">
+            {{ loading ? 'SIGNING UP...' : 'SIGN UP' }}
+          </button>
+          <div class="signup-footer mt-2">
+            <span>Already have an account? </span>
+            <a routerLink="/login">Sign in!</a>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
-
-</mat-sidenav-container>
+</div>

@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit {
-  
+
   // Forms
   verifyForm!: FormGroup;
   resetForm!: FormGroup;
@@ -18,6 +18,7 @@ export class ForgotPasswordComponent implements OnInit {
   // State flags
   isVerified = false;
   isLoading = false;
+  hide = true;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +32,7 @@ export class ForgotPasswordComponent implements OnInit {
     // 1. Initialize Verification Form
     this.verifyForm = this.fb.group({
       email: [this.data.email || '', [Validators.required, Validators.email]],
-      mob_no: ['', [Validators.required, Validators.minLength(10)]] 
+      mob_no: ['', [Validators.required, Validators.minLength(10)]]
     });
 
     // 2. Initialize Reset Password Form

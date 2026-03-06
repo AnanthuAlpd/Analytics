@@ -1,2 +1,0 @@
-http://localhost:4200/login/employee
-http://localhost:4200/dashboard/demo

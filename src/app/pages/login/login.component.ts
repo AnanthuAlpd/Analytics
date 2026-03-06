@@ -9,17 +9,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
 // 1. New Imports
 import { MatDialog } from '@angular/material/dialog';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component'; 
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   public form: UntypedFormGroup;
   public settings: Settings;
-  userType: 'EMPLOYEE' | 'CLIENT' = 'EMPLOYEE';
-  staticWebsiteUrl: any;
+  public userType: 'EMPLOYEE' | 'CLIENT' = 'EMPLOYEE';
+  public staticWebsiteUrl: any;
+  public hide = true;
+  public loading = false;
 
   constructor(
     public appSettings: AppSettings,
@@ -46,10 +49,12 @@ export class LoginComponent {
   public onSubmit(value: any): void {
     if (this.form.invalid) return;
 
+    this.loading = true;
     const loginData = this.form.value;
 
     this.authService.login(loginData).subscribe({
       next: (response: any) => {
+        this.loading = false;
         this.snackBar.open('Login successful!', 'Close', {
           duration: 3000,
           panelClass: ['success-snackbar']
@@ -76,6 +81,7 @@ export class LoginComponent {
         }
       },
       error: (error) => {
+        this.loading = false;
         console.error('Login error:', error);
         this.snackBar.open(error?.error?.message || 'Login failed!', 'Close', {
           duration: 3000,
