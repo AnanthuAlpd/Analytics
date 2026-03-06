@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { SharedModule } from '../../shared/shared.module';
 import { DashboardComponent } from './dashboard.component';
@@ -25,7 +26,7 @@ export const routes: Routes = [
     path: '',
     component: DashboardComponent,
     canActivate: [AuthGuard],
-    data: { breadcrumb: 'Admin Dashboard', role_id: 1 } 
+    data: { breadcrumb: 'Admin Dashboard', role_id: 1 }
   },
   {
     path: 'demo',
@@ -54,6 +55,7 @@ export const routes: Routes = [
     RouterModule.forChild(routes),
     FormsModule,
     NgxChartsModule,
+    NgApexchartsModule,
     PerfectScrollbarModule,
     SharedModule,
     NgxDatatableModule,

@@ -63,7 +63,6 @@ export class DemoDashboardService {
   /** Fetch sales trend (Historical + Predicted) */
   getSalesTrendData(productId?: number): Observable<SalesData[]> {
     const params: any = productId ? { product_id: productId } : {};
-
     return this.http
       .get<{ status: string; message: string; data: SalesData[] }>(
         `${this.apiUrl}/demo-dashboard/sales-trend`,
@@ -126,6 +125,24 @@ export class DemoDashboardService {
       map(response => {
         if (response.status !== 'success') {
           throw new Error(response.message || 'Failed to fetch product growth data');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    )
+  }
+
+  getTop10ProductGrowthData(productId?: number): Observable<SalesData[]> {
+    let params = new HttpParams();
+    if (productId) {
+      params = params.set('product_id', productId.toString());
+    }
+    return this.http.get<{ status: string; message: string; data: SalesData[] }>(
+      `${this.apiUrl}/demo-dashboard/top-10-product-growth`, { params }
+    ).pipe(
+      map(response => {
+        if (response.status !== 'success') {
+          throw new Error(response.message || 'Failed to fetch top 10 product growth data');
         }
         return response.data;
       }),

@@ -1,442 +1,906 @@
-// forecast-dashboard.component.scss
+// ============================================
+// ULTRA COMPACT DASHBOARD - ENHANCED UI/UX
+// Improved line chart styling and interactions
+// ============================================
+
+// ============================================
+// ENHANCED COLOR PALETTE
+// ============================================
+$color-revenue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$color-profit: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+$color-aov: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+$color-products: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+$color-prediction: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+$color-growth: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+$color-accuracy: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+$color-backorder-warning: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+$color-backorder-success: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+
+$color-success: #10b981;
+$color-warning: #f59e0b;
+$color-error: #ef4444;
+$color-info: #3b82f6;
+
+$color-text-primary: #1f2937;
+$color-text-secondary: #6b7280;
+$color-text-muted: #9ca3af;
+
+// Enhanced chart colors
+$chart-primary: #667eea;
+$chart-secondary: #f5576c;
+$chart-accent: #43e97b;
+$chart-grid: rgba(156, 163, 175, 0.15);
+$chart-axis: #9ca3af;
+
+// ============================================
+// ORIGINAL DASHBOARD CONTAINER
+// ============================================
 .dashboard-container {
-  padding: 20px;
+  padding: 0;
   min-height: 100vh;
+  margin: 0;
 }
 
-// Enhanced KPI Cards with Option 1 styling
-.kpi-card {
-  position: relative;
+// ============================================
+// ULTRA COMPACT DASHBOARD
+// ============================================
+.kpi-dashboard-compact {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// Section Headers - Ultra Compact
+.section-header-compact {
+  margin: 0 0 4px 0;
+  padding: 6px 8px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0;
+    padding: 0;
+    letter-spacing: -0.025em;
+  }
+}
+
+// ============================================
+// ULTRA COMPACT GRID
+// ============================================
+.kpi-grid-compact {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// ============================================
+// ULTRA COMPACT KPI CARDS
+// ============================================
+.kpi-card-compact {
+  border-radius: 8px;
+  border: none;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
   overflow: hidden;
-  border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  position: relative;
+  margin: 0;
 
-  // Gradient backgrounds for different card types
-  &.product-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  &.sales-card {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  }
-
-  &.growth-card {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-
-  &.backlog-card {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  }
-
-  &.accuracy-card {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  }
-
-  // Hover effects
   &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow:
-      0 12px 28px rgba(0, 0, 0, 0.15),
-      0 8px 20px rgba(0, 0, 0, 0.12);
-
-    &::before {
-      opacity: 1;
-    }
-
-    .kpi-icon .icon-background {
-      transform: scale(1.1) rotate(5deg);
-      opacity: 0.4;
-    }
-
-    .kpi-value {
-      transform: scale(1.05);
-    }
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
   }
 
   .mat-card-content {
-    padding: 20px;
-    position: relative;
-    z-index: 2;
+    padding: 8px !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .kpi-value {
-    font-size: 2.4em;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-
-    &.positive {
-      color: #4CAF50;
-    }
-
-    &.negative {
-      color: #F44336;
-    }
-  }
-
-  .kpi-label {
-    font-size: 0.95em;
-    opacity: 0.9;
-    color: white;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-
-  // Icon styling
-  .kpi-icon {
-    .icon-background {
-      font-size: 3.5em;
-      opacity: 0.25;
-      width: 70px;
-      height: 70px;
-      color: white;
-      transition: all 0.3s ease;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-    }
-  }
-
-  // Trend indicator styling
-  .kpi-trend {
+  .card-header-compact {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.85em;
-    margin-top: 12px;
-    color: rgba(255, 255, 255, 0.9);
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+  }
+
+  .icon-wrapper-compact {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin: 0;
 
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      transition: transform 0.2s ease;
+      color: white;
     }
 
+    &.revenue {
+      background: $color-revenue;
+    }
+
+    &.profit {
+      background: $color-profit;
+    }
+
+    &.aov {
+      background: $color-aov;
+    }
+
+    &.products {
+      background: $color-products;
+    }
+
+    &.prediction {
+      background: $color-prediction;
+    }
+
+    &.growth {
+      background: $color-growth;
+    }
+
+    &.accuracy {
+      background: $color-accuracy;
+    }
+
+    &.backorder {
+      background: linear-gradient(135deg, $color-text-secondary 0%, darken($color-text-secondary, 10%) 100%);
+
+      &.warning {
+        background: $color-backorder-warning;
+      }
+
+      &.success {
+        background: $color-backorder-success;
+      }
+    }
+  }
+
+  // Badges - Ultra Compact
+  .trend-badge-compact,
+  .metric-badge-compact,
+  .accuracy-badge-compact,
+  .status-badge-compact,
+  .alert-badge-compact,
+  .success-badge-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    margin: 0;
+
+    mat-icon {
+      font-size: 12px;
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .trend-badge-compact {
     &.positive {
-      color: rgba(255, 255, 255, 0.95);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.25) 100%);
+      color: darken($color-success, 10%);
 
       mat-icon {
-        color: #4CAF50;
+        color: $color-success;
       }
     }
 
     &.negative {
-      color: rgba(255, 255, 255, 0.8);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.25) 100%);
+      color: darken($color-error, 10%);
 
       mat-icon {
-        color: #F44336;
+        color: $color-error;
       }
-    }
-
-    span {
-      font-weight: 500;
     }
   }
 
-  // Layout for the card content
-  .mat-card-content>div[fxLayout="row"] {
+  .metric-badge-compact {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.25) 100%);
+    color: darken($color-info, 15%);
+  }
+
+  .accuracy-badge-compact {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.25) 100%);
+    color: darken($color-success, 10%);
+
+    mat-icon {
+      color: $color-success;
+    }
+  }
+
+  .status-badge-compact {
+    &.excellent {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.25) 100%);
+      color: darken($color-success, 10%);
+    }
+
+    &.good {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.25) 100%);
+      color: darken($color-info, 10%);
+    }
+
+    &.fair {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.25) 100%);
+      color: darken($color-warning, 15%);
+    }
+
+    &.poor {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.25) 100%);
+      color: darken($color-error, 10%);
+    }
+  }
+
+  .alert-badge-compact {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.25) 100%);
+    color: darken($color-error, 10%);
+
+    mat-icon {
+      color: $color-error;
+    }
+  }
+
+  .success-badge-compact {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.25) 100%);
+    color: darken($color-success, 10%);
+
+    mat-icon {
+      color: $color-success;
+    }
+  }
+
+  // Card Body - Ultra Compact
+  .card-body-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+
+    &.split {
+      flex-direction: row;
+      gap: 6px;
+      padding-top: 2px;
+
+      .split-section-compact {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .divider-compact {
+        width: 1px;
+        background: #e5e7eb;
+      }
+    }
+  }
+
+  .kpi-label-compact {
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    padding: 0;
+  }
+
+  .kpi-label-small-compact {
+    font-size: 0.5625rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    padding: 0;
+  }
+
+  .kpi-value-compact {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 0;
+    padding: 0;
+  }
+
+  .kpi-value-small-compact {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 0;
+    padding: 0;
+
+    &.positive-text {
+      color: $color-success;
+    }
+
+    &.negative-text {
+      color: $color-error;
+    }
+  }
+
+  .kpi-meta-compact {
+    font-size: 0.625rem;
+    color: $color-text-muted;
+    margin: 0;
+    padding: 0;
+  }
+
+  .warning-text {
+    color: $color-error !important;
+  }
+
+  .success-text {
+    color: $color-success !important;
+  }
+
+  // Card Footer - Ultra Compact
+  .card-footer-compact {
+    padding-top: 2px;
+    border-top: 1px solid #f3f4f6;
+    margin: 2px 0 0 0;
+  }
+
+  .growth-delta-compact {
+    display: inline-flex;
     align-items: center;
-  }
-}
-
-// Table Styles
-.forecast-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th {
+    gap: 2px;
+    font-size: 0.625rem;
     font-weight: 600;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 16px 12px;
+    margin: 0;
 
-    &:first-child {
-      border-top-left-radius: 8px;
-      padding-left: 24px;
+    mat-icon {
+      font-size: 12px;
+      width: 12px;
+      height: 12px;
     }
 
-    &:last-child {
-      border-top-right-radius: 8px;
-      padding-right: 24px;
-    }
-  }
-
-  td {
-    padding: 14px 12px;
-    border-bottom: 1px solid #e0e0e0;
-    transition: background-color 0.2s ease;
-
-    &:first-child {
-      padding-left: 24px;
-      font-weight: 500;
+    &.positive {
+      color: $color-success;
     }
 
-    &:last-child {
-      padding-right: 24px;
+    &.negative {
+      color: $color-error;
     }
   }
 
-  tr {
-    transition: all 0.2s ease;
+  .progress-bar-compact {
+    width: 100%;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
 
-    &:hover {
-      background-color: #f8f9fa;
-      transform: translateX(4px);
+    .progress-fill-compact {
+      height: 100%;
+      background: $color-success;
+      transition: width 0.5s ease;
+      border-radius: 2px;
 
-      td {
-        background-color: transparent;
+      &.poor {
+        background: linear-gradient(90deg, $color-error 0%, lighten($color-error, 10%) 100%);
+      }
+
+      &.fair {
+        background: linear-gradient(90deg, $color-warning 0%, lighten($color-warning, 10%) 100%);
+      }
+
+      &.good {
+        background: linear-gradient(90deg, $color-info 0%, lighten($color-info, 10%) 100%);
+      }
+
+      &.excellent {
+        background: linear-gradient(90deg, $color-success 0%, lighten($color-success, 10%) 100%);
       }
     }
   }
-
-  .growth-positive {
-    color: #4CAF50;
-    font-weight: 600;
-  }
-
-  .growth-negative {
-    color: #F44336;
-    font-weight: 600;
-  }
-
-  .growth-neutral {
-    color: #FFC107;
-    font-weight: 600;
-  }
 }
 
-// Badge Styles with hover effects
-.confidence-badge,
-.backlog-severity {
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.8em;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-block;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.confidence-high {
-  background: rgba(76, 175, 80, 0.15);
-  color: #4CAF50;
-  border: 1px solid rgba(76, 175, 80, 0.3);
-
-  &:hover {
-    background: rgba(76, 175, 80, 0.25);
-  }
-}
-
-.confidence-medium {
-  background: rgba(255, 193, 7, 0.15);
-  color: #FFC107;
-  border: 1px solid rgba(255, 193, 7, 0.3);
-
-  &:hover {
-    background: rgba(255, 193, 7, 0.25);
-  }
-}
-
-.confidence-low {
-  background: rgba(244, 67, 54, 0.15);
-  color: #F44336;
-  border: 1px solid rgba(244, 67, 54, 0.3);
-
-  &:hover {
-    background: rgba(244, 67, 54, 0.25);
-  }
-}
-
-// Chart Cards with enhanced styling
+// ============================================
+// ENHANCED CHART CARDS
+// ============================================
 .chart-card {
-  width: 100%;
   border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  &.enhanced-chart {
+    background: linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    mat-card-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+      padding: 20px 24px;
+    }
+  }
+
+  mat-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: $color-text-primary;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .chart-icon {
+    color: $chart-primary;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
 
   mat-card-content {
+    padding: 24px;
+    position: relative;
+  }
+}
+
+// Enhanced Chart Title Wrapper
+.chart-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .chart-title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-subtitle {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: $color-text-secondary;
+    margin-left: 28px;
+  }
+}
+
+// Chart Controls & Legend
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  .legend-indicators {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: $color-text-secondary;
+
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+        &.revenue-dot {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        &.profit-dot {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+      }
+
+      .legend-text {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Enhanced Chart Wrapper
+.chart-wrapper {
+  position: relative;
+  min-height: 340px;
+  padding: 12px 0;
+
+  ngx-charts-pie-chart,
+  ngx-charts-bar-vertical,
+  ngx-charts-line-chart,
+  ngx-charts-bar-vertical-2d {
     display: block;
     width: 100%;
-    padding: 0 !important;
+    height: 100%;
   }
 
-  .mat-card-header {
-    padding: 20px 20px 0;
-
-    .mat-card-title {
-      font-size: 1.2em;
-      font-weight: 600;
-      color: #2c3e50;
-    }
-  }
-
-  ngx-charts-line-chart,
-  ngx-charts-bar-vertical-2d,
-  ngx-charts-bar-vertical,
-  ngx-charts-pie-chart {
-    width: 100% !important;
-    height: 380px !important;
+  /* ApexCharts Hybrid Fix */
+  &.apex-wrapper {
+    width: 100%;
+    min-height: 350px;
     display: block;
-    transition: all 0.3s ease;
-  }
 
-  @media (max-width: 960px) {
-
-    ngx-charts-line-chart,
-    ngx-charts-bar-vertical-2d,
-    ngx-charts-bar-vertical,
-    ngx-charts-pie-chart {
-      height: 320px !important;
+    apx-chart {
+      display: block;
+      width: 100%;
     }
   }
 }
 
-// Filter section styling
-.filter-section {
-  border-radius: 12px;
-  transition: all 0.3s ease;
+// Empty State
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: $color-text-muted;
 
-  &:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
   }
 
-  .mat-form-field {
-    .mat-form-field-outline {
-      border-radius: 8px;
-    }
+  p {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
 
-    &:hover {
-      .mat-form-field-outline {
-        border-color: #667eea;
+// Chart Insights Footer
+.chart-insights {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+  .insight-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+
+    .insight-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: $color-text-secondary;
+
+      &.positive {
+        color: $color-success;
       }
     }
-  }
-}
 
-// Responsive Design
-@media (max-width: 959px) {
-  .dashboard-container {
-    padding: 16px;
-  }
-
-  .kpi-card {
-    .kpi-value {
-      font-size: 2em;
-    }
-
-    .kpi-icon .icon-background {
-      font-size: 2.8em;
-      width: 50px;
-      height: 50px;
-    }
-  }
-
-  .forecast-table {
-
-    th,
-    td {
-      padding: 12px 8px;
-
-      &:first-child {
-        padding-left: 16px;
-      }
-
-      &:last-child {
-        padding-right: 16px;
-      }
+    .insight-text {
+      color: $color-text-secondary;
+      font-weight: 500;
     }
   }
 }
 
-@media (max-width: 599px) {
-  .dashboard-container {
-    padding: 12px;
-  }
+// ============================================
+// ENHANCED LINE CHART STYLING
+// ============================================
+.enhanced-line-chart {
+  ::ng-deep {
 
-  .kpi-card {
-    .mat-card-content {
-      padding: 16px;
+    // Chart container
+    .ngx-charts {
+      position: relative;
+      overflow: visible !important;
     }
 
-    .kpi-value {
-      font-size: 1.8em;
+    // Grid lines - lighter and more elegant
+    .gridline-path {
+      stroke: $chart-grid !important;
+      stroke-width: 1 !important;
+      stroke-dasharray: 3, 3;
+      opacity: 0.7;
     }
 
-    .kpi-icon .icon-background {
-      font-size: 2.5em;
-      width: 45px;
-      height: 45px;
-    }
+    // Axis styling
+    .x-axis,
+    .y-axis {
+      .tick {
+        line {
+          stroke: $chart-grid !important;
+          stroke-width: 1 !important;
+        }
 
-    .kpi-trend {
-      font-size: 0.8em;
-    }
-  }
-
-  .forecast-table {
-    display: block;
-    overflow-x: auto;
-
-    th,
-    td {
-      padding: 10px 6px;
-      font-size: 0.85em;
-
-      &:first-child {
-        padding-left: 12px;
-      }
-
-      &:last-child {
-        padding-right: 12px;
+        text {
+          fill: $chart-axis !important;
+          font-size: 11px !important;
+          font-weight: 500 !important;
+        }
       }
     }
+
+    // Axis labels
+    .axis-label {
+      fill: $color-text-secondary !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    // Line paths - enhanced with better visibility
+    .line-series {
+      .line {
+        stroke-width: 3 !important;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: all 0.3s ease;
+
+        &:hover {
+          stroke-width: 4 !important;
+        }
+      }
+    }
+
+    // Data points/circles
+    .line-series {
+      circle {
+        r: 4 !important;
+        stroke-width: 2 !important;
+        stroke: white !important;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          r: 6 !important;
+          stroke-width: 3 !important;
+        }
+      }
+    }
+
+    // Tooltip enhancements
+    .tooltip-anchor {
+      .ngx-charts-tooltip-content {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+        padding: 12px 16px !important;
+
+        .tooltip-caret {
+          border-top-color: rgba(255, 255, 255, 0.98) !important;
+        }
+
+        .tooltip-label {
+          font-size: 11px !important;
+          font-weight: 600 !important;
+          color: $color-text-secondary !important;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px !important;
+        }
+
+        .tooltip-val {
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          color: $color-text-primary !important;
+        }
+      }
+    }
+
+    // Legend enhancements
+    .legend {
+      .legend-labels {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+
+        .legend-label {
+          .legend-label-text {
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            color: $color-text-primary !important;
+          }
+
+          &:hover {
+            .legend-label-text {
+              color: $chart-primary !important;
+            }
+          }
+        }
+      }
+    }
+
+    // Animation on load
+    .line-series {
+      animation: fadeInChart 0.8s ease-out;
+    }
   }
 }
 
-// Animation for value changes
-@keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+@keyframes fadeInChart {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
-  70% {
-    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.value-updated {
-  animation: pulseGlow 2s;
+// ============================================
+// LOADING OVERLAY
+// ============================================
+.loading-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
 }
 
-// Custom scrollbar for table
+// ============================================
+// FORECAST TABLE (PRESERVED)
+// ============================================
+.forecast-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    color: $color-text-primary;
+    background: #f9fafb;
+  }
+
+  td {
+    padding: 12px 16px;
+  }
+
+  tr:hover {
+    background-color: #f9fafb;
+  }
+
+  .growth-positive {
+    color: $color-success;
+    font-weight: 600;
+  }
+
+  .growth-negative {
+    color: $color-error;
+    font-weight: 600;
+  }
+
+  .growth-neutral {
+    color: $color-text-secondary;
+  }
+
+  .confidence-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &.confidence-high {
+      background: rgba(16, 185, 129, 0.15);
+      color: darken($color-success, 10%);
+    }
+
+    &.confidence-medium {
+      background: rgba(59, 130, 246, 0.15);
+      color: darken($color-info, 10%);
+    }
+
+    &.confidence-low {
+      background: rgba(245, 158, 11, 0.15);
+      color: darken($color-warning, 15%);
+    }
+  }
+
+  .backlog-severity {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &.severity-critical {
+      background: rgba(239, 68, 68, 0.15);
+      color: darken($color-error, 10%);
+    }
+
+    &.severity-high {
+      background: rgba(245, 158, 11, 0.15);
+      color: darken($color-warning, 15%);
+    }
+
+    &.severity-medium {
+      background: rgba(59, 130, 246, 0.15);
+      color: darken($color-info, 10%);
+    }
+
+    &.severity-low {
+      background: rgba(16, 185, 129, 0.15);
+      color: darken($color-success, 10%);
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-card-compact {
+  animation: slideInUp 0.3s ease-out;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.03}s;
+    }
+  }
+}
+
+// ============================================
+// CUSTOM SCROLLBAR
+// ============================================
 .forecast-table-container {
   &::-webkit-scrollbar {
     height: 6px;
@@ -457,40 +921,9 @@
   }
 }
 
-// Enhanced Analytics Styles
-.revenue-card {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
-  color: white;
-
-  .kpi-value,
-  .kpi-label,
-  .kpi-trend {
-    color: white;
-  }
-}
-
-.profit-card {
-  background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%) !important;
-  color: white;
-
-  .kpi-value,
-  .kpi-label,
-  .kpi-trend {
-    color: white;
-  }
-}
-
-.aov-card {
-  background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%) !important;
-  color: white;
-
-  .kpi-value,
-  .kpi-label,
-  .kpi-trend {
-    color: white;
-  }
-}
-
+// ============================================
+// ALERTS CARD
+// ============================================
 .alerts-card {
   mat-card-title {
     display: flex;
@@ -540,23 +973,169 @@
 
   .alert-title {
     font-weight: 600;
-    font-size: 14px;
     margin-bottom: 4px;
   }
 
   .alert-message {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 4px;
+    color: #4b5563;
+    margin-bottom: 8px;
+    font-size: 0.9em;
   }
 
   .alert-action {
-    font-size: 12px;
-    color: #888;
-    font-style: italic;
+    font-size: 0.85em;
+    color: #374151;
   }
 }
 
+// ============================================
+// LAYOUT UTILITIES
+// ============================================
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+
+  @media (max-width: 1279px) {
+    flex-direction: column;
+  }
+}
+
+.health-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+
+  @media (max-width: 959px) {
+    flex-direction: column;
+  }
+}
+
+// Flex Utilities
+.col-20 {
+  flex: 0 0 calc(20% - 16px);
+  max-width: calc(20% - 16px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-40 {
+  flex: 0 0 calc(40% - 10px);
+  max-width: calc(40% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .health-row & {
+    @media (max-width: 959px) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+.col-50 {
+  flex: 0 0 calc(50% - 10px);
+  max-width: calc(50% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-60 {
+  flex: 0 0 calc(60% - 10px);
+  max-width: calc(60% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .health-row & {
+    @media (max-width: 959px) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+.col-75 {
+  flex: 0 0 calc(75% - 10px);
+  max-width: calc(75% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-100 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.col-25 {
+  flex: 0 0 calc(25% - 10px);
+  max-width: calc(25% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-30 {
+  flex: 0 0 calc(30% - 10px);
+  max-width: calc(30% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-70 {
+  flex: 0 0 calc(70% - 10px);
+  max-width: calc(70% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.col-80 {
+  flex: 0 0 calc(80% - 10px);
+  max-width: calc(80% - 10px);
+
+  @media (max-width: 1279px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.w-100 {
+  width: 100%;
+}
+
+// ============================================
+// TOP PERFORMERS TABLE
+// ============================================
 .top-performers-table {
   width: 100%;
 
@@ -586,7 +1165,9 @@
   }
 }
 
-// Health Cards
+// ============================================
+// HEALTH CARDS
+// ============================================
 .health-card {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -600,9 +1181,17 @@
     gap: 10px;
 
     mat-icon {
-      &.positive { color: #4caf50; }
-      &.negative { color: #f44336; }
-      &.warning { color: #ffc107; }
+      &.positive {
+        color: #4caf50;
+      }
+
+      &.negative {
+        color: #f44336;
+      }
+
+      &.warning {
+        color: #ffc107;
+      }
     }
   }
 
@@ -644,4 +1233,156 @@
   color: #4caf50;
   font-style: italic;
   padding: 10px;
+}
+
+.loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  color: #6b7280;
+  gap: 12px;
+}
+
+.chart-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px 0;
+
+  h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .chart-filter {
+    width: 200px;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    .chart-filter {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================
+// CHART HEADER GRID
+// ============================================
+.chart-header-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 16px 16px 0;
+
+  h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-filter {
+    width: 100%;
+
+    .mat-form-field {
+      width: 100%;
+      font-size: 0.85em;
+    }
+  }
+}
+
+// ============================================
+// DASHBOARD TABS
+// ============================================
+.dashboard-tabs {
+  margin-top: 8px;
+  background: transparent;
+
+  ::ng-deep .mat-tab-header {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  ::ng-deep .mat-tab-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #6b7280;
+    opacity: 0.8;
+    height: 48px;
+    padding: 0 24px;
+
+    &.mat-tab-label-active {
+      color: #667eea;
+      opacity: 1;
+      font-weight: 700;
+    }
+  }
+
+  ::ng-deep .mat-ink-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+    height: 3px;
+  }
+}
+
+.tab-content {
+  padding: 16px 24px 24px 24px;
+  animation: fadeEffect 0.4s ease-out;
+}
+
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Scoped styles for Forecast Tab
+.forecast-tab {
+
+  .chart-wrapper,
+  .loading-overlay {
+    height: 450px !important; // Force height
+  }
+
+  // Scoped compact padding for Forecast Tab
+  .enhanced-chart {
+    mat-card-header {
+      padding: 8px 16px !important;
+    }
+
+    mat-card-content {
+      padding: 8px !important;
+    }
+  }
+
+  // Remove wrapper padding in Forecast Tab
+  .chart-wrapper {
+    padding: 0 !important;
+  }
+
+  ngx-charts-pie-chart,
+  ngx-charts-bar-vertical,
+  ngx-charts-bar-vertical-2d {
+    display: block;
+    height: 100% !important;
+    width: 100% !important;
+  }
 }

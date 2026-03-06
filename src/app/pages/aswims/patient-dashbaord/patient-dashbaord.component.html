@@ -1,7 +1,7 @@
 <div class="dashboard-wrapper" *ngIf="!isLoading">
   <div class="header">
     <div class="title-area">
-      <button mat-icon-button routerLink="/aswims/ward-overview">
+      <button mat-icon-button routerLink="/aswims/dashboard/overview">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
@@ -10,14 +10,14 @@
       </div>
     </div>
     <div class="header-actions">
-      <button mat-stroked-button (click)="openHistory()">
+      <button mat-stroked-button (click)="openHistory(patientInfo)" matTooltip="View Clinical History">
         <mat-icon>history</mat-icon> HISTORY
       </button>
-      <button mat-flat-button color="primary" (click)="openVitalsForm()">
-        <mat-icon>add</mat-icon> VITALS/NOTES
+      <button mat-flat-button color="primary" (click)="openVitalsForm(patientInfo)" matTooltip="Add Vitals">
+        <mat-icon>add</mat-icon> VITALS
       </button>
-      <button mat-flat-button color="accent" (click)="openMedicationForm()">
-        <mat-icon>medication</mat-icon> TREATMENT
+      <button mat-flat-button color="accent" (click)="onEdit(patientInfo)" matTooltip="Add Treatment / Clinical Notes">
+        <mat-icon>medication</mat-icon> TREATMENT/NOTES
       </button>
     </div>
   </div>

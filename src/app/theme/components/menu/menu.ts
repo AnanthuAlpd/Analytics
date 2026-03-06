@@ -61,12 +61,12 @@ export const verticalMenuItems = [
     // new Menu (141, 'Level 2', null, null, 'folder_open', null, true, 140),
     // new Menu (142, 'Level 3', null, null, 'folder_open', null, true, 141),
     // new Menu (143, 'Level 4', null, null, 'folder_open', null, true, 142),
-    new Menu(201, 'Expenses', '/expenses', null, 'account_balance_wallet', null, false, 0)
+    // new Menu(2, 'Expenses', '/expenses', null, 'account_balance_wallet', null, false, 0)
 ]
 
 export const horizontalMenuItems = [
-    new Menu(1, 'Dashboard', '/dashboard', null, 'dashboard', null, false, 0),
-    new Menu(201, 'Expenses', '/expenses', null, 'account_balance_wallet', null, false, 0),
+    //new Menu(1, 'Dashboard', '/dashboard', null, 'dashboard', null, false, 0),
+    //  new Menu(2, 'Expenses', '/expenses', null, 'account_balance_wallet', null, false, 0),
     // new Menu (2,'Upload Excel','/upload_data',null,'backup icon',null,false,0),
     // new Menu (2, 'Users', '/users', null, 'supervisor_account', null, false, 0),
     // new Menu (3, 'UI Features', null, null, 'computer', null, true, 0),

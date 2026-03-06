@@ -1,579 +1,573 @@
 <!-- forecast-dashboard.component.html -->
-<div fxLayout="column" fxLayoutGap="20px" class="dashboard-container">
+<div class="dashboard-container">
 
-  <!-- Enhanced KPI Cards with Icons -->
-  <div *ngIf="kpiSummaryNew" fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column">
-    <!-- Total Products Card -->
-    <mat-card fxFlex class="kpi-card product-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">{{kpiSummaryNew.totalProducts}}</div>
-            <div class="kpi-label">Total Products</div>
-            <div class="kpi-trend positive">
-              <mat-icon>trending_up</mat-icon>
-              <!-- <span>{{dashBoardDataKpi.trends.totalProducts}}</span> -->
-            </div>
+  <mat-tab-group animationDuration="0ms" class="dashboard-tabs">
+
+    <!-- TAB 1: BUSINESS OVERVIEW -->
+    <mat-tab label="Business Overview">
+      <div class="tab-content">
+
+        <!-- Enhanced KPI Cards with Icons -->
+        <div class="kpi-dashboard-compact">
+          <div class="section-header-compact"
+            style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Business Overview</h2>
+            <!-- <button mat-raised-button color="primary" routerLink="/budget-shopper">
+              <mat-icon>shopping_cart</mat-icon> Budget Shopper Tool
+            </button> -->
           </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">inventory_2</mat-icon>
+          <div class="kpi-grid-compact primary-metrics">
+            <mat-card *ngFor="let card of kpiCards" class="kpi-card-compact" [ngClass]="card.cardClass">
+              <mat-card-content>
+                <div class="card-header-compact">
+                  <div class="icon-wrapper-compact" [ngClass]="card.iconClass">
+                    <mat-icon>{{card.icon}}</mat-icon>
+                  </div>
+                  <span *ngIf="card.trend !== undefined" class="trend-badge-compact"
+                    [ngClass]="card.trend > 0 ? 'positive' : 'negative'">
+                    <mat-icon>{{card.trend > 0 ? 'trending_up' : 'trending_down'}}</mat-icon>
+                    {{card.trend | number:'1.1-1'}}%
+                  </span>
+                  <span *ngIf="card.badge !== undefined" class="metric-badge-compact">
+                    {{card.badge | number:'1.1-1'}}%
+                  </span>
+                </div>
+                <div class="card-body-compact">
+                  <div class="kpi-label-compact">{{card.label}}</div>
+                  <div class="kpi-value-compact">
+                    <ng-container *ngIf="card.isCurrency">₹</ng-container>{{card.value | number:'1.0-0'}}
+                  </div>
+
+                  <div class="kpi-meta-compact"
+                    style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <span>{{card.subValue}}</span>
+                    <div style="flex-shrink: 0;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
+
+                </div>
+              </mat-card-content>
+            </mat-card>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
 
-    <!-- Predicted Sales Card -->
-    <mat-card fxFlex class="kpi-card sales-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">{{kpiSummaryNew.predictedSales}}</div>
-            <div class="kpi-label">Predicted Sales</div>
-            <!-- <div class="kpi-trend" [ngClass]="kpiSummaryNew.totalPredictedSales >= kpiSummaryNew.previousActualSales ? 'positive' : 'negative'">
-                <mat-icon>{{kpiSummaryNew.totalPredictedSales >= kpiSummaryNew.previousActualSales ? 'show_chart' : 'trending_down'}}</mat-icon>
-                <span>{{dashBoardDataKpi.trends.totalPredictedSales}}</span>
-              </div> -->
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">analytics</mat-icon>
-          </div>
+        <!-- Enhanced Analytics Charts Row -->
+        <div class="chart-row" style="margin-top: 20px;">
+          <!-- IMPROVED Revenue Trend Chart -->
+          <mat-card class="chart-card col-60 enhanced-chart">
+            <mat-card-header>
+              <div class="chart-title-wrapper">
+                <div class="chart-title-content">
+                  <mat-icon class="chart-icon">trending_up</mat-icon>
+                  <mat-card-title>Revenue & Profit Trend</mat-card-title>
+                </div>
+                <div class="chart-subtitle">12-month performance overview</div>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- Chart Controls -->
+              <div class="chart-controls">
+                <div class="legend-indicators">
+                  <span class="legend-item">
+                    <span class="legend-dot revenue-dot"></span>
+                    <span class="legend-text">Revenue</span>
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-dot profit-dot"></span>
+                    <span class="legend-text">Profit</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Enhanced Line Chart (ApexCharts Hybrid) -->
+              <div class="chart-wrapper apex-wrapper">
+                <apx-chart
+                  *ngIf="revenueChartOptions && revenueChartOptions.series && revenueChartOptions.series.length > 0"
+                  [series]="revenueChartOptions.series" [chart]="revenueChartOptions.chart"
+                  [xaxis]="revenueChartOptions.xaxis" [yaxis]="revenueChartOptions.yaxis"
+                  [dataLabels]="revenueChartOptions.dataLabels" [grid]="revenueChartOptions.grid"
+                  [stroke]="revenueChartOptions.stroke" [colors]="revenueChartOptions.colors"
+                  [tooltip]="revenueChartOptions.tooltip" [legend]="revenueChartOptions.legend">
+                </apx-chart>
+
+                <!-- Loading state -->
+                <div
+                  *ngIf="!revenueChartOptions || !revenueChartOptions.series || revenueChartOptions.series.length === 0"
+                  class="chart-empty-state">
+                  <mat-icon>insights</mat-icon>
+                  <p>Loading revenue data...</p>
+                </div>
+              </div>
+
+              <!-- Chart Insights Footer -->
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <mat-icon class="insight-icon positive">arrow_upward</mat-icon>
+                  <span class="insight-text">Strong growth trajectory</span>
+                </div>
+                <div class="insight-item">
+                  <mat-icon class="insight-icon">trending_up</mat-icon>
+                  <span class="insight-text">Consistent month-over-month gains</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Category Performance Chart -->
+          <mat-card class="chart-card col-40">
+            <mat-card-header>
+              <mat-card-title>Sales by Category</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="chart-wrapper">
+                <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0"
+                  [view]="undefined" [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="false"
+                  [legend]="true" [legendPosition]="'below'" [labels]="false" [doughnut]="true" [arcWidth]="0.25"
+                  (select)="onSelect($event)" class="enhanced-pie-chart">
+                </ngx-charts-pie-chart>
+
+                <!-- Loading state -->
+                <div *ngIf="!categoryPerformanceData || categoryPerformanceData.length === 0" class="chart-empty-state">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <p>Loading category data...</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
-      </mat-card-content>
-    </mat-card>
 
-    <!-- Current Growth Rate Card -->
-    <mat-card fxFlex class="kpi-card growth-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value" [ngClass]="{
-                'positive': kpiSummaryNew.currentGrowthRate > 0,
-                'negative': kpiSummaryNew.currentGrowthRate <= 0
-              }">
-              {{kpiSummaryNew.currentGrowthRate | number:'1.1-1'}}%
-            </div>
-            <div class="kpi-label">Avg Current Growth Rate</div>
-            <div class="kpi-trend" [ngClass]="kpiSummaryNew.currentGrowthRate > 0 ? 'positive' : 'negative'">
-              <mat-icon>{{kpiSummaryNew.currentGrowthRate > 0 ? 'trending_up' : 'trending_down'}}</mat-icon>
-              <!-- <span>{{dashBoardDataKpi.trends.currentGrowthRate}}</span> -->
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">trending_up</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Predicted Growth Rate Card -->
-    <mat-card fxFlex class="kpi-card growth-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value" [ngClass]="{
-                'positive': kpiSummaryNew.predictedGrowthRate > 0,
-                'negative': kpiSummaryNew.predictedGrowthRate <= 0
-              }">
-              {{kpiSummaryNew.predictedGrowthRate | number:'1.1-1'}}%
-            </div>
-            <div class="kpi-label">Avg Predicted Growth Rate</div>
-            <div class="kpi-trend" [ngClass]="kpiSummaryNew.predictedGrowthRate > 0 ? 'positive' : 'negative'">
-              <mat-icon>{{kpiSummaryNew.averageGrowth > 0 ? 'trending_up' : 'trending_down'}}</mat-icon>
-              <span>{{kpiSummaryNew.averageGrowth}}</span>
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">trending_up</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Backlogs Card -->
-    <mat-card fxFlex class="kpi-card backlog-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">{{kpiSummaryNew.monthly_avg_backorder}}</div>
-            <div class="kpi-label">Monthly Average Backorder</div>
-            <div class="kpi-trend" [ngClass]="kpiSummaryNew.monthly_avg_backorder === 0 ? 'positive' : 'negative'">
-              <mat-icon>{{kpiSummaryNew.monthly_avg_backorder === 0 ? 'check_circle' : 'warning'}}</mat-icon>
-              <!-- <span>{{dashBoardDataKpi.trends.totalBacklogs}}</span> -->
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">pending_actions</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Accuracy Card -->
-    <mat-card fxFlex class="kpi-card accuracy-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">{{kpiSummaryNew.predictionAccuracy | number:'1.1-1'}}%</div>
-            <div class="kpi-label">Prediction Accuracy</div>
-            <div class="kpi-trend"
-              [ngClass]="kpiSummaryNew.predictionAccuracy >= 80 ? 'positive' : (dashBoardDataKpi.kpiSummary.predictionAccuracy >= 50 ? 'neutral' : 'negative')">
-              <mat-icon>{{kpiSummaryNew.predictionAccuracy >= 50 ? 'verified' : 'warning'}}</mat-icon>
-              <!-- <span>{{dashBoardDataKpi.trends.predictionAccuracy}}</span> -->
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">psychology</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Enhanced Revenue Metrics KPI Cards -->
-  <div *ngIf="revenueMetrics" fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" style="margin-top: 20px;">
-    <!-- Total Revenue Card -->
-    <mat-card fxFlex class="kpi-card revenue-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">₹{{revenueMetrics.total_revenue | number:'1.0-0'}}</div>
-            <div class="kpi-label">Total Revenue</div>
-            <div class="kpi-trend" [ngClass]="revenueMetrics.revenue_growth_yoy > 0 ? 'positive' : 'negative'">
-              <mat-icon>{{revenueMetrics.revenue_growth_yoy > 0 ? 'trending_up' : 'trending_down'}}</mat-icon>
-              <span>{{revenueMetrics.revenue_growth_yoy | number:'1.1-1'}}% YoY</span>
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">attach_money</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Gross Profit Card -->
-    <mat-card fxFlex class="kpi-card profit-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">₹{{revenueMetrics.gross_profit | number:'1.0-0'}}</div>
-            <div class="kpi-label">Gross Profit</div>
-            <div class="kpi-trend positive">
-              <mat-icon>account_balance_wallet</mat-icon>
-              <span>{{revenueMetrics.profit_margin | number:'1.1-1'}}% Margin</span>
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">savings</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Average Order Value Card -->
-    <mat-card fxFlex class="kpi-card aov-card">
-      <mat-card-content>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <div fxLayout="column">
-            <div class="kpi-value">₹{{revenueMetrics.avg_order_value | number:'1.0-0'}}</div>
-            <div class="kpi-label">Avg Order Value</div>
-            <div class="kpi-trend positive">
-              <mat-icon>shopping_cart</mat-icon>
-              <span>{{revenueMetrics.total_units_sold | number}} Units</span>
-            </div>
-          </div>
-          <div class="kpi-icon">
-            <mat-icon class="icon-background">receipt_long</mat-icon>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Business Alerts Section -->
-  <mat-card *ngIf="businessAlerts && businessAlerts.length > 0" style="margin-top: 20px;" class="alerts-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>notifications_active</mat-icon>
-        Business Alerts & Insights
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div fxLayout="column" fxLayoutGap="12px">
-        <div *ngFor="let alert of businessAlerts" class="alert-item" [ngClass]="'alert-' + alert.type">
-          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
-            <mat-icon [ngClass]="'severity-' + alert.severity">
-              {{alert.type === 'warning' ? 'warning' : alert.type === 'success' ? 'check_circle' : 'info'}}
-            </mat-icon>
-            <div fxFlex fxLayout="column">
-              <div class="alert-title">{{alert.title}}</div>
-              <div class="alert-message">{{alert.message}}</div>
-              <div class="alert-action"><strong>Action:</strong> {{alert.action}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Inventory Health Section -->
-  <div *ngIf="inventoryHealth" fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" style="margin-top: 20px;">
-    <!-- Inventory Value Card -->
-    <mat-card fxFlex="40" class="health-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon [ngClass]="inventoryHealth.status === 'Healthy' ? 'positive' : 'negative'">
-            {{inventoryHealth.status === 'Healthy' ? 'check_circle' : 'inventory'}}
-          </mat-icon>
-          Inventory Health: {{inventoryHealth.status}}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div fxLayout="column" fxLayoutGap="15px">
-          <div fxLayout="row" fxLayoutAlign="space-between center">
-            <span class="sub-label">Total Stock Value (Cost):</span>
-            <span class="sub-value">₹{{inventoryHealth.total_inventory_value_cost | number:'1.0-0'}}</span>
-          </div>
-          <div fxLayout="row" fxLayoutAlign="space-between center">
-            <span class="sub-label">Estimated Sale Value:</span>
-            <span class="sub-value">₹{{inventoryHealth.total_inventory_value_sale | number:'1.0-0'}}</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- At-Risk Products List -->
-    <mat-card fxFlex="60" class="health-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon class="warning">warning</mat-icon>
-          Low Stock - Immediate Attention
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div *ngFor="let product of inventoryHealth.at_risk_products" class="risk-badge" fxLayout="row"
-            fxLayoutAlign="start center" fxLayoutGap="8px">
-            <span class="product-name">{{product.name}}</span>
-            <span class="stock-qty">{{product.stock}} left</span>
-          </div>
-          <div *ngIf="inventoryHealth.at_risk_products.length === 0" class="no-risk">
-            All key products are well-stocked.
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Rest of the template remains the same -->
-  <!-- Filters -->
-  <!-- <mat-card class="filter-section">
-    <mat-card-content>
-      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start center">
-        <mat-form-field>
-          <mat-label>Product</mat-label>
-          <mat-select [(value)]="selectedProduct" (selectionChange)="onProductFilterChange($event.value)">
-            <mat-option value="all">All Products</mat-option>
-            <mat-option *ngFor="let product of dashboardData.products" [value]="product.id">
-              {{product.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Timeframe</mat-label>
-          <mat-select [(value)]="selectedTimeframe" (selectionChange)="onTimeframeChange($event.value)">
-            <mat-option value="3months">3 Months</mat-option>
-            <mat-option value="6months">6 Months</mat-option>
-            <mat-option value="1year">1 Year</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </mat-card-content>
-  </mat-card> -->
-  <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-lg="column" style="margin-top: 20px;">
-    <!-- Actual - Prediction Sale Chart (Left Side) -->
-    <mat-card fxFlex="55" fxFlex.lt-lg="100">
-      <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
-        <mat-card-subtitle fxFlex>
-          <h2 style="margin: 0; font-weight: 500;">Actual - Prediction Sale Chart</h2>
-        </mat-card-subtitle>
-
-        <div class="chart-filter">
-          <mat-form-field appearance="outline" dense>
-            <mat-label>Filter by Product</mat-label>
-            <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
-              <mat-option value="all">All Products</mat-option>
-              <mat-option *ngFor="let product of productList" [value]="product.id">
-                {{product.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="w-100 h-300p">
-          <div *ngIf="isSalesTrendLoading" class="loading-message">
-            <mat-spinner diameter="40"></mat-spinner>
-            <span>Loading sales data...</span>
-          </div>
-
-          <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
-            [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
-            [autoScale]="true" (select)="onSelect($event)">
-          </ngx-charts-line-chart>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Comparison Section (Right Side) -->
-    <div fxFlex="45" fxFlex.lt-lg="100" fxLayout="column">
-      <!-- Comparison Header with Filter -->
-      <div fxLayout="row" fxLayoutAlign="space-between center" style="margin-bottom: 15px; padding: 0 10px;">
-        <h2 style="margin: 0; font-weight: 500;">Current vs Predicted Top 10 Products</h2>
-        <div class="chart-filter">
-          <mat-form-field appearance="outline" dense>
-            <mat-label>Filter Comparison</mat-label>
-            <mat-select [value]="selectedComparisonProductId"
-              (selectionChange)="onComparisonProductFilterChange($event.value)">
-              <mat-option value="all">All Products (Summary)</mat-option>
-              <mat-option *ngFor="let product of productList" [value]="product.id">
-                {{product.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div fxLayout="column" fxLayoutGap="20px">
-        <!-- Forecast Comparison -->
-        <mat-card class="chart-card">
+        <!-- Top Performers Table -->
+        <mat-card *ngIf="topPerformers && topPerformers.length > 0" style="margin-top: 20px;">
           <mat-card-header>
-            <mat-card-title>Product Breakdown</mat-card-title>
+            <mat-card-title>
+              <mat-icon>emoji_events</mat-icon>
+              Top Performing Products (This Month)
+            </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div *ngIf="isComparisonLoading" class="loading-overlay">
-              <mat-spinner diameter="30"></mat-spinner>
-            </div>
-            <ngx-charts-bar-vertical-2d *ngIf="!isComparisonLoading" [view]="undefined" [scheme]="colorScheme"
-              [results]="forecastComparisonData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
-              [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
-              (select)="onSelect($event)">
-            </ngx-charts-bar-vertical-2d>
+            <table mat-table [dataSource]="topPerformers" class="top-performers-table">
+              <ng-container matColumnDef="rank">
+                <th mat-header-cell *matHeaderCellDef>Rank</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <span class="rank-badge">{{i + 1}}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="product">
+                <th mat-header-cell *matHeaderCellDef>Product</th>
+                <td mat-cell *matCellDef="let element">{{element.product_name}}</td>
+              </ng-container>
+              <ng-container matColumnDef="units">
+                <th mat-header-cell *matHeaderCellDef>Units Sold</th>
+                <td mat-cell *matCellDef="let element">{{element.units_sold | number}}</td>
+              </ng-container>
+              <ng-container matColumnDef="revenue">
+                <th mat-header-cell *matHeaderCellDef>Revenue</th>
+                <td mat-cell *matCellDef="let element">
+                  <strong>₹{{element.revenue | number:'1.0-0'}}</strong>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['rank', 'product', 'units', 'revenue']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['rank', 'product', 'units', 'revenue'];"></tr>
+            </table>
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="chart-card">
+        <!-- Business Alerts Section -->
+        <mat-card *ngIf="businessAlerts && businessAlerts.length > 0" class="alerts-card" style="margin-top: 20px;">
           <mat-card-header>
-            <mat-card-title>Total Impact</mat-card-title>
+            <mat-card-title>
+              <mat-icon>notifications_active</mat-icon>
+              Business Alerts & Insights
+            </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div *ngIf="isComparisonLoading" class="loading-overlay">
-              <mat-spinner diameter="30"></mat-spinner>
+            <div class="dashboard-container" style="gap: 12px; min-height: auto;">
+              <div *ngFor="let alert of businessAlerts" class="alert-item" [ngClass]="'alert-' + alert.type">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <mat-icon [ngClass]="'severity-' + alert.severity">
+                    {{alert.type === 'warning' ? 'warning' : alert.type === 'success' ? 'check_circle' : 'info'}}
+                  </mat-icon>
+                  <div style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="alert-title">{{alert.title}}</div>
+                    <div class="alert-message">{{alert.message}}</div>
+                    <div class="alert-action"><strong>Action:</strong> {{alert.action}}</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <ngx-charts-bar-vertical *ngIf="!isComparisonLoading" [view]="undefined" [scheme]="colorScheme"
-              [results]="totalComparisonData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
-              [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Category" yAxisLabel="Quantity"
-              (select)="onSelect($event)">
-            </ngx-charts-bar-vertical>
           </mat-card-content>
         </mat-card>
+
       </div>
-    </div>
-  </div>
+    </mat-tab>
 
-  <!-- Enhanced Analytics Charts Row -->
-  <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-lg="column" style="margin-top: 20px;">
-    <!-- Revenue Trend Chart -->
-    <mat-card class="chart-card" fxFlex="60" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Revenue & Profit Trend</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-line-chart *ngIf="revenueTrendData && revenueTrendData.length > 0" [view]="undefined"
-          [scheme]="colorScheme" [results]="revenueTrendData" [gradient]="true" [xAxis]="true" [yAxis]="true"
-          [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Month" yAxisLabel="Amount (₹)"
-          (select)="onSelect($event)">
-        </ngx-charts-line-chart>
-      </mat-card-content>
-    </mat-card>
+    <!-- TAB 2: FORECAST & GROWTH -->
+    <mat-tab label="Forecast & Growth">
+      <div class="tab-content forecast-tab">
 
-    <!-- Category Performance Chart -->
-    <mat-card class="chart-card" fxFlex="40" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Sales by Category</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-pie-chart *ngIf="categoryPerformanceData && categoryPerformanceData.length > 0" [view]="[400, 300]"
-          [scheme]="colorScheme" [results]="categoryPerformanceData" [gradient]="true" [legend]="true" [labels]="true"
-          [doughnut]="true" (select)="onSelect($event)">
-        </ngx-charts-pie-chart>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Top Performers Table -->
-  <mat-card *ngIf="topPerformers && topPerformers.length > 0" style="margin-top: 20px;">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>emoji_events</mat-icon>
-        Top Performing Products (This Month)
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <table mat-table [dataSource]="topPerformers" class="top-performers-table">
-        <ng-container matColumnDef="rank">
-          <th mat-header-cell *matHeaderCellDef>Rank</th>
-          <td mat-cell *matCellDef="let element; let i = index">
-            <span class="rank-badge">{{i + 1}}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="product">
-          <th mat-header-cell *matHeaderCellDef>Product</th>
-          <td mat-cell *matCellDef="let element">{{element.product_name}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="units">
-          <th mat-header-cell *matHeaderCellDef>Units Sold</th>
-          <td mat-cell *matCellDef="let element">{{element.units_sold | number}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="revenue">
-          <th mat-header-cell *matHeaderCellDef>Revenue</th>
-          <td mat-cell *matCellDef="let element">
-            <strong>₹{{element.revenue | number:'1.0-0'}}</strong>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="['rank', 'product', 'units', 'revenue']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['rank', 'product', 'units', 'revenue'];"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Charts Row 2 -->
-  <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-lg="column">
-
-    <!-- Growth Performance -->
-    <mat-card class="chart-card" fxFlex="50" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Growth Performance (%)</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div *ngIf="isGrowthDataLoading" class="loading-overlay"
-          style="height: 300px; display: flex; align-items: center; justify-content: center;">
-          <mat-spinner diameter="40"></mat-spinner>
+        <!-- Forecast Intelligence KPIs -->
+        <div class="section-header-compact">
+          <h2>Forecast Intelligence</h2>
         </div>
-        <ngx-charts-bar-vertical-2d *ngIf="!isGrowthDataLoading" [view]="undefined" [scheme]="colorScheme"
-          [results]="productGrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="true"
-          [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Product" yAxisLabel="Quantity"
-          (select)="onSelect($event)">
-        </ngx-charts-bar-vertical-2d>
-      </mat-card-content>
-    </mat-card>
+        <div class="kpi-grid-compact forecast-metrics">
+          <ng-container *ngFor="let card of forecastCards">
+            <!-- Standard Cards -->
+            <mat-card *ngIf="card.type === 'standard' || card.type === 'alert'" class="kpi-card-compact"
+              [ngClass]="card.cardClass">
+              <mat-card-content>
+                <div class="card-header-compact">
+                  <div class="icon-wrapper-compact" [ngClass]="card.iconClass"><mat-icon>{{card.icon}}</mat-icon></div>
+                  <span *ngIf="card.badge" [class]="card.badgeClass">
+                    <mat-icon *ngIf="card.badgeIcon">{{card.badgeIcon}}</mat-icon>{{card.badge}}
+                  </span>
+                </div>
+                <div class="card-body-compact">
+                  <div class="kpi-label-compact">{{card.label}}</div>
+                  <div class="kpi-value-compact" [ngClass]="card.progressClass">{{card.value}}</div>
+                  <div class="kpi-meta-compact"
+                    style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <span>{{card.subValue}}</span>
+                    <div style="flex-shrink: 0;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
+                  <div *ngIf="card.footer" class="card-footer-compact">
+                    <div class="growth-delta-compact" [ngClass]="card.footer.class">
+                      <mat-icon>{{card.footer.icon}}</mat-icon>{{card.footer.value}}
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
 
-    <!-- Backlog Analysis -->
-    <!-- <mat-card fxFlex="50" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Backlog Analysis</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ngx-charts-pie-chart
-          [view]="[500, 400]"
-          [scheme]="colorScheme"
-          [results]="dashboardData.backlogData"
-          [gradient]="true"
-          [legend]="true"
-          [labels]="true"
-          [doughnut]="false"
-          (select)="onSelect($event)"
-          (activate)="onActivate($event)"
-          (deactivate)="onDeactivate($event)">
-        </ngx-charts-pie-chart>
-      </mat-card-content>
-    </mat-card> -->
+            <!-- Split Cards -->
+            <mat-card *ngIf="card.type === 'split'" class="kpi-card-compact" [ngClass]="card.cardClass">
+              <mat-card-content>
+                <div class="card-header-compact">
+                  <div class="icon-wrapper-compact" [ngClass]="card.iconClass"><mat-icon>{{card.icon}}</mat-icon></div>
+                </div>
+                <div class="card-body-compact split">
+                  <div *ngFor="let split of card.splitData" class="split-section-compact">
+                    <div class="kpi-label-small-compact">{{split.label}}</div>
+                    <div class="kpi-value-small-compact" [ngClass]="split.class">{{split.value}}</div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
 
-    <mat-card fxFlex="50" fxFlex.lt-lg="100">
-      <mat-card-header>
-        <mat-card-title>Detailed Forecast Summary</mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="forecast-table-container">
-        <div *ngIf="isSummaryLoading" class="loading-overlay"
-          style="height: 200px; display: flex; align-items: center; justify-content: center;">
-          <mat-spinner diameter="40"></mat-spinner>
+            <!-- Progress Cards -->
+            <mat-card *ngIf="card.type === 'progress'" class="kpi-card-compact" [ngClass]="card.cardClass">
+              <mat-card-content>
+                <div class="card-header-compact">
+                  <div class="icon-wrapper-compact" [ngClass]="card.iconClass"><mat-icon>{{card.icon}}</mat-icon></div>
+                  <span [class]="card.badgeClass">{{card.badge}}</span>
+                </div>
+                <div class="card-body-compact">
+                  <div class="kpi-label-compact">{{card.label}}</div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div class="kpi-value-compact">{{card.value}}</div>
+                    <div style="flex-shrink: 0; margin-bottom: 5px;" *ngIf="card.sparklineOptions">
+                      <apx-chart [series]="card.sparklineOptions.series" [chart]="card.sparklineOptions.chart"
+                        [stroke]="card.sparklineOptions.stroke" [colors]="card.sparklineOptions.colors"
+                        [fill]="card.sparklineOptions.fill" [tooltip]="card.sparklineOptions.tooltip">
+                      </apx-chart>
+                    </div>
+                  </div>
+                  <div *ngIf="card.progress !== undefined" class="progress-bar-compact">
+                    <div class="progress-fill-compact" [ngClass]="card.progressClass" [style.width.%]="card.progress">
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+          </ng-container>
         </div>
-        <table mat-table *ngIf="!isSummaryLoading" [dataSource]="productSummary" class="forecast-table">
 
-          <!-- Product Column -->
-          <ng-container matColumnDef="product_name">
-            <th mat-header-cell *matHeaderCellDef>Product</th>
-            <td mat-cell *matCellDef="let element">{{element.product_name}}</td>
-          </ng-container>
+        <!-- Missing Chart: Actual - Prediction Sale Chart -->
+        <div class="chart-row" style="margin-top: 20px;">
+          <mat-card class="chart-card col-100 enhanced-chart">
+            <div class="chart-header-flex">
+              <h3>Actual - Prediction Sale Chart</h3>
+              <div class="chart-filter">
+                <mat-form-field appearance="outline" dense>
+                  <mat-label>Filter by Product</mat-label>
+                  <mat-select [value]="selectedChartProductId" (selectionChange)="onProductFilterChange($event.value)">
+                    <mat-option value="all">All Products</mat-option>
+                    <mat-option *ngFor="let product of productList" [value]="product.id">
+                      {{product.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-card-content>
+              <div class="chart-wrapper">
+                <div *ngIf="isSalesTrendLoading" class="loading-message">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <span>Loading sales data...</span>
+                </div>
 
-          <!-- Current Sales Column -->
-          <ng-container matColumnDef="current_sales">
-            <th mat-header-cell *matHeaderCellDef>Current Sales</th>
-            <td mat-cell *matCellDef="let element">{{element.current_month_sales | number}}</td>
-          </ng-container>
+                <ngx-charts-line-chart *ngIf="!isSalesTrendLoading" [results]="salesChartData" [scheme]="colorScheme"
+                  [xAxis]="true" [yAxis]="true" [legend]="true" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'"
+                  [autoScale]="true" (select)="onSelect($event)">
+                </ngx-charts-line-chart>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
-          <!-- Predicted Sales Column -->
-          <ng-container matColumnDef="predicted_sales">
-            <th mat-header-cell *matHeaderCellDef>Predicted Sales</th>
-            <td mat-cell *matCellDef="let element">{{element.predicted_next_month | number}}</td>
-          </ng-container>
+        <!-- IMPROVED Forecast Comparison Chart -->
+        <div class="chart-row" style="margin-top: 10px;">
+          <!-- Left Chart: Top 10 Products (Bar Chart, No Filter) -->
+          <mat-card class="chart-card col-75 enhanced-chart">
+            <div class="chart-header-grid">
+              <h3>
+                <mat-icon class="chart-icon">bar_chart</mat-icon>
+                Top 10 Products Comparison
+              </h3>
+            </div>
+            <mat-card-content>
+              <div *ngIf="isComparisonLoading" class="loading-overlay">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+              <div class="chart-wrapper">
+                <ngx-charts-bar-vertical-2d
+                  *ngIf="!isComparisonLoading && forecastComparisonData && forecastComparisonData.length > 0"
+                  [view]="undefined" [scheme]="forecastColorScheme" [results]="forecastComparisonData"
+                  [gradient]="false" [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="false"
+                  [showYAxisLabel]="false" [xAxisLabel]="'Month'" [yAxisLabel]="'Quantity'" [animations]="true"
+                  [showGridLines]="true" [barPadding]="2" [groupPadding]="4" (select)="onSelect($event)"
+                  class="enhanced-bar-chart">
+                </ngx-charts-bar-vertical-2d>
+              </div>
+            </mat-card-content>
+          </mat-card>
 
-          <!-- Growth Column -->
-          <ng-container matColumnDef="growth">
-            <th mat-header-cell *matHeaderCellDef>Growth %</th>
-            <td mat-cell *matCellDef="let element">
-              <span [ngClass]="{
-                'growth-positive': element.growth_percentage > 0,
-                'growth-negative': element.growth_percentage < 0,
-                'growth-neutral': element.growth_percentage === 0
-              }">
-                {{element.growth_percentage | number:'1.1-1'}}%
-              </span>
-            </td>
-          </ng-container>
+          <!-- Right Chart: Total Forecast (Doughnut Chart, With Filter) -->
+          <mat-card class="chart-card col-25 enhanced-chart">
+            <div class="chart-header-grid">
+              <h3>
+                <mat-icon class="chart-icon">pie_chart</mat-icon>
+                Total Forecast Comparison
+              </h3>
+              <div class="chart-filter">
+                <mat-form-field appearance="outline">
+                  <mat-label>Filter by Product</mat-label>
+                  <mat-select [value]="selectedComparisonProductId"
+                    (selectionChange)="onComparisonProductFilterChange($event.value)">
+                    <mat-option value="all">All Products</mat-option>
+                    <mat-option *ngFor="let product of productList" [value]="product.id">{{product.name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-card-content>
+              <div *ngIf="isTotalComparisonLoading" class="loading-overlay">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+              <div class="chart-wrapper">
+                <ngx-charts-pie-chart
+                  *ngIf="!isTotalComparisonLoading && totalForecastPieData && totalForecastPieData.length > 0"
+                  [view]="undefined" [scheme]="forecastColorScheme" [results]="totalForecastPieData" [gradient]="false"
+                  [legend]="true" [legendPosition]="'below'" [labels]="false" [doughnut]="true" [arcWidth]="0.25"
+                  (select)="onSelect($event)" class="enhanced-pie-chart">
+                </ngx-charts-pie-chart>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
-          <!-- Confidence Column -->
-          <ng-container matColumnDef="confidence">
-            <th mat-header-cell *matHeaderCellDef>Confidence</th>
-            <td mat-cell *matCellDef="let element">
-              <span class="confidence-badge" [ngClass]="{
-                'confidence-high': element.confidence_score > 90,
-                'confidence-medium': element.confidence_score >= 80 && element.confidence_score <= 90,
-                'confidence-low': element.confidence_score < 80
-              }">
-                {{element.confidence_score | number:'1.1-1'}}%
-              </span>
-            </td>
-          </ng-container>
+        <!-- Product Growth Charts -->
+        <!-- Product Growth Charts Split Row -->
+        <div class="chart-row" style="margin-top: 10px;">
+          <!-- Left Chart: Product Growth (Multi-Series Bar) -->
+          <!-- Left Chart: Product Growth (Multi-Series Bar) -->
+          <mat-card class="chart-card col-75 enhanced-chart">
+            <div class="chart-header-grid">
+              <h3>
+                <mat-icon class="chart-icon">trending_up</mat-icon>
+                Top 10 Product Growth Performance
+              </h3>
+            </div>
+            <mat-card-content>
+              <div *ngIf="isGrowthDataLoading" class="loading-overlay">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+              <div class="chart-wrapper">
+                <ngx-charts-bar-vertical-2d *ngIf="!isGrowthDataLoading" [view]="undefined" [scheme]="growthColorScheme"
+                  [results]="top10GrowthData" [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="false"
+                  [showXAxisLabel]="false" [showYAxisLabel]="false" xAxisLabel="Product" yAxisLabel="Quantity"
+                  (select)="onSelect($event)">
+                </ngx-charts-bar-vertical-2d>
+              </div>
+            </mat-card-content>
+          </mat-card>
 
-          <!-- Backlogs Column -->
-          <ng-container matColumnDef="backlogs">
-            <th mat-header-cell *matHeaderCellDef>Backlogs</th>
-            <td mat-cell *matCellDef="let element">
-              <span class="backlog-severity" [ngClass]="{
-                'severity-critical': (element.backlog_count || 0) > 30,
-                'severity-high': (element.backlog_count || 0) > 20 && (element.backlog_count || 0) <= 30,
-                'severity-medium': (element.backlog_count || 0) > 10 && (element.backlog_count || 0) <= 20,
-                'severity-low': (element.backlog_count || 0) <= 10
-              }">
-                {{element.backlog_count || 0}}
-              </span>
-            </td>
-          </ng-container>
+          <!-- Right Chart: Future Projection (Placeholder Bar Chart) -->
+          <mat-card class="chart-card col-25 enhanced-chart">
+            <div class="chart-header-grid">
+              <h3>
+                <mat-icon class="chart-icon">bar_chart</mat-icon>
+                Total Product Growth Performance
+              </h3>
+              <div class="chart-filter">
+                <mat-form-field appearance="outline">
+                  <mat-label>Filter by Product</mat-label>
+                  <mat-select [value]="selectedFutureProductId"
+                    (selectionChange)="onFutureProjectionFilterChange($event.value)">
+                    <mat-option value="all">All Products</mat-option>
+                    <mat-option *ngFor="let product of productList" [value]="product.id">{{product.name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-card-content>
+              <div *ngIf="isFutureProjectionLoading" class="loading-overlay">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+              <div class="chart-wrapper">
+                <ngx-charts-bar-vertical-2d
+                  *ngIf="!isFutureProjectionLoading && futureProjectionData && futureProjectionData.length > 0"
+                  [view]="undefined" [scheme]="forecastColorScheme" [results]="futureProjectionData" [gradient]="false"
+                  [xAxis]="true" [yAxis]="true" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                  [xAxisLabel]="'Period'" [yAxisLabel]="'Growth'" [legendPosition]="'below'" [groupPadding]="16"
+                  (select)="onSelect($event)">
+                </ngx-charts-bar-vertical-2d>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </mat-card-content>
-    </mat-card>
+                <div *ngIf="!isFutureProjectionLoading && (!futureProjectionData || futureProjectionData.length === 0)"
+                  class="chart-empty-state">
+                  <mat-icon>bar_chart</mat-icon>
+                  <p>No projection data available</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
+        <!-- Detailed Forecast Summary Table -->
+        <div class="chart-row" style="margin-top: 20px;">
+          <mat-card class="w-100">
+            <mat-card-header>
+              <mat-card-title>Detailed Forecast Summary</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="forecast-table-container">
+              <div *ngIf="isSummaryLoading" class="loading-overlay"
+                style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+              <table mat-table *ngIf="!isSummaryLoading" [dataSource]="productSummary" class="forecast-table">
+                <ng-container matColumnDef="product_name">
+                  <th mat-header-cell *matHeaderCellDef>Product</th>
+                  <td mat-cell *matCellDef="let element">{{element.product_name}}</td>
+                </ng-container>
+                <ng-container matColumnDef="current_sales">
+                  <th mat-header-cell *matHeaderCellDef>Current Sales</th>
+                  <td mat-cell *matCellDef="let element">{{element.current_month_sales | number}}</td>
+                </ng-container>
+                <ng-container matColumnDef="predicted_sales">
+                  <th mat-header-cell *matHeaderCellDef>Predicted Sales</th>
+                  <td mat-cell *matCellDef="let element">{{element.predicted_next_month | number}}</td>
+                </ng-container>
+                <ng-container matColumnDef="growth">
+                  <th mat-header-cell *matHeaderCellDef>Growth %</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span
+                      [ngClass]="{'growth-positive': element.growth_percentage > 0, 'growth-negative': element.growth_percentage < 0, 'growth-neutral': element.growth_percentage === 0}">
+                      {{element.growth_percentage | number:'1.1-1'}}%
+                    </span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="confidence">
+                  <th mat-header-cell *matHeaderCellDef>Confidence</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="confidence-badge"
+                      [ngClass]="{'confidence-high': element.confidence_score > 90, 'confidence-medium': element.confidence_score >= 80 && element.confidence_score <= 90, 'confidence-low': element.confidence_score < 80}">
+                      {{element.confidence_score | number:'1.1-1'}}%
+                    </span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="backlogs">
+                  <th mat-header-cell *matHeaderCellDef>Backlogs</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="backlog-severity"
+                      [ngClass]="{'severity-critical': (element.backlog_count || 0) > 30, 'severity-high': (element.backlog_count || 0) > 20 && (element.backlog_count || 0) <= 30, 'severity-medium': (element.backlog_count || 0) > 10 && (element.backlog_count || 0) <= 20, 'severity-low': (element.backlog_count || 0) <= 10}">
+                      {{element.backlog_count || 0}}
+                    </span>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
 
-  </div>
+      </div>
+    </mat-tab>
 
-  <!-- Forecast Table CHECK FXFLEX IN UPPER MAT-CRAD -->
+    <!-- TAB 3: INVENTORY HEALTH -->
+    <mat-tab label="Inventory Health">
+      <div class="tab-content">
+
+        <div *ngIf="inventoryHealth" class="health-row" style="margin-top: 20px;">
+          <!-- Inventory Value Card -->
+          <mat-card class="health-card col-40">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon [ngClass]="inventoryHealth.status === 'Healthy' ? 'positive' : 'negative'">
+                  {{inventoryHealth.status === 'Healthy' ? 'check_circle' : 'inventory'}}
+                </mat-icon>
+                Inventory Health: {{inventoryHealth.status}}
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="dashboard-container" style="gap: 15px; min-height: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="sub-label">Total Stock Value (Cost):</span>
+                  <span class="sub-value">₹{{inventoryHealth.total_inventory_value_cost | number:'1.0-0'}}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="sub-label">Estimated Sale Value:</span>
+                  <span class="sub-value">₹{{inventoryHealth.total_inventory_value_sale | number:'1.0-0'}}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- At-Risk Products List -->
+          <mat-card class="health-card col-60">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon class="warning">warning</mat-icon>
+                Low Stock - Immediate Attention
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <div *ngFor="let product of inventoryHealth.at_risk_products" class="risk-badge"
+                  style="display: flex; align-items: center; gap: 8px;">
+                  <span class="product-name">{{product.name}}</span>
+                  <span class="stock-qty">{{product.stock}} left</span>
+                </div>
+                <div *ngIf="inventoryHealth.at_risk_products.length === 0" class="no-risk">
+                  All key products are well-stocked.
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
 
 </div>

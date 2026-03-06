@@ -31,8 +31,22 @@ export class PatientService {
     }
 
     getPatientsByWard(wardId: number): Observable<any> {
-        
         const url = `${this.baseUrl}/patients/ward/${wardId}`;
+        return this.http.get(url);
+    }
+
+    getPatientById(patientId): Observable<any> {
+        const url = `${this.baseUrl}/get_patient_by_id/${patientId}`;
+        return this.http.get(url);
+    }
+
+    getMedFrequencies(): Observable<any> {
+        const url = `${this.baseUrl}/med-frequencies`;
+        return this.http.get(url);
+    }
+
+    getMedCategories(): Observable<any> {
+        const url = `${this.baseUrl}/med-categories`;
         return this.http.get(url);
     }
 

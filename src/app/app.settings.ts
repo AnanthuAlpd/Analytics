@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 @Injectable()
 export class AppSettings {
     public settings = new Settings(
-        'Pothens AI',       //theme name
+        'PothensAI',       //theme name
         true,           //loadingSpinner
         true,           //fixedHeader
         true,           //sidenavIsOpened
@@ -15,7 +15,7 @@ export class AppSettings {
         'default',      //default, compact, mini
         'indigo-light', //indigo-light, teal-light, red-light, blue-dark, green-dark, pink-dark
         false,          // true = rtl, false = ltr
-        true ,           // true = has footer, false = no footer
+        true,           // true = has footer, false = no footer
         environment.baseUrl
     )
 }

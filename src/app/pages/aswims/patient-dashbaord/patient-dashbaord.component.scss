@@ -1,93 +1,254 @@
+/* patient-dashboard.component.scss */
 .dashboard-wrapper {
-    padding: 20px;
-    background: #f5f7f9;
-  
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-  
-      h1 { margin: 0; font-size: 1.8rem; color: #004d40; }
-      .subtitle { margin: 0; color: #666; font-size: 0.9rem; }
-      .header-actions { display: flex; gap: 10px; }
-    }
-  
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-  
-      @media (max-width: 992px) { grid-template-columns: 1fr; }
-  
-      .chart-card {
-        height: 380px;
-        .chart-container { height: 300px; padding-top: 15px; }
-      }
-    }
-  
-    .data-card {
-      margin-bottom: 20px;
-      padding: 20px;
-      
-      .section-title { margin-bottom: 20px; border-left: 4px solid #00796b; padding-left: 10px; }
-    }
-  
-    /* Investigations Grid */
-    .investigation-grid {
-      display: flex;
-      overflow-x: auto;
-      gap: 15px;
-      padding-bottom: 10px;
-  
-      .day-column {
-        min-width: 140px;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        text-align: center;
-  
-        .day-header { background: #f0f0f0; padding: 8px; font-weight: 600; border-bottom: 1px solid #e0e0e0; }
-        .day-content { padding: 15px; min-height: 80px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-        .test-item { font-size: 0.85rem; color: #00796b; background: #e0f2f1; border-radius: 4px; padding: 2px; }
-        .nil-text { color: #bdbdbd; font-style: italic; }
-      }
-    }
-  
-    /* Treatment / Circles Grid */
-    .med-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid #f0f0f0;
-  
-      .med-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        .category { font-size: 10px; background: #eee; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
-        .details { display: flex; flex-direction: column; }
-      }
-  
-      .dosage-view {
-        text-align: center;
-        .time-row { display: flex; gap: 8px; font-size: 10px; color: #999; justify-content: center; margin-bottom: 4px; }
-        .circle-row { display: flex; gap: 8px; }
-        .dose-circle { width: 14px; height: 14px; border: 2px solid #00796b; border-radius: 50%; }
-        .filled { background: #00796b; }
-      }
-    }
-  
-    .future-plans-footer {
+  padding: 20px;
+  background: #f5f7f9;
+  box-sizing: border-box;
+  min-height: 100vh;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    flex-wrap: wrap; // Allows buttons to wrap below name on mobile
+    gap: 15px;
+
+    .title-area {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 15px;
-      background: #fff9c4;
-      border-radius: 8px;
-      color: #f57f17;
+      max-width: 100%;
+
+      h1 { 
+        margin: 0; 
+        font-size: 1.8rem; 
+        color: #004d40; 
+        font-weight: 600;
+        line-height: 1.2;
+      }
+      
+      .subtitle { 
+        margin: 4px 0 0 0; 
+        color: #666; 
+        font-size: 0.9rem; 
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap; // Ensures action buttons don't bleed off screen
     }
   }
-  
-  .loader { display: flex; justify-content: center; align-items: center; height: 300px; }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // Desktop: Side-by-side
+    gap: 20px;
+    margin-bottom: 20px;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr; // Tablet/Mobile: Stacked
+    }
+
+    .chart-card {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+
+      mat-card-header {
+        margin-bottom: 10px;
+      }
+
+      .chart-container {
+        flex-grow: 1;
+        height: 300px;
+        width: 100%;
+        overflow: hidden; // Prevents SVG overflow issues
+      }
+    }
+  }
+
+  .data-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    
+    .section-title {
+      margin-bottom: 20px;
+      border-left: 4px solid #00796b;
+      padding-left: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #37474f;
+    }
+  }
+
+  /* Investigations Grid: Improved Horizontal Scroll */
+  .investigation-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 15px;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cfd8dc;
+      border-radius: 10px;
+    }
+
+    .day-column {
+      min-width: 140px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      background: white;
+
+      .day-header {
+        background: #f0f0f0;
+        padding: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .day-content {
+        padding: 12px;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+
+        .test-item {
+          font-size: 0.8rem;
+          color: #00796b;
+          background: #e0f2f1;
+          border-radius: 4px;
+          padding: 4px;
+        }
+
+        .nil-text {
+          color: #bdbdbd;
+          font-style: italic;
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
+  /* Treatment / Dosage Grid: Mobile First */
+  .med-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 20px;
+
+    @media (max-width: 600px) {
+      flex-direction: column; // Stack medicine details and circles
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .med-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      .category {
+        font-size: 10px;
+        background: #e8eaf6;
+        color: #3f51b5;
+        padding: 2px 8px;
+        border-radius: 10px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+
+      .details {
+        display: flex;
+        flex-direction: column;
+        strong { font-size: 1rem; color: #263238; }
+        small { color: #78909c; font-size: 0.85rem; }
+      }
+    }
+
+    .dosage-view {
+      .time-row {
+        display: flex;
+        gap: 8px;
+        font-size: 10px;
+        color: #90a4ae;
+        justify-content: center;
+        margin-bottom: 6px;
+      }
+      
+      .circle-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .dose-circle {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #00796b;
+        border-radius: 50%;
+        &.filled { background: #00796b; }
+      }
+
+      @media (max-width: 600px) {
+        width: 100%;
+        .time-row, .circle-row { justify-content: flex-start; }
+      }
+    }
+  }
+
+  .future-plans-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #fff9c4;
+    border-radius: 8px;
+    color: #f57f17;
+    margin-top: 10px;
+
+    span { font-size: 0.9rem; }
+  }
+}
+
+/* Loader Styles */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* --- Mobile Specific Overrides (Screen Width < 600px) --- */
+@media (max-width: 600px) {
+  .dashboard-wrapper {
+    padding: 12px;
+
+    .header {
+      h1 { font-size: 1.4rem; }
+      .header-actions {
+        width: 100%;
+        button { 
+          flex: 1; 
+          min-width: 110px; 
+          font-size: 0.75rem; 
+        }
+      }
+    }
+
+    .data-card {
+      padding: 15px;
+    }
+  }
+}
