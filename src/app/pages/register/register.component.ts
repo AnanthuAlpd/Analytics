@@ -92,7 +92,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loading = false;
           this.snackBar.open('Employee registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login', this.userType.toLowerCase()]);
         },
         error: (error) => {
           this.loading = false;
@@ -107,7 +107,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         next: () => {
           this.loading = false;
           this.snackBar.open('Client registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login', this.userType.toLowerCase()]);
         },
         error: (error) => {
           this.loading = false;

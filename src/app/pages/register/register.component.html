@@ -109,7 +109,7 @@
           </button>
           <div class="signup-footer mt-2">
             <span>Already have an account? </span>
-            <a routerLink="/login">Sign in!</a>
+            <a [routerLink]="['/login', userType | lowercase]">Sign in!</a>
           </div>
         </div>
       </form>
