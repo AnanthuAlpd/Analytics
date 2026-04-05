@@ -1,0 +1,234 @@
+.detail-container {
+    max-width: 900px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+
+    .header-section {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+
+        .lead-name {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1a237e;
+            margin: 0;
+        }
+
+        .lead-id {
+            font-size: 14px;
+            color: #7986cb;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            color: #5c6bc0;
+            &:hover { background: rgba(0,0,0,0.05); }
+        }
+    }
+
+    .glass-content {
+        padding: 0;
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
+    // Info Column Styles
+    .info-column {
+        .info-card, .status-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 0;
+
+            mat-icon {
+                color: #5c6bc0;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+
+            .label {
+                font-size: 12px;
+                color: #9fa8da;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .value {
+                font-size: 15px;
+                color: #283593;
+                font-weight: 500;
+            }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            
+            &.new { background: #e0f2f1; color: #00897b; }
+            &.contacted { background: #fff3e0; color: #f57c00; }
+            &.converted { background: #e8f5e9; color: #2e7d32; }
+            &.rejected { background: #ffebee; color: #d32f2f; }
+        }
+    }
+
+    // Timeline Column Styles
+    .timeline-column {
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #3f51b5;
+            margin-bottom: 20px;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 10px 0 20px 20px;
+            border-left: 2px solid rgba(63, 81, 181, 0.1);
+            margin-left: 10px;
+
+            .timeline-spinner {
+                margin: 40px auto;
+            }
+
+            .timeline-item {
+                position: relative;
+                margin-bottom: 30px;
+                padding-left: 30px;
+
+                &:last-child { margin-bottom: 0; }
+
+                .timeline-marker {
+                    position: absolute;
+                    left: -11px;
+                    top: 0;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: white;
+                    border: 2px solid #5c6bc0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 2;
+
+                    mat-icon {
+                        font-size: 12px;
+                        width: 12px;
+                        height: 12px;
+                        color: #5c6bc0;
+                    }
+
+                    &.status-change { border-color: #ff9800; mat-icon { color: #ff9800; } }
+                    &.note-added { border-color: #4caf50; mat-icon { color: #4caf50; } }
+                    &.lead-created { border-color: #2196f3; mat-icon { color: #2196f3; } }
+                }
+
+                .timeline-content {
+                    background: rgba(255, 255, 255, 0.7);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+
+                    .activity-type {
+                        font-weight: 600;
+                        font-size: 14px;
+                        color: #1a237e;
+                    }
+
+                    .activity-date {
+                        font-size: 12px;
+                        color: #9fa8da;
+                    }
+
+                    .activity-details {
+                        font-size: 14px;
+                        color: #3f4771;
+                        margin: 12px 0;
+                        line-height: 1.5;
+                    }
+
+                    .value-change {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 12px;
+                        margin-bottom: 8px;
+                        
+                        .old { text-decoration: line-through; color: #e57373; }
+                        .new { font-weight: 600; color: #81c784; }
+                        mat-icon { font-size: 14px; width: 14px; height: 14px; color: #bdbdbd; }
+                    }
+
+                    .activity-user {
+                        font-size: 11px;
+                        color: #7986cb;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                    }
+                }
+            }
+
+            .empty-timeline {
+                padding: 40px 20px;
+                text-align: center;
+                opacity: 0.6;
+
+                mat-icon {
+                    font-size: 48px;
+                    width: 48px;
+                    height: 48px;
+                    color: #9fa8da;
+                    margin-bottom: 12px;
+                }
+
+                p {
+                    font-size: 14px;
+                    color: #7986cb;
+                    margin: 0;
+                }
+            }
+        }
+
+        .note-entry {
+            margin-top: 30px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+            .note-field {
+                width: 100%;
+            }
+        }
+    }
+
+    // Scrollbar styling for a cleaner look
+    .glass-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    .glass-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .glass-content::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+}

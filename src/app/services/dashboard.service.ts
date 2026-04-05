@@ -90,6 +90,16 @@ export class DashBoardService {
     return this.http.post(url, leadData);
   }
 
+  updateLead(id: number, leadData: any): Observable<any> {
+    const url = `${this.appSettings.settings.baseUrl}/leads/update/${id}`;
+    return this.http.put(url, leadData);
+  }
+
+  deleteLead(id: number): Observable<any> {
+    const url = `${this.appSettings.settings.baseUrl}/leads/delete/${id}`;
+    return this.http.delete(url);
+  }
+
   getLeadsByEmployeeId(): Observable<any> {
     const url = `${this.appSettings.settings.baseUrl}/leads/get-leads-byEmplId`;
     return this.http.get<any>(url);

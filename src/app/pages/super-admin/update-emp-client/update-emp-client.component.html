@@ -1,5 +1,5 @@
 <div class="dialog-container">
-    <h2 mat-dialog-title>Update {{ data.type === 'employee' ? 'Employee' : 'Client' }}</h2>
+    <h2 mat-dialog-title>{{ isEditMode ? 'Update' : 'Add' }} {{ data.type === 'employee' ? 'Employee' : 'Client' }}</h2>
 
     <mat-dialog-content>
         <form [formGroup]="updateForm" class="form-container">
@@ -42,6 +42,20 @@
                     </mat-error>
                     <mat-error *ngIf="updateForm.get('mob_no')?.hasError('pattern')">
                         Please enter a valid mobile number
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Password Field (Add Mode Only) -->
+            <div fxFlex="100" class="field-container" *ngIf="!isEditMode">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" type="password" placeholder="Enter password">
+                    <mat-error *ngIf="updateForm.get('password')?.hasError('required')">
+                        Password is required
+                    </mat-error>
+                    <mat-error *ngIf="updateForm.get('password')?.hasError('minlength')">
+                        Password must be at least 6 characters
                     </mat-error>
                 </mat-form-field>
             </div>

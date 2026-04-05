@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router,private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
     const requiredRoleId = route.data['role_id']; // e.g., 1 for Super Admin
 
     if (!userJson || !userType) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login/employee']);
       return false;
     }
 

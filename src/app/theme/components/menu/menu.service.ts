@@ -16,54 +16,55 @@ export class MenuService {
   constructor(private location: Location,
     private router: Router, private authService: AuthService,
     private http: HttpClient, private appSettings: AppSettings) { this.apiUrl = this.appSettings.settings.baseUrl; }
-    
-    getAllMenus(): Observable<Menu[]> {
-      return this.http.get<Menu[]>(`${this.apiUrl}/get-menus`).pipe(
-        map((menus: Menu[]) => this.applyDynamicRoutes(menus))
-      );
+
+  getAllMenus(): Observable<Menu[]> {
+    return this.http.get<Menu[]>(`${this.apiUrl}/get-menus`).pipe(
+      map((menus: Menu[]) => this.applyDynamicRoutes(menus))
+    );
+  }
+
+  getMenusByRoles(roleIds: number[]): Observable<Menu[]> {
+    return this.http.post<Menu[]>(`${this.apiUrl}/get-menus-by-ids`, { role_ids: roleIds }).pipe(
+      map((menus: Menu[]) => this.applyDynamicRoutes(menus))
+    );
+  }
+
+  // 🔥 Private helper for dynamic route assignment
+  private applyDynamicRoutes(menus: Menu[]): Menu[] {
+    const rawUserType = localStorage.getItem('userType');
+    const userType = rawUserType ? rawUserType.toUpperCase() : '';
+    const isSuperAdmin = this.authService.hasRole(1);
+
+    let dashboardRoute = '';
+    if (isSuperAdmin) {
+      dashboardRoute = '/dashboard';
+    } else if (userType === 'EMPLOYEE') {
+      dashboardRoute = '/dashboard/employee';
+    } else if (userType === 'CLIENT') {
+      dashboardRoute = '/dashboard/client';
     }
-    
-    getMenusByRoles(roleIds: number[]): Observable<Menu[]> {
-      return this.http.post<Menu[]>(`${this.apiUrl}/get-menus-by-ids`, { role_ids: roleIds }).pipe(
-        map((menus: Menu[]) => this.applyDynamicRoutes(menus))
-      );
-    }
-    
-    // 🔥 Private helper for dynamic route assignment
-    private applyDynamicRoutes(menus: Menu[]): Menu[] {
-      const userType = localStorage.getItem('userType'); // 'EMPLOYEE' | 'CLIENT'
-      const isSuperAdmin = this.authService.hasRole(1);
-    
-      let dashboardRoute = '';
-      if (isSuperAdmin) {
-        dashboardRoute = '/dashboard';
-      } else if (userType === 'EMPLOYEE') {
-        dashboardRoute = '/dashboard/employee';
-      } else if (userType === 'CLIENT') {
-        dashboardRoute = '/dashboard/client';
+
+    // Replace dashboard's routerLink dynamically
+    return menus.map(menu => {
+      if (menu.title.toLowerCase().includes('dashboard')) {
+        return { ...menu, routerLink: dashboardRoute };
       }
-    
-      // Replace dashboard's routerLink dynamically
-      return menus.map(menu => {
-        if (menu.title.toLowerCase() === 'dashboard') {
-          return { ...menu, routerLink: dashboardRoute };
-        }
-        return menu;
-      });
-    }
-    
-    
-    createMenu(payload: any): Observable<any> {
-      return this.http.post<any>(`${this.apiUrl}/menus`, payload);
-    }
-  
-    updateMenu(menuId: number, payload: any): Observable<any> {
-      return this.http.put<any>(`${this.apiUrl}/menus/${menuId}`, payload);
-    }
-  
-    deleteMenu(menuId: number): Observable<any> {
-      return this.http.delete<any>(`${this.apiUrl}/menus/${menuId}`);
-    }
+      return menu;
+    });
+  }
+
+
+  createMenu(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/menus`, payload);
+  }
+
+  updateMenu(menuId: number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/menus/${menuId}`, payload);
+  }
+
+  deleteMenu(menuId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/menus/${menuId}`);
+  }
   // public getVerticalMenuItems(): Array<Menu> {
   //   const userType = localStorage.getItem('userType'); // 'EMPLOYEE' or 'CLIENT'
   //   const isSuperAdmin = this.authService.hasRole(1);

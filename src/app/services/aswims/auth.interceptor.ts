@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('access_token');
@@ -29,7 +29,8 @@ export class AuthInterceptor implements HttpInterceptor {
         if (error.status === 401) {
           // Token expired or unauthorized - Clear data and go to login
           localStorage.removeItem('access_token');
-          this.router.navigate(['/aswims/login']);
+          this.router.navigate(['/unauthorized']);
+          //this.router.navigate(['/aswims/login']);
         }
         return throwError(() => error);
       })

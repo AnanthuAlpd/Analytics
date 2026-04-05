@@ -2,8 +2,23 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material/dialog';
 import { DashBoardService } from 'src/app/services/dashboard.service';
 import { environment } from '../../../../environments/environment'
-import { LeadsFormComponent} from './leads-form/leads-form.component'
+import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexStroke,
+  ApexTooltip,
+  ApexFill
+} from 'ng-apexcharts';
 
+export type SparklineOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  stroke: ApexStroke;
+  tooltip: ApexTooltip;
+  colors: string[];
+  fill: ApexFill;
+};
 @Component({
   selector: 'app-emp-dashboard',
   templateUrl: './emp-dashboard.component.html',
@@ -24,6 +39,11 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
   employeeLeadsGrowth?: number;
   earningsGrowth?: number;
 
+  // Sparkline Chart Options
+  public clientSparklineOptions: Partial<SparklineOptions>;
+  public employeeSparklineOptions: Partial<SparklineOptions>;
+  public earningsSparklineOptions: Partial<SparklineOptions>;
+
   // UI state
   videoLoading: boolean = false;
   showQuickActions: boolean = true;
@@ -34,9 +54,65 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.vidSrc = `${environment.baseHref}assets/vid/intro.mp4`;
-     this.vidJpg = `${environment.baseHref}assets/vid/intro.jpg`;
+    this.vidJpg = `${environment.baseHref}assets/vid/intro.jpg`;
+    this.initSparklineCharts();
     this.loadDashboardData();
     this.setupVideoEventListeners();
+  }
+
+  private initSparklineCharts(): void {
+    const commonChartOptions: any = {
+      type: 'area',
+      height: 60,
+      sparkline: { enabled: true },
+      animations: { enabled: true, easing: 'easeinout', speed: 800 }
+    };
+
+    const commonStroke: any = { curve: 'smooth', width: 2 };
+    const commonTooltip: any = {
+      fixed: { enabled: false },
+      x: { show: false },
+      y: { title: { formatter: () => '' } },
+      marker: { show: false }
+    };
+    
+    // Gradient definitions
+    const fillGradient = {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [0, 100]
+      }
+    };
+
+    this.clientSparklineOptions = {
+      series: [{ data: [12, 14, 2, 47, 42, 15, 35, 75, 40, 15, 20] }],
+      chart: commonChartOptions,
+      stroke: commonStroke,
+      colors: ['#00e5ff'], // Cyber Cyan
+      fill: fillGradient,
+      tooltip: commonTooltip
+    };
+
+    this.employeeSparklineOptions = {
+      series: [{ data: [47, 45, 74, 14, 56, 37, 54, 25, 41, 10] }],
+      chart: commonChartOptions,
+      stroke: commonStroke,
+      colors: ['#ff00ff'], // Neon Magenta
+      fill: fillGradient,
+      tooltip: commonTooltip
+    };
+
+    this.earningsSparklineOptions = {
+      series: [{ data: [120, 240, 180, 480, 720, 580, 950, 1150, 1000] }],
+      chart: commonChartOptions,
+      stroke: commonStroke,
+      colors: ['#00ff00'], // Neon Green
+      fill: fillGradient,
+      tooltip: commonTooltip
+    };
   }
 
   ngOnDestroy(): void {

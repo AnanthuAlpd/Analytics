@@ -9,11 +9,11 @@ import { DashBoardService } from 'src/app/services/dashboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-entity-list-leads',
-  templateUrl: './entity-list-leads.component.html',
-  styleUrls: ['./entity-list-leads.component.scss']
+  selector: 'app-my-leads',
+  templateUrl: './my-leads.component.html',
+  styleUrls: ['./my-leads.component.scss']
 })
-export class EntityListLeadsComponent implements OnInit {
+export class MyLeadsComponent implements OnInit {
   leads$: Observable<Lead[]>;
   leadType: string = '';
   title: string = '';
@@ -25,23 +25,36 @@ export class EntityListLeadsComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.leadType = data['type'];
       this.title = data['breadcrumb'];
-
+      
       if (this.leadType === 'employee') {
-        this.leads$ = this.leadsService.getEmployeeLeads();
+        this.leads$ = this.leadsService.getCurrentUserEmployeeLeads();
       } else {
-        this.leads$ = this.leadsService.getClientLeads();
+        this.leads$ = this.leadsService.getCurrentUserClientLeads();
       }
     });
   }
 
   getStatusClass(status: string): string {
     return status ? status.toLowerCase().replace(' ', '-') : '';
+  }
+
+  onAddLead(): void {
+    const dialogRef = this.dialog.open(LeadsFormComponent, {
+      width: '500px',
+      data: { lead_cat: this.leadType === 'employee' ? 'Employee' : 'Client' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.refreshLeads();
+      }
+    });
   }
 
   onView(lead: Lead): void {
@@ -88,9 +101,9 @@ export class EntityListLeadsComponent implements OnInit {
 
   private refreshLeads(): void {
     if (this.leadType === 'employee') {
-      this.leads$ = this.leadsService.getEmployeeLeads();
+      this.leads$ = this.leadsService.getCurrentUserEmployeeLeads();
     } else {
-      this.leads$ = this.leadsService.getClientLeads();
+      this.leads$ = this.leadsService.getCurrentUserClientLeads();
     }
   }
 }

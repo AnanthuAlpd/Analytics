@@ -1,0 +1,15 @@
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+  gap: 12px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}

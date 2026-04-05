@@ -45,8 +45,8 @@ import localeIn from '@angular/common/locales/en-IN';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 // import { AuthInterceptor } from './interceptors/auth.interceptor';
 import {AswimsModule} from './pages/aswims/aswims.module'
-import { ClientEmpListComponent } from './pages/super-admin/client-emp-list/client-emp-list.component';
 import { RoleDeptMenuListComponent } from './pages/super-admin/role-dept-menu-list/role-dept-menu-list.component';
+import { EntityListEmpClientComponent } from './pages/super-admin/entity-list-emp-client/entity-list-emp-client.component';
 import { UpdateEmpClientComponent } from './pages/super-admin/update-emp-client/update-emp-client.component';
 import { UpdateRoleDeptMenuComponent } from './pages/super-admin/update-role-dept-menu/update-role-dept-menu.component';
 
@@ -89,7 +89,7 @@ registerLocaleData(localeIn);
     ApplicationsComponent,
     MessagesComponent,
     UserMenuComponent,
-    ClientEmpListComponent,
+    EntityListEmpClientComponent,
     RoleDeptMenuListComponent,
     UpdateEmpClientComponent,
     UpdateRoleDeptMenuComponent

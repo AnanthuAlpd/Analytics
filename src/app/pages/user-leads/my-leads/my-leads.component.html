@@ -1,0 +1,150 @@
+<div class="leads-container" fxLayout="column" fxGap="20px">
+
+    <!-- Header Section -->
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="header-section">
+        <h2 class="page-title">{{ title }}</h2>
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+            <mat-chip *ngIf="leads$ | async as leads" class="count-chip">
+                Total: {{ leads.length }}
+            </mat-chip>
+            <button mat-raised-button color="primary" (click)="onAddLead()" class="add-lead-btn">
+                <mat-icon>person_add</mat-icon>
+                Add Lead
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <mat-card class="leads-card">
+        <mat-card-header>
+            <mat-card-title>My {{ leadType | titlecase }} Leads</mat-card-title>
+            <mat-card-subtitle>Manage and view your {{ leadType }} leads</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div *ngIf="leads$ | async as leads; else loading">
+
+                <!-- Table Container -->
+                <div class="table-container" *ngIf="leads.length > 0; else emptyState">
+                    <table mat-table [dataSource]="leads" class="leads-table">
+
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef class="name-header">Name</th>
+                            <td mat-cell *matCellDef="let lead" class="name-cell">
+                                <div fxLayout="column">
+                                    <span class="lead-name">{{ lead.name }}</span>
+                                    <span class="lead-id">ID: {{ lead.id }}</span>
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <!-- Email Column -->
+                        <ng-container matColumnDef="email">
+                            <th mat-header-cell *matHeaderCellDef>Email</th>
+                            <td mat-cell *matCellDef="let lead" class="email-cell">
+                                <mat-icon class="contact-icon">email</mat-icon>
+                                {{ lead.email }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Mobile Column -->
+                        <ng-container matColumnDef="mob_no">
+                            <th mat-header-cell *matHeaderCellDef>Mobile</th>
+                            <td mat-cell *matCellDef="let lead" class="mobile-cell">
+                                <mat-icon class="contact-icon">phone</mat-icon>
+                                {{ lead.mob_no }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Lead Source Column -->
+                        <ng-container matColumnDef="lead_source">
+                            <th mat-header-cell *matHeaderCellDef>Source</th>
+                            <td mat-cell *matCellDef="let lead">
+                                <mat-chip class="source-chip">{{ lead.lead_source }}</mat-chip>
+                            </td>
+                        </ng-container>
+
+                        <!-- Status Column -->
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef>Status</th>
+                            <td mat-cell *matCellDef="let lead">
+                                <mat-chip [ngClass]="getStatusClass(lead.status)" class="status-chip">
+                                    {{ lead.status }}
+                                </mat-chip>
+                            </td>
+                        </ng-container>
+
+                        <!-- Remarks Column -->
+                        <ng-container matColumnDef="remarks">
+                            <th mat-header-cell *matHeaderCellDef>Remarks</th>
+                            <td mat-cell *matCellDef="let lead" class="remarks-cell">
+                                <span *ngIf="lead.remarks; else noRemarks" [matTooltip]="lead.remarks">
+                                    {{ lead.remarks.length > 30 ? (lead.remarks | slice:0:30) + '...' : lead.remarks }}
+                                </span>
+                                <ng-template #noRemarks>
+                                    <span class="no-remarks">-</span>
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- Created Date Column -->
+                        <ng-container matColumnDef="created_at">
+                            <th mat-header-cell *matHeaderCellDef>Created</th>
+                            <td mat-cell *matCellDef="let lead" class="date-cell">
+                                {{ lead.created_at | date:'MMM dd, yyyy' }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Actions Column -->
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+                            <td mat-cell *matCellDef="let lead" class="actions-cell">
+                                <div fxLayout="row" fxGap="8px">
+                                    <button mat-icon-button color="primary" matTooltip="View Details"
+                                        (click)="onView(lead)">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+
+                                    <button mat-icon-button color="accent" matTooltip="Edit Lead"
+                                        (click)="onEdit(lead)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+
+                                    <button mat-icon-button color="warn" matTooltip="Delete Lead"
+                                        (click)="onDelete(lead)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <ng-template #emptyState>
+                    <div fxLayout="column" fxLayoutAlign="center center" class="empty-state">
+                        <mat-icon class="empty-icon">inbox</mat-icon>
+                        <h3>No {{ leadType }} leads found</h3>
+                        <p>You have currently not added any leads in this category.</p>
+                    </div>
+                </ng-template>
+
+            </div>
+
+            <!-- Loading Template -->
+            <ng-template #loading>
+                <div fxLayout="column" fxLayoutAlign="center center" class="loading-state">
+                    <mat-spinner diameter="50"></mat-spinner>
+                    <p>Loading leads...</p>
+                </div>
+            </ng-template>
+
+        </mat-card-content>
+    </mat-card>
+
+</div>

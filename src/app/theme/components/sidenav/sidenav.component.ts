@@ -36,11 +36,13 @@ export class SidenavComponent implements OnInit {
     if (user && user.roles) {
       roleIds = user.roles.map((r: any) => r.id);
     }
+    // console.log("Role IDs:", roleIds);
+    //console.log("User:", user);
 
     this.menuService.getMenusByRoles(roleIds).subscribe({
       next: (menus) => {
         this.menuItems = menus;
-        // console.log("Menus:", menus);
+        //  console.log("Menus:", menus);
       },
       error: (err) => {
         console.error("Error fetching menus", err);

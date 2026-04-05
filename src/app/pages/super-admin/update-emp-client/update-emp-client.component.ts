@@ -15,6 +15,7 @@ export class UpdateEmpClientComponent implements OnInit {
   updateForm: FormGroup;
   isLoading = false;
   departments: any;
+  isEditMode = false;
 
   roles = [];
 
@@ -25,6 +26,7 @@ export class UpdateEmpClientComponent implements OnInit {
     private dialogRef: MatDialogRef<UpdateEmpClientComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { item: any; type: string }
   ) {
+    this.isEditMode = !!this.data.item;
     this.updateForm = this.createForm();
   }
 
@@ -51,14 +53,20 @@ export class UpdateEmpClientComponent implements OnInit {
   }
 
   private createForm(): FormGroup {
-    return this.fb.group({
+    const formConfig: any = {
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       mob_no: ['', [Validators.required, Validators.pattern(/^[+]?[\d\s\-\(\)]+$/)]],
       main_department: ['', [Validators.required]],
       other_departments: [[]],
       roles: [[], [Validators.required]]
-    });
+    };
+
+    if (!this.isEditMode) {
+      formConfig.password = ['', [Validators.required, Validators.minLength(6)]];
+    }
+
+    return this.fb.group(formConfig);
   }
 
   private populateForm(): void {
@@ -86,19 +94,51 @@ export class UpdateEmpClientComponent implements OnInit {
   onSave(): void {
     if (this.updateForm.valid) {
       this.isLoading = true;    
-      const formData = this.updateForm.value;
-      const employeeId = this.data.item.id;
-      console.log(formData);
-      this.superAdmService.updateEmployee(employeeId,formData).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Error loading chart data:', err);
-          this.isLoading = false;
+      const formData = { ...this.updateForm.value };
+      
+      // Map main_department to department_id for backend API
+      if (formData.main_department) {
+        formData.department_id = formData.main_department;
+      }
+      
+      if (this.isEditMode) {
+        const employeeId = this.data.item.id;
+        this.superAdmService.updateEmployee(employeeId, formData).subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error updating:', err);
+            this.isLoading = false;
+          }
+        });
+      } else {
+        // Add Mode
+        if (this.data.type === 'employee') {
+          this.authService.register(formData).subscribe({
+            next: (response) => {
+              this.dialogRef.close(response);
+              this.isLoading = false;
+            },
+            error: (err) => {
+              console.error('Error adding employee:', err);
+              this.isLoading = false;
+            }
+          });
+        } else {
+          this.authService.registerClient(formData).subscribe({
+            next: (response) => {
+              this.dialogRef.close(response);
+              this.isLoading = false;
+            },
+            error: (err) => {
+              console.error('Error adding client:', err);
+              this.isLoading = false;
+            }
+          });
         }
-      });
+      }
     }
   }
 

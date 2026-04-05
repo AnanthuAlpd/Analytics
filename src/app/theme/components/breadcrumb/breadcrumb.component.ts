@@ -37,18 +37,23 @@ export class BreadcrumbComponent {
     }
 
     private parseRoute(node: ActivatedRouteSnapshot) { 
-        if (node.data['breadcrumb']) {
-            let urlSegments: UrlSegment[] = [];
-            node.pathFromRoot.forEach(routerState => {
-                urlSegments = urlSegments.concat(routerState.url);
-            });
-            let url = urlSegments.map(urlSegment => {
-                return urlSegment.path;
-            }).join('/');
-            this.breadcrumbs.push({
-                name: node.data['breadcrumb'],
-                url: '/' + url
-            }); 
+        const breadcrumbName = node.data['breadcrumb'];
+        if (breadcrumbName) {
+            // Deduplicate: Don't push if it's the same name as the last breadcrumb (common in lazy loading)
+            const lastBreadcrumb = this.breadcrumbs[this.breadcrumbs.length - 1];
+            if (!lastBreadcrumb || lastBreadcrumb.name !== breadcrumbName) {
+                let urlSegments: UrlSegment[] = [];
+                node.pathFromRoot.forEach(routerState => {
+                    urlSegments = urlSegments.concat(routerState.url);
+                });
+                let url = urlSegments.map(urlSegment => {
+                    return urlSegment.path;
+                }).join('/');
+                this.breadcrumbs.push({
+                    name: breadcrumbName,
+                    url: '/' + url
+                }); 
+            }
         }
         if (node.firstChild) {
             this.parseRoute(node.firstChild);

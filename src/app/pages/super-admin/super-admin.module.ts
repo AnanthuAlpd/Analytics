@@ -24,12 +24,12 @@ export const routes: Routes = [
       {
         path: 'leads/emp-leads-list',
         component: EntityListLeadsComponent,
-        data: { type: 'employee',breadcrumb: 'Employee Leads List' }
+        data: { type: 'employee', breadcrumb: 'Employee Leads List' }
       },
       {
         path: 'leads/client-leads-list',
         component: EntityListLeadsComponent,
-        data: { type: 'client',breadcrumb: 'Client Leads List' }
+        data: { type: 'client', breadcrumb: 'Client Leads List' }
       }
     ]
   },
@@ -38,7 +38,6 @@ export const routes: Routes = [
 
 @NgModule({
   declarations: [
-    EntityListEmpClientComponent,
     EntityListLeadsComponent
   ],
   imports: [

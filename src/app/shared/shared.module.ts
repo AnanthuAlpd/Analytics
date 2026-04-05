@@ -31,6 +31,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LeadsFormComponent } from './components/leads-form/leads-form.component';
+import { LeadDetailComponent } from './components/lead-detail/lead-detail.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
@@ -68,7 +71,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
     MatStepperModule
   ],
+  declarations: [
+    LeadsFormComponent,
+    LeadDetailComponent
+  ],
   exports: [
+    ReactiveFormsModule,
+    FormsModule,
+    LeadsFormComponent,
+    LeadDetailComponent,
     FlexLayoutModule,
     MatAutocompleteModule,
     MatButtonModule,
@@ -101,7 +112,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule
-  ],
-  declarations: []
+  ]
 })
 export class SharedModule { }

@@ -17,11 +17,21 @@
                     </mat-card-header>
                     <mat-card-content class="stat-content">
                         <div class="stat-number">
-0
+                            {{ countRecentClients }}
                         </div>
-                        <div class="stat-growth">
-                            <mat-icon>trending_up</mat-icon>
-                            <span>%</span>
+                        <div class="stat-growth" [ngClass]="{'positive': growthClients >= 0, 'negative': growthClients < 0}">
+                            <mat-icon>{{ growthClients >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                            <span>{{ growthClients >= 0 ? '+' : ''}}{{ growthClients }}%</span>
+                        </div>
+                        <div class="sparkline-wrapper" *ngIf="clientSparklineOptions">
+                            <apx-chart 
+                                [series]="clientSparklineOptions.series" 
+                                [chart]="clientSparklineOptions.chart"
+                                [stroke]="clientSparklineOptions.stroke" 
+                                [colors]="clientSparklineOptions.colors"
+                                [fill]="clientSparklineOptions.fill" 
+                                [tooltip]="clientSparklineOptions.tooltip">
+                            </apx-chart>
                         </div>
 
                     </mat-card-content>
@@ -46,12 +56,22 @@
                     </mat-card-header>
                     <mat-card-content class="stat-content">
                         <div class="stat-number">
-0
+                            {{ countRecentEmployees }}
                         </div>
-                        <div class="stat-growth">
-                            <mat-icon>trending_up</mat-icon>
-                            <span>
-                                % </span>
+                        <div class="stat-growth" [ngClass]="{'positive': growthEmployees >= 0, 'negative': growthEmployees < 0}">
+                            <mat-icon>{{ growthEmployees >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                            <span>{{ growthEmployees >= 0 ? '+' : ''}}{{ growthEmployees }}%</span>
+                        </div>
+
+                        <div class="sparkline-wrapper" *ngIf="employeeSparklineOptions">
+                            <apx-chart 
+                                [series]="employeeSparklineOptions.series" 
+                                [chart]="employeeSparklineOptions.chart"
+                                [stroke]="employeeSparklineOptions.stroke" 
+                                [colors]="employeeSparklineOptions.colors"
+                                [fill]="employeeSparklineOptions.fill" 
+                                [tooltip]="employeeSparklineOptions.tooltip">
+                            </apx-chart>
                         </div>
                     </mat-card-content>
 
@@ -81,6 +101,17 @@
                         <div class="stat-growth positive">
                             <mat-icon>trending_up</mat-icon>
                             <span>+%</span>
+                        </div>
+
+                        <div class="sparkline-wrapper" *ngIf="earningsSparklineOptions">
+                            <apx-chart 
+                                [series]="earningsSparklineOptions.series" 
+                                [chart]="earningsSparklineOptions.chart"
+                                [stroke]="earningsSparklineOptions.stroke" 
+                                [colors]="earningsSparklineOptions.colors"
+                                [fill]="earningsSparklineOptions.fill" 
+                                [tooltip]="earningsSparklineOptions.tooltip">
+                            </apx-chart>
                         </div>
                     </mat-card-content>
                     <mat-card-actions class="card-actions">

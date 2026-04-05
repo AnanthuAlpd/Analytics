@@ -1,0 +1,118 @@
+<div class="detail-container">
+    <div class="header-section" fxLayout="row" fxLayoutAlign="space-between center">
+        <div fxLayout="column">
+            <h2 class="lead-name">{{ lead.name }}</h2>
+            <span class="lead-id">Lead ID: #{{ lead.id }}</span>
+        </div>
+        <button mat-icon-button mat-dialog-close class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="glass-content">
+        <div fxLayout="row wrap" fxLayoutGap="24px">
+            
+            <!-- Left Column: Core Info -->
+            <div fxFlex="100" fxFlex.gt-sm="40" fxLayout="column" fxLayoutGap="20px" class="info-column">
+                <mat-card class="info-card">
+                    <mat-card-header>
+                        <mat-icon mat-card-avatar>person</mat-icon>
+                        <mat-card-title>Contact Information</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content fxLayout="column" fxLayoutGap="12px">
+                        <div class="info-item">
+                            <mat-icon>email</mat-icon>
+                            <div fxLayout="column">
+                                <span class="label">Email</span>
+                                <span class="value">{{ lead.email }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <mat-icon>phone</mat-icon>
+                            <div fxLayout="column">
+                                <span class="label">Mobile</span>
+                                <span class="value">{{ lead.mob_no }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <mat-icon>category</mat-icon>
+                            <div fxLayout="column">
+                                <span class="label">Category</span>
+                                <span class="value">{{ lead.lead_cat }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <mat-icon>source</mat-icon>
+                            <div fxLayout="column">
+                                <span class="label">Source</span>
+                                <span class="value">{{ lead.lead_source }}</span>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="status-card">
+                    <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+                        <div fxLayout="column">
+                            <span class="label">Current Status</span>
+                            <span class="status-badge" [ngClass]="lead.status.toLowerCase()">{{ lead.status }}</span>
+                        </div>
+                        <button mat-stroked-button color="primary" (click)="onEditLead()">
+                            <mat-icon>edit</mat-icon> Edit
+                        </button>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- Right Column: Timeline -->
+            <div fxFlex="100" fxFlex.gt-sm="55" class="timeline-column">
+                <h3 class="section-title">Activity Timeline</h3>
+                
+                <div class="timeline-container">
+                    <mat-spinner *ngIf="loadingActivities" diameter="40" class="timeline-spinner"></mat-spinner>
+                    
+                    <div *ngIf="!loadingActivities" class="timeline">
+                        <!-- Timeline Items Loop -->
+                        <div *ngFor="let activity of activities" class="timeline-item">
+                            <div class="timeline-marker" [ngClass]="activity.action_type.toLowerCase().replace(' ', '-')">
+                                <mat-icon>{{ getActionIcon(activity.action_type) }}</mat-icon>
+                            </div>
+                            <div class="timeline-content">
+                                <div fxLayout="row" fxLayoutAlign="space-between start">
+                                    <span class="activity-type">{{ activity.action_type }}</span>
+                                    <span class="activity-date">{{ activity.created_at | date:'MMM dd, HH:mm' }}</span>
+                                </div>
+                                <p class="activity-details">{{ activity.details }}</p>
+                                <div *ngIf="activity.old_value" class="value-change">
+                                    <span class="old">{{ activity.old_value }}</span>
+                                    <mat-icon>arrow_forward</mat-icon>
+                                    <span class="new">{{ activity.new_value }}</span>
+                                </div>
+                                <span class="activity-user">{{ activity.emp_name }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State Message -->
+                        <div *ngIf="activities.length === 0" class="empty-timeline" fxLayout="column" fxLayoutAlign="center center">
+                            <mat-icon>history</mat-icon>
+                            <p>No activity recorded yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Note Entry -->
+                    <div class="note-entry">
+                        <mat-form-field appearance="outline" class="note-field">
+                            <mat-label>Add a follow-up note...</mat-label>
+                            <textarea matInput [(ngModel)]="newNote" rows="2" [disabled]="savingNote"></textarea>
+                            <button mat-icon-button matSuffix (click)="addNote()" [disabled]="!newNote || savingNote">
+                                <mat-icon *ngIf="!savingNote">send</mat-icon>
+                                <mat-spinner *ngIf="savingNote" diameter="20"></mat-spinner>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </mat-dialog-content>
+</div>

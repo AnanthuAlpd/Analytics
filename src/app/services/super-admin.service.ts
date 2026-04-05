@@ -48,8 +48,8 @@ export class SuperAdminService {
   getAllEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(`${this.apiUrl}/employees`);
   }
-  getAllClents(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.apiUrl}/clients`);
+  getAllClients(): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.apiUrl}/get-all-clients`);
   }
   getAllDepartments(): Observable<Department[]>{
     return this.http.get<Department[]>(`${this.apiUrl}/departments`);

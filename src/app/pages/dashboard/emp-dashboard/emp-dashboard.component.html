@@ -27,11 +27,24 @@
                             <span>{{ clientLeadsGrowth >= 0 ? '+' : ''}}{{ clientLeadsGrowth }}%</span>
                         </div>
 
+                        <div class="sparkline-wrapper" *ngIf="clientSparklineOptions">
+                            <apx-chart [series]="clientSparklineOptions.series" [chart]="clientSparklineOptions.chart"
+                                [stroke]="clientSparklineOptions.stroke" [colors]="clientSparklineOptions.colors"
+                                [fill]="clientSparklineOptions.fill" [tooltip]="clientSparklineOptions.tooltip">
+                            </apx-chart>
+                        </div>
+
+
                     </mat-card-content>
-                    <mat-card-actions class="card-actions">
-                        <button mat-button color="primary">
+                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
+                        <button mat-button color="primary" (click)="viewDetails('client')">
                             <mat-icon>visibility</mat-icon>
                             View Details
+                        </button>
+                        <button mat-stroked-button color="primary" (click)="openLeadFormDialog('Client')"
+                            class="card-action-btn">
+                            <mat-icon>person_add</mat-icon>
+                            Add Lead
                         </button>
                     </mat-card-actions>
                 </mat-card>
@@ -70,12 +83,25 @@
                                         ? '+' + employeeLeadsGrowth + '%'
                                         : employeeLeadsGrowth < 0 ? employeeLeadsGrowth + '%' : '0%' }} </span>
                         </div>
+
+                        <div class="sparkline-wrapper" *ngIf="employeeSparklineOptions">
+                            <apx-chart [series]="employeeSparklineOptions.series"
+                                [chart]="employeeSparklineOptions.chart" [stroke]="employeeSparklineOptions.stroke"
+                                [colors]="employeeSparklineOptions.colors" [fill]="employeeSparklineOptions.fill"
+                                [tooltip]="employeeSparklineOptions.tooltip">
+                            </apx-chart>
+                        </div>
                     </mat-card-content>
 
-                    <mat-card-actions class="card-actions">
-                        <button mat-button color="warn">
+                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
+                        <button mat-button color="warn" (click)="viewDetails('employee')">
                             <mat-icon>visibility</mat-icon>
                             View Details
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="openLeadFormDialog('Employee')"
+                            class="card-action-btn">
+                            <mat-icon>badge</mat-icon>
+                            Add Lead
                         </button>
                     </mat-card-actions>
                 </mat-card>
@@ -99,6 +125,14 @@
                         <div class="stat-growth positive" *ngIf="earningsGrowth">
                             <mat-icon>trending_up</mat-icon>
                             <span>+{{ earningsGrowth }}%</span>
+                        </div>
+
+                        <div class="sparkline-wrapper" *ngIf="earningsSparklineOptions">
+                            <apx-chart [series]="earningsSparklineOptions.series"
+                                [chart]="earningsSparklineOptions.chart" [stroke]="earningsSparklineOptions.stroke"
+                                [colors]="earningsSparklineOptions.colors" [fill]="earningsSparklineOptions.fill"
+                                [tooltip]="earningsSparklineOptions.tooltip">
+                            </apx-chart>
                         </div>
                     </mat-card-content>
                     <mat-card-actions class="card-actions">
@@ -130,8 +164,7 @@
 
             <mat-card-content class="video-content">
                 <div class="video-container" #videoContainer>
-                    <video #videoPlayer controls class="video-player" preload="metadata"
-                        [poster]="vidJpg">
+                    <video #videoPlayer controls class="video-player" preload="metadata" [poster]="vidJpg">
                         <source [attr.src]="vidSrc" type="video/mp4" />
                         <p class="video-fallback">
                             Your browser does not support the video tag.
@@ -163,21 +196,14 @@
     </div>
 
     <!-- Optional: Quick Actions Section -->
-    <div class="quick-actions-section" *ngIf="showQuickActions">
-        <h3 class="section-title">Quick Actions</h3>
+
+    <!-- <div class="quick-actions-section" *ngIf="showQuickActions">
+        <h3 class="section-title">Quick Reports</h3>
         <div fxLayout="row wrap" fxLayoutGap="12px">
-            <button mat-raised-button color="primary" (click)="openLeadFormDialog('Client')" class="action-btn">
-                <mat-icon>person_add</mat-icon>
-                Add Client Lead
-            </button>
-            <button mat-raised-button color="warn" (click)="openLeadFormDialog('Employee')" class="action-btn">
-                <mat-icon>work</mat-icon>
-                Add Employee Lead
-            </button>
             <button mat-stroked-button color="accent" class="action-btn">
                 <mat-icon>analytics</mat-icon>
                 View Reports
             </button>
         </div>
-    </div>
+    </div> -->
 </div>

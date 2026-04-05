@@ -7,7 +7,7 @@ import { AuthService } from './auth.service'; // Adjust path to your auth servic
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -22,7 +22,8 @@ export class AuthGuard implements CanActivate {
     }
 
     // Not logged in, redirect to login page with the return url
-    this.router.navigate(['/aswims/login'], { queryParams: { returnUrl: state.url } });
+    this.router.navigate(['/unauthorized']);
+    //this.router.navigate(['/aswims/login'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 }
