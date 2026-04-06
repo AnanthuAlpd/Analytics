@@ -22,40 +22,55 @@
                 <div class="table-container" *ngIf="leads.length > 0; else emptyState">
                     <table mat-table [dataSource]="leads" class="leads-table">
 
-                        <!-- Name Column -->
+                        <!-- Name & Avatar Column -->
                         <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef class="name-header">Name</th>
+                            <th mat-header-cell *matHeaderCellDef>Lead Profile</th>
                             <td mat-cell *matCellDef="let lead" class="name-cell">
-                                <div fxLayout="column">
-                                    <span class="lead-name">{{ lead.name }}</span>
-                                    <span class="lead-id">ID: {{ lead.id }}</span>
+                                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+                                    <div class="lead-avatar" [style.background-color]="lead.name | initialColor">
+                                        {{ getInitials(lead.name) }}
+                                    </div>
+                                    <div fxLayout="column">
+                                        <span class="lead-name text-truncate">{{ lead.name }}</span>
+                                        <span class="lead-id">ID: #{{ lead.id }}</span>
+                                    </div>
                                 </div>
                             </td>
                         </ng-container>
 
-                        <!-- Email Column -->
-                        <ng-container matColumnDef="email">
-                            <th mat-header-cell *matHeaderCellDef>Email</th>
-                            <td mat-cell *matCellDef="let lead" class="email-cell">
-                                <mat-icon class="contact-icon">email</mat-icon>
-                                {{ lead.email }}
+                        <!-- Combined Contact Column -->
+                        <ng-container matColumnDef="contact">
+                            <th mat-header-cell *matHeaderCellDef fxHide.lt-md>Contact Info</th>
+                            <td mat-cell *matCellDef="let lead" class="contact-cell" fxHide.lt-md>
+                                <div fxLayout="column" fxLayoutGap="4px">
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+                                        <mat-icon class="mini-icon">email</mat-icon>
+                                        <span class="small-text">{{ lead.email }}</span>
+                                    </div>
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+                                        <mat-icon class="mini-icon">phone</mat-icon>
+                                        <span class="small-text">{{ lead.mob_no }}</span>
+                                    </div>
+                                </div>
                             </td>
                         </ng-container>
 
-                        <!-- Mobile Column -->
-                        <ng-container matColumnDef="mob_no">
-                            <th mat-header-cell *matHeaderCellDef>Mobile</th>
-                            <td mat-cell *matCellDef="let lead" class="mobile-cell">
-                                <mat-icon class="contact-icon">phone</mat-icon>
-                                {{ lead.mob_no }}
+                        <!-- Added By Column -->
+                        <ng-container matColumnDef="emp_name">
+                            <th mat-header-cell *matHeaderCellDef fxHide.lt-lg>Added By</th>
+                            <td mat-cell *matCellDef="let lead" class="added-by-cell" fxHide.lt-lg>
+                                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+                                    <mat-icon class="mini-icon">person</mat-icon>
+                                    <span class="small-text">{{ lead.emp_name || 'System' }}</span>
+                                </div>
                             </td>
                         </ng-container>
 
                         <!-- Lead Source Column -->
                         <ng-container matColumnDef="lead_source">
-                            <th mat-header-cell *matHeaderCellDef>Source</th>
-                            <td mat-cell *matCellDef="let lead">
-                                <mat-chip class="source-chip">{{ lead.lead_source }}</mat-chip>
+                            <th mat-header-cell *matHeaderCellDef fxHide.lt-md>Source</th>
+                            <td mat-cell *matCellDef="let lead" fxHide.lt-md>
+                                <span class="badge source-badge">{{ lead.lead_source }}</span>
                             </td>
                         </ng-container>
 
@@ -63,30 +78,20 @@
                         <ng-container matColumnDef="status">
                             <th mat-header-cell *matHeaderCellDef>Status</th>
                             <td mat-cell *matCellDef="let lead">
-                                <mat-chip [ngClass]="getStatusClass(lead.status)" class="status-chip">
+                                <span class="badge status-badge" [ngClass]="getStatusClass(lead.status)">
                                     {{ lead.status }}
-                                </mat-chip>
-                            </td>
-                        </ng-container>
-
-                        <!-- Remarks Column -->
-                        <ng-container matColumnDef="remarks">
-                            <th mat-header-cell *matHeaderCellDef>Remarks</th>
-                            <td mat-cell *matCellDef="let lead" class="remarks-cell">
-                                <span *ngIf="lead.remarks; else noRemarks" [matTooltip]="lead.remarks">
-                                    {{ lead.remarks.length > 30 ? (lead.remarks | slice:0:30) + '...' : lead.remarks }}
                                 </span>
-                                <ng-template #noRemarks>
-                                    <span class="no-remarks">-</span>
-                                </ng-template>
                             </td>
                         </ng-container>
 
                         <!-- Created Date Column -->
                         <ng-container matColumnDef="created_at">
-                            <th mat-header-cell *matHeaderCellDef>Created</th>
-                            <td mat-cell *matCellDef="let lead" class="date-cell">
-                                {{ lead.created_at | date:'MMM dd, yyyy' }}
+                            <th mat-header-cell *matHeaderCellDef fxHide.lt-lg>Added On</th>
+                            <td mat-cell *matCellDef="let lead" class="date-cell" fxHide.lt-lg>
+                                <div fxLayout="column">
+                                    <span class="date-text">{{ lead.created_at | date:'MMM dd, yyyy' }}</span>
+                                    <span class="time-ago">{{ lead.created_at | timeAgo }}</span>
+                                </div>
                             </td>
                         </ng-container>
 
@@ -94,21 +99,38 @@
                         <ng-container matColumnDef="actions">
                             <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
                             <td mat-cell *matCellDef="let lead" class="actions-cell">
-                                <div fxLayout="row" fxGap="8px">
-                                    <button mat-icon-button color="primary" matTooltip="View Details"
-                                        (click)="onView(lead)">
-                                        <mat-icon>visibility</mat-icon>
+                                <!-- Desktop-only Actions -->
+                                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxHide.lt-md>
+                                    <button mat-icon-button class="action-btn view-btn" matTooltip="View Detail" (click)="onView(lead)">
+                                        <mat-icon>remove_red_eye</mat-icon>
                                     </button>
+                                    <button mat-icon-button class="action-btn edit-btn" matTooltip="Update" (click)="onEdit(lead)">
+                                        <mat-icon>edit_note</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="action-btn delete-btn" matTooltip="Remove" (click)="onDelete(lead)">
+                                        <mat-icon>delete_outline</mat-icon>
+                                    </button>
+                                </div>
 
-                                    <button mat-icon-button color="accent" matTooltip="Edit Lead"
-                                        (click)="onEdit(lead)">
-                                        <mat-icon>edit</mat-icon>
+                                <!-- Mobile/Tablet Action Menu -->
+                                <div fxHide.gt-sm>
+                                    <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                                        <mat-icon>more_vert</mat-icon>
                                     </button>
-
-                                    <button mat-icon-button color="warn" matTooltip="Delete Lead"
-                                        (click)="onDelete(lead)">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
+                                    <mat-menu #actionMenu="matMenu">
+                                        <button mat-menu-item (click)="onView(lead)">
+                                            <mat-icon class="view-icon">remove_red_eye</mat-icon>
+                                            <span>View Details</span>
+                                        </button>
+                                        <button mat-menu-item (click)="onEdit(lead)">
+                                            <mat-icon class="edit-icon">edit_note</mat-icon>
+                                            <span>Edit Lead</span>
+                                        </button>
+                                        <button mat-menu-item (click)="onDelete(lead)">
+                                            <mat-icon class="delete-icon text-danger">delete_outline</mat-icon>
+                                            <span class="text-danger">Delete Lead</span>
+                                        </button>
+                                    </mat-menu>
                                 </div>
                             </td>
                         </ng-container>

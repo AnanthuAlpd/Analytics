@@ -1,57 +1,98 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Add New' }} Lead</h2>
-<mat-dialog-content [formGroup]="leadForm" fxLayout="column" fxLayoutGap="16px">
+<div class="form-container">
+  <div mat-dialog-title class="dialog-header" fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxLayout="column">
+      <span class="title">{{ isEditMode ? 'Edit Lead Profile' : 'Create New Lead' }}</span>
+      <span class="subtitle">Complete the information below to {{ isEditMode ? 'update' : 'add' }} a lead</span>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-icon"><mat-icon>close</mat-icon></button>
+  </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Name</mat-label>
-    <input matInput formControlName="name" placeholder="Lead Name" />
-    <mat-error *ngIf="leadForm.get('name').hasError('required')">Name is required</mat-error>
-  </mat-form-field>
+  <mat-dialog-content [formGroup]="leadForm" class="glass-content">
+    <div fxLayout="row wrap" fxLayoutGap="16px grid">
+      <!-- Name -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline" color="primary">
+          <mat-label>Lead Name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="name" placeholder="John Doe" />
+          <mat-error *ngIf="leadForm.get('name').hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Lead Category</mat-label>
-    <mat-select formControlName="lead_cat">
-      <mat-option *ngFor="let cat of leadCategories" [value]="cat">{{ cat }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+      <!-- Category -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline">
+          <mat-label>Lead Category</mat-label>
+          <mat-icon matPrefix>category</mat-icon>
+          <mat-select formControlName="lead_cat">
+            <mat-option *ngFor="let cat of leadCategories" [value]="cat">
+              {{ cat }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Email</mat-label>
-    <input matInput type="email" formControlName="email" placeholder="email@example.com" />
-    <mat-error *ngIf="leadForm.get('email').hasError('email')">Please enter a valid email</mat-error>
-    <mat-error *ngIf="leadForm.get('email').hasError('required')">Email is required</mat-error>
-  </mat-form-field>
+      <!-- Email -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" formControlName="email" placeholder="email@example.com" />
+          <mat-error *ngIf="leadForm.get('email').hasError('email')">Invalid email format</mat-error>
+          <mat-error *ngIf="leadForm.get('email').hasError('required')">Email is required</mat-error>
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Mobile Number</mat-label>
-    <input matInput type="text" formControlName="mob_no" placeholder="9876543210" />
-  </mat-form-field>
+      <!-- Mobile -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline">
+          <mat-label>Mobile Number</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput type="text" formControlName="mob_no" placeholder="9876543210" />
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Lead Source</mat-label>
-    <input matInput formControlName="lead_source" placeholder="Google, Referral, etc." />
-  </mat-form-field>
+      <!-- Source -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline">
+          <mat-label>Lead Source</mat-label>
+          <mat-icon matPrefix>ads_click</mat-icon>
+          <input matInput formControlName="lead_source" placeholder="E.g. Referral, Website" />
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Status</mat-label>
-    <mat-select formControlName="status">
-      <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+      <!-- Status -->
+      <div fxFlex="100" fxFlex.gt-xs="50">
+        <mat-form-field appearance="outline">
+          <mat-label>Current Status</mat-label>
+          <mat-icon matPrefix>sync_alt</mat-icon>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Remarks</mat-label>
-    <textarea matInput formControlName="remarks" rows="3" placeholder="Add any initial notes..."></textarea>
-  </mat-form-field>
+      <!-- Remarks -->
+      <div fxFlex="100">
+        <mat-form-field appearance="outline">
+          <mat-label>Remarks / Initial Notes</mat-label>
+          <mat-icon matPrefix>notes</mat-icon>
+          <textarea matInput formControlName="remarks" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-dialog-content>
 
-</mat-dialog-content>
-
-<mat-dialog-actions class="dialog-actions" align="end">
-  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
-  
-  <button mat-flat-button color="primary"
-          (click)="onSubmit()"
-          [disabled]="leadForm.invalid || loading">
-    <mat-spinner *ngIf="loading" diameter="20" strokeWidth="3" style="display: inline-block; vertical-align: middle; margin-right: 8px;"></mat-spinner>
-    <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Save' }}</span>
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end" class="dialog-actions-premium">
+    <button mat-button class="cancel-btn" (click)="onCancel()" [disabled]="loading">DISCARD</button>
+    <button mat-flat-button color="primary" 
+            class="submit-btn"
+            (click)="onSubmit()"
+            [disabled]="leadForm.invalid || loading">
+      <mat-spinner *ngIf="loading" diameter="20" class="btn-spinner"></mat-spinner>
+      <span *ngIf="!loading">{{ isEditMode ? 'UPDATE LEAD' : 'CREATE LEAD' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

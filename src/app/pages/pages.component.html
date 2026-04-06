@@ -7,31 +7,29 @@
     <mat-toolbar color="primary" class="flex-p-x">
       <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100">
         <div fxLayout="row" fxLayoutAlign="center center">
-          <button *ngIf="settings.menu == 'vertical'" mat-icon-button (click)="toggleSidenav()">
+          <button *ngIf="settings.menu == 'vertical'" mat-icon-button (click)="toggleSidenav()" matTooltip="Toggle Menu">
             <mat-icon>menu</mat-icon>
           </button>
           <button fxShow="false" fxShow.gt-xs *ngIf="settings.menu == 'vertical'" mat-icon-button
-            (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock">
+            (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock" matTooltip="User Profile">
             <mat-icon>person</mat-icon>
           </button>
           <a *ngIf="settings.menu == 'horizontal'" mat-raised-button color="accent" routerLink="/"
             (click)="closeSubMenus()" class="small-logo">P</a>
           <a *ngIf="settings.menu == 'horizontal'" class="logo" (click)="closeSubMenus()">{{ serviceName === 'Prabha
             Analytics' ? 'PRABHA' : 'POTHANSAI' }}</a>
-          <!-- routerLink="/" -->
-          <button *ngIf="hasAdminRole()" mat-raised-button color="accent" class="action-btn"
-            [routerLink]="toggleDashboardLink">
-            <mat-icon>{{ toggleDashboardIcon }}</mat-icon>
-            {{ toggleDashboardLabel }}
+          <button fxHide.xs mat-icon-button *ngIf="settings.menu == 'vertical'"
+            (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned" class="pin-btn"
+            [matTooltip]="settings.sidenavIsPinned ? 'Unpin Sidebar' : 'Pin Sidebar'">
+            <mat-icon>{{ settings.sidenavIsPinned ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
           </button>
-
         </div>
         <div fxLayout="row" fxLayoutAlign="end center">
           <div fxLayout="row" fxLayoutAlign="start center" fxShow="false" fxShow.gt-xs class="search-bar">
             <form method="get">
               <input type="text" placeholder="Type to search..." class="mat-elevation-z3"
                 [class.show]="toggleSearchBar">
-              <button mat-icon-button (click)="toggleSearchBar = !toggleSearchBar" type="button">
+              <button mat-icon-button (click)="toggleSearchBar = !toggleSearchBar" type="button" matTooltip="Search">
                 <mat-icon>search</mat-icon>
               </button>
             </form>
@@ -73,11 +71,11 @@
     </div>
 
 
-    <div fxLayout="row" fxLayoutAlign="center center" class="options-icon" (click)="options.toggle()">
+    <div fxLayout="row" fxLayoutAlign="center center" class="options-icon" (click)="options.toggle()" matTooltip="Settings">
       <mat-icon>settings</mat-icon>
     </div>
 
-    <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()">
+    <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()" matTooltip="Back to Top">
       <mat-icon>arrow_upward</mat-icon>
     </div>
 

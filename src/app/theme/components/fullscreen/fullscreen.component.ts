@@ -4,7 +4,7 @@ import {Component, ViewEncapsulation, ViewChild, HostListener, ElementRef} from 
   selector: 'app-fullscreen',
   encapsulation: ViewEncapsulation.None,
   template: `
-    <button mat-icon-button class="full-screen">
+    <button mat-icon-button class="full-screen" [matTooltip]="toggle ? 'Exit Fullscreen' : 'Enter Fullscreen'">
         <mat-icon *ngIf="!toggle" #expand>fullscreen</mat-icon>
         <mat-icon *ngIf="toggle" #compress>fullscreen_exit</mat-icon>
     </button> 

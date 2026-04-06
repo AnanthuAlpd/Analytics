@@ -7,6 +7,24 @@
     </svg>
 </mat-toolbar>
 
+<div class="dashboard-context-switcher" *ngIf="hasAdminRole() && settings.menuType != 'mini'">
+    <mat-button-toggle-group 
+        [value]="dashboardModeService.currentMode" 
+        (change)="dashboardModeService.setMode($event.value)"
+        class="sidebar-switcher"
+        fxLayout="row"
+        fxLayoutAlign="center center">
+        <mat-button-toggle value="admin" fxFlex="50" matTooltip="Admin Overview">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Admin</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="employee" fxFlex="50" matTooltip="Employee Workspace">
+            <mat-icon>dashboard</mat-icon>
+            <span>Staff</span>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+</div>
+
 <div fxLayout="column" fxLayoutAlign="center center" class="user-block transition-2" [class.show]="settings.sidenavUserBlock">
     <div [fxLayout]="(settings.menuType != 'default') ? 'column' : 'row'"
          [fxLayoutAlign]="(settings.menuType != 'default') ? 'center center' : 'space-around center'" class="user-info-wrapper">

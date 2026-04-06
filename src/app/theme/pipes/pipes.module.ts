@@ -7,6 +7,8 @@ import { ChatPersonSearchPipe } from './search/chat-person-search.pipe';
 import { UserSearchPipe } from './search/user-search.pipe';
 import { TruncatePipe } from './truncate/truncate.pipe';
 import { MailSearchPipe } from './search/mail-search.pipe';
+import { InitialColorPipe } from './initial-color.pipe';
+import { TimeAgoPipe } from './time-ago.pipe';
 
 @NgModule({
     imports: [ 
@@ -18,7 +20,9 @@ import { MailSearchPipe } from './search/mail-search.pipe';
         ChatPersonSearchPipe,
         UserSearchPipe,
         TruncatePipe,
-        MailSearchPipe
+        MailSearchPipe,
+        InitialColorPipe,
+        TimeAgoPipe
     ],
     exports: [
         PaginationPipe,
@@ -26,7 +30,9 @@ import { MailSearchPipe } from './search/mail-search.pipe';
         ChatPersonSearchPipe,
         UserSearchPipe,
         TruncatePipe,
-        MailSearchPipe
+        MailSearchPipe,
+        InitialColorPipe,
+        TimeAgoPipe
     ]
 })
 export class PipesModule { }

@@ -56,17 +56,17 @@
                   {{ getInitials(employee.name) }}
                 </div>
                 <div class="name-wrapper">
-                  <div class="entity-name primary-color">{{ employee.name }}</div>
-                  <div class="entity-subtext">{{ employee.email }}</div>
+                  <div class="entity-name primary-color text-truncate" style="max-width: 150px;">{{ employee.name }}</div>
+                  <div class="entity-subtext text-truncate" style="max-width: 150px;">{{ employee.email }}</div>
                 </div>
               </div>
             </mat-cell>
           </ng-container>
 
-          <!-- Department (Modern Pill) -->
+          <!-- Department -->
           <ng-container matColumnDef="department">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
-            <mat-cell *matCellDef="let employee">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-sm>Dept</mat-header-cell>
+            <mat-cell *matCellDef="let employee" fxHide.lt-sm>
               <div class="modern-pill-set">
                 <span class="pill" [ngClass]="employee.main_department ? 'primary' : 'warning'">
                   {{ employee.main_department || 'Unassigned' }}
@@ -75,10 +75,10 @@
             </mat-cell>
           </ng-container>
 
-          <!-- Roles (Grouped Pills) -->
+          <!-- Roles -->
           <ng-container matColumnDef="roles">
-            <mat-header-cell *matHeaderCellDef>Access Roles</mat-header-cell>
-            <mat-cell *matCellDef="let employee">
+            <mat-header-cell *matHeaderCellDef fxHide.lt-md>Roles</mat-header-cell>
+            <mat-cell *matCellDef="let employee" fxHide.lt-md>
               <div class="modern-pill-set">
                 <span class="pill success" *ngFor="let role of employee.roles">{{ role.name }}</span>
                 <span class="pill warning" *ngIf="employee.roles?.length === 0">No Access</span>
@@ -88,16 +88,16 @@
 
           <!-- Mobile -->
           <ng-container matColumnDef="mobile">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Contact</mat-header-cell>
-            <mat-cell *matCellDef="let employee">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Contact</mat-header-cell>
+            <mat-cell *matCellDef="let employee" fxHide.lt-lg>
               <span class="entity-subtext">{{ employee.mob_no || '---' }}</span>
             </mat-cell>
           </ng-container>
 
           <!-- Created -->
           <ng-container matColumnDef="created">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Joined</mat-header-cell>
-            <mat-cell *matCellDef="let employee">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Joined</mat-header-cell>
+            <mat-cell *matCellDef="let employee" fxHide.lt-lg>
               <span class="entity-subtext">{{ formatDate(employee.created_at) }}</span>
             </mat-cell>
           </ng-container>
@@ -106,7 +106,8 @@
           <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
             <mat-cell *matCellDef="let employee">
-              <div class="action-group">
+              <!-- Desktop Actions -->
+              <div class="action-group" fxHide.lt-md>
                 <button mat-icon-button class="btn-view" matTooltip="View Detail" (click)="view(employee)">
                   <mat-icon>visibility</mat-icon>
                 </button>
@@ -116,6 +117,27 @@
                 <button mat-icon-button class="btn-delete" matTooltip="Remove Member" (click)="delete(employee)">
                   <mat-icon>delete</mat-icon>
                 </button>
+              </div>
+
+              <!-- Mobile/Tablet Action Menu -->
+              <div fxHide.gt-sm>
+                <button mat-icon-button [matMenuTriggerFor]="empMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #empMenu="matMenu">
+                  <button mat-menu-item (click)="view(employee)">
+                    <mat-icon color="primary">visibility</mat-icon>
+                    <span>View Detail</span>
+                  </button>
+                  <button mat-menu-item (click)="edit(employee)">
+                    <mat-icon color="accent">edit</mat-icon>
+                    <span>Edit Record</span>
+                  </button>
+                  <button mat-menu-item (click)="delete(employee)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>Remove Member</span>
+                  </button>
+                </mat-menu>
               </div>
             </mat-cell>
           </ng-container>
@@ -139,8 +161,8 @@
                   {{ getInitials(client.name) }}
                 </div>
                 <div class="name-wrapper">
-                  <div class="entity-name primary-color">{{ client.name }}</div>
-                  <div class="entity-subtext">{{ client.email }}</div>
+                  <div class="entity-name primary-color text-truncate" style="max-width: 180px;">{{ client.name }}</div>
+                  <div class="entity-subtext text-truncate" style="max-width: 180px;">{{ client.email }}</div>
                 </div>
               </div>
             </mat-cell>
@@ -148,16 +170,16 @@
 
           <!-- Phone -->
           <ng-container matColumnDef="phone">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Direct Phone</mat-header-cell>
-            <mat-cell *matCellDef="let client">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-md>Phone</mat-header-cell>
+            <mat-cell *matCellDef="let client" fxHide.lt-md>
               <span class="entity-subtext">{{ client.phone || '---' }}</span>
             </mat-cell>
           </ng-container>
 
           <!-- Created -->
           <ng-container matColumnDef="createdAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Acquisition Date</mat-header-cell>
-            <mat-cell *matCellDef="let client">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Acquired</mat-header-cell>
+            <mat-cell *matCellDef="let client" fxHide.lt-lg>
               <span class="entity-subtext">{{ formatDate(client.created_at) }}</span>
             </mat-cell>
           </ng-container>
@@ -166,7 +188,8 @@
           <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
             <mat-cell *matCellDef="let client">
-              <div class="action-group">
+              <!-- Desktop Actions -->
+              <div class="action-group" fxHide.lt-md>
                 <button mat-icon-button class="btn-view" (click)="view(client)" matTooltip="View Details">
                   <mat-icon>visibility</mat-icon>
                 </button>
@@ -176,6 +199,27 @@
                 <button mat-icon-button class="btn-delete" (click)="delete(client)" matTooltip="Delete Client">
                   <mat-icon>delete</mat-icon>
                 </button>
+              </div>
+
+              <!-- Mobile/Tablet Action Menu -->
+              <div fxHide.gt-sm>
+                <button mat-icon-button [matMenuTriggerFor]="clientMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #clientMenu="matMenu">
+                  <button mat-menu-item (click)="view(client)">
+                    <mat-icon color="primary">visibility</mat-icon>
+                    <span>View Details</span>
+                  </button>
+                  <button mat-menu-item (click)="edit(client)">
+                    <mat-icon color="accent">edit</mat-icon>
+                    <span>Edit Profile</span>
+                  </button>
+                  <button mat-menu-item (click)="delete(client)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>Delete Client</span>
+                  </button>
+                </mat-menu>
               </div>
             </mat-cell>
           </ng-container>

@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 export interface Lead {
   id: number;
   emp_id: number;
+  emp_name?: string;
   name: string;
   lead_cat: 'Employee' | 'Client';
   email: string;
@@ -39,8 +40,13 @@ export class LeadsService {
   }
 
   getAllLeads(): Observable<Lead[]> {
-    return this.http.get<{ data: Lead[] }>(`${this.apiUrl}/leads/getall`).pipe(
-      map(res => res.data) 
+    return this.http.get<any>(`${this.apiUrl}/leads/getall`).pipe(
+      map(res => {
+        if (res && res.assigned_leads) return res.assigned_leads;
+        if (res && res.data) return res.data;
+        if (Array.isArray(res)) return res;
+        return [];
+      })
     );
   }
 

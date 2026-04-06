@@ -5,6 +5,7 @@ import { AppSettings } from '../app.settings';
 import { Settings } from '../app.settings.model';
 import { AuthService } from '../services/auth.service';
 import { MenuService } from '../theme/components/menu/menu.service';
+import { DashboardModeService } from '../services/dashboard-mode.service';
 
 @Component({
   selector: 'app-pages',
@@ -27,16 +28,12 @@ export class PagesComponent implements OnInit {
   private defaultMenu: string; //declared for return default menu when window resized 
   serviceName: string | null = null;
   isClient: boolean = false;
-  toggleDashboardLink: string = '';
-  toggleDashboardLabel: string = '';
-  toggleDashboardIcon: string = '';
-  private lastDashboard: 'admin' | 'employee';
+  dashboardMode: 'admin' | 'employee' = 'admin';
   constructor(public appSettings: AppSettings, public router: Router,
     public authService: AuthService,
+    public dashboardModeService: DashboardModeService
   ) {
     this.settings = this.appSettings.settings;
-    this.updateButtonState();
-    this.router.events.subscribe(() => this.updateButtonState());
   }
 
   ngOnInit() {
@@ -62,26 +59,6 @@ export class PagesComponent implements OnInit {
   }
   hasAdminRole(): boolean {
     return this.authService.hasRole(1);
-  }
-
-
-  private updateButtonState() {
-    const currentUrl = this.router.url;
-  
-    if (currentUrl.startsWith('/dashboard/employee')) {
-      this.lastDashboard = 'employee';
-    } else if (currentUrl.startsWith('/dashboard')) {
-      this.lastDashboard = 'admin';
-    }
-    if (this.lastDashboard === 'employee') {
-      this.toggleDashboardLink = '/dashboard';
-      this.toggleDashboardLabel = 'Admin Dashboard';
-      this.toggleDashboardIcon = 'admin_panel_settings';
-    } else {
-      this.toggleDashboardLink = '/dashboard/employee';
-      this.toggleDashboardLabel = 'Employee Dashboard';
-      this.toggleDashboardIcon = 'dashboard';
-    }
   }
 
 

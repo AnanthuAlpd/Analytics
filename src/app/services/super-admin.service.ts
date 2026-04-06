@@ -22,18 +22,18 @@ export interface Client {
   email: string;
   phone: string;
   service_name: string;
-  ref_emp_name : string;
+  ref_emp_name: string;
   created_at: string;
 }
-export interface Department{
-  id:number;
+export interface Department {
+  id: number;
   name: string;
 }
 
-export interface Role{
-  id:number;
+export interface Role {
+  id: number;
   name: string;
-  descriptions:string;
+  descriptions: string;
 }
 
 @Injectable({
@@ -41,20 +41,20 @@ export interface Role{
 })
 export class SuperAdminService {
   private apiUrl: string;
-  constructor(private http: HttpClient, private appSettings: AppSettings) { 
-    this.apiUrl = this.appSettings.settings.baseUrl; 
+  constructor(private http: HttpClient, private appSettings: AppSettings) {
+    this.apiUrl = this.appSettings.settings.baseUrl;
   }
 
   getAllEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(`${this.apiUrl}/employees`);
   }
   getAllClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.apiUrl}/get-all-clients`);
+    return this.http.get<Client[]>(`${this.apiUrl}/clients`);
   }
-  getAllDepartments(): Observable<Department[]>{
+  getAllDepartments(): Observable<Department[]> {
     return this.http.get<Department[]>(`${this.apiUrl}/departments`);
   }
-  getAllRoles(): Observable<Role[]>{
+  getAllRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(`${this.apiUrl}/roles`);
   }
   updateEmployee(employeeId: number, payload: any): Observable<any> {

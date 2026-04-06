@@ -43,7 +43,7 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeIn from '@angular/common/locales/en-IN';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-// import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import {AswimsModule} from './pages/aswims/aswims.module'
 import { RoleDeptMenuListComponent } from './pages/super-admin/role-dept-menu-list/role-dept-menu-list.component';
 import { EntityListEmpClientComponent } from './pages/super-admin/entity-list-emp-client/entity-list-emp-client.component';
@@ -99,11 +99,11 @@ registerLocaleData(localeIn);
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
     { provide: OverlayContainer, useClass: CustomOverlayContainer },
     { provide: LOCALE_ID, useValue: 'en-IN' } ,
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   // useClass: AuthInterceptor,
-    //   multi: true
-    // }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

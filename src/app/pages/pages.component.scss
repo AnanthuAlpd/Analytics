@@ -203,15 +203,61 @@
     }
 }
 
-.action-btn {
-    border-radius: 8px; /* Slightly rounded edges */
-    margin: 8px; /* Margin around the button for spacing */
-    padding: 0 16px; /* Horizontal padding for content */
-    display: flex; /* Ensure icon and text align nicely */
-    align-items: center; /* Center icon and text vertically */
-    gap: 8px; /* Space between icon and text */
-    font-size: 14px; /* Optional: adjust text size for balance */
-    height: 40px; /* Consistent button height */
-  }
+.dashboard-switcher {
+    border-radius: 25px; /* Pill shape */
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15); /* Glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    overflow: hidden;
+    margin: 0 16px;
+    
+    mat-button-toggle {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.85);
+        border: none !important;
+        transition: all 0.3s ease;
+        padding: 0 12px;
+
+        &.mat-button-toggle-checked {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            color: #3f51b5 !important; /* Theme primary */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        ::ng-deep .mat-button-toggle-label-content {
+            line-height: 48px !important; // Match parent height (40px) plus some buffer or literal height
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 16px !important;
+            gap: 8px;
+            font-size: 14px !important;
+            font-weight: 500;
+            white-space: nowrap;
+            
+            mat-icon {
+                margin: 0 !important;
+                font-size: 20px !important;
+                width: 20px !important;
+                height: 20px !important;
+                line-height: 20px !important;
+                display: inline-flex !important;
+                vertical-align: middle !important;
+                align-items: center;
+                justify-content: center;
+            }
+
+            span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+
+        &:hover:not(.mat-button-toggle-checked) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
 
 

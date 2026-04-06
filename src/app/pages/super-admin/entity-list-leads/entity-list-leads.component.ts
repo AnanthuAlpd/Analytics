@@ -17,7 +17,7 @@ export class EntityListLeadsComponent implements OnInit {
   leads$: Observable<Lead[]>;
   leadType: string = '';
   title: string = '';
-  displayedColumns: string[] = ['name', 'email', 'mob_no', 'lead_source', 'status', 'remarks', 'created_at', 'actions'];
+  displayedColumns: string[] = ['name', 'contact', 'emp_name', 'lead_source', 'status', 'created_at', 'actions'];
 
   constructor(
     private leadsService: LeadsService,
@@ -38,6 +38,15 @@ export class EntityListLeadsComponent implements OnInit {
         this.leads$ = this.leadsService.getClientLeads();
       }
     });
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name.split(' ')
+               .map(n => n[0])
+               .join('')
+               .toUpperCase()
+               .substring(0, 2);
   }
 
   getStatusClass(status: string): string {

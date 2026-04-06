@@ -5,6 +5,7 @@ import { MenuService } from '../menu/menu.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from '../../../../environments/environment'
+import { DashboardModeService } from 'src/app/services/dashboard-mode.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -26,7 +27,8 @@ export class SidenavComponent implements OnInit {
   isClient: boolean = false;
   loginUrl: any;
   constructor(public appSettings: AppSettings, public menuService: MenuService,
-    private router: Router, private authService: AuthService) {
+    private router: Router, private authService: AuthService,
+    public dashboardModeService: DashboardModeService) {
     this.settings = this.appSettings.settings;
   }
 
@@ -97,6 +99,10 @@ export class SidenavComponent implements OnInit {
         }
       }
     }
+  }
+
+  public hasAdminRole(): boolean {
+    return this.authService.hasRole(1);
   }
 
 }

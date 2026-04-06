@@ -14,7 +14,7 @@
                             <mat-icon>group_add</mat-icon>
                         </div>
                         <mat-card-title class="card-title">Client Leads</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">This month</mat-card-subtitle>
+                        <mat-card-subtitle class="card-subtitle">New this month</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content class="stat-content">
                         <div class="stat-number" [attr.data-value]="clientLeads || 0">
@@ -28,9 +28,10 @@
                         </div>
 
                         <div class="sparkline-wrapper" *ngIf="clientSparklineOptions">
-                            <apx-chart [series]="clientSparklineOptions.series" [chart]="clientSparklineOptions.chart"
+                            <apx-chart #clientChart [series]="clientSparklineOptions.series" [chart]="clientSparklineOptions.chart"
                                 [stroke]="clientSparklineOptions.stroke" [colors]="clientSparklineOptions.colors"
-                                [fill]="clientSparklineOptions.fill" [tooltip]="clientSparklineOptions.tooltip">
+                                [fill]="clientSparklineOptions.fill" [tooltip]="clientSparklineOptions.tooltip"
+                                [xaxis]="clientSparklineOptions.xaxis">
                             </apx-chart>
                         </div>
 
@@ -58,7 +59,7 @@
                             <mat-icon>badge</mat-icon>
                         </div>
                         <mat-card-title class="card-title">Employee Leads</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">This Month</mat-card-subtitle>
+                        <mat-card-subtitle class="card-subtitle">New this month</mat-card-subtitle>
                     </mat-card-header>
 
                     <mat-card-content class="stat-content">
@@ -85,10 +86,10 @@
                         </div>
 
                         <div class="sparkline-wrapper" *ngIf="employeeSparklineOptions">
-                            <apx-chart [series]="employeeSparklineOptions.series"
+                            <apx-chart #employeeChart [series]="employeeSparklineOptions.series"
                                 [chart]="employeeSparklineOptions.chart" [stroke]="employeeSparklineOptions.stroke"
                                 [colors]="employeeSparklineOptions.colors" [fill]="employeeSparklineOptions.fill"
-                                [tooltip]="employeeSparklineOptions.tooltip">
+                                [tooltip]="employeeSparklineOptions.tooltip" [xaxis]="employeeSparklineOptions.xaxis">
                             </apx-chart>
                         </div>
                     </mat-card-content>
@@ -131,7 +132,7 @@
                             <apx-chart [series]="earningsSparklineOptions.series"
                                 [chart]="earningsSparklineOptions.chart" [stroke]="earningsSparklineOptions.stroke"
                                 [colors]="earningsSparklineOptions.colors" [fill]="earningsSparklineOptions.fill"
-                                [tooltip]="earningsSparklineOptions.tooltip">
+                                [tooltip]="earningsSparklineOptions.tooltip" [xaxis]="earningsSparklineOptions.xaxis">
                             </apx-chart>
                         </div>
                     </mat-card-content>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LeadsService, Lead } from '../../../services/leads.service';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, map, switchMap, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
 import { LeadDetailComponent } from 'src/app/shared/components/lead-detail/lead-detail.component';
@@ -17,7 +17,7 @@ export class MyLeadsComponent implements OnInit {
   leads$: Observable<Lead[]>;
   leadType: string = '';
   title: string = '';
-  displayedColumns: string[] = ['name', 'email', 'mob_no', 'lead_source', 'status', 'remarks', 'created_at', 'actions'];
+  displayedColumns: string[] = ['name', 'contact', 'emp_name', 'lead_source', 'status', 'created_at', 'actions'];
 
   constructor(
     private leadsService: LeadsService,
@@ -28,15 +28,41 @@ export class MyLeadsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.leadType = data['type'];
-      this.title = data['breadcrumb'];
-      
-      if (this.leadType === 'employee') {
-        this.leads$ = this.leadsService.getCurrentUserEmployeeLeads();
-      } else {
-        this.leads$ = this.leadsService.getCurrentUserClientLeads();
-      }
+    this.leads$ = combineLatest([
+      this.route.data,
+      this.route.queryParams
+    ]).pipe(
+      switchMap(([data, params]) => {
+        // Wrap state updates in setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => {
+          this.leadType = data['type'];
+          this.title = data['breadcrumb'];
+        });
+
+        const isRecentOnly = params['recent'] === 'true';
+
+        let baseObservable$: Observable<Lead[]>;
+        if (this.leadType === 'employee') {
+          baseObservable$ = this.leadsService.getCurrentUserEmployeeLeads();
+        } else {
+          baseObservable$ = this.leadsService.getCurrentUserClientLeads();
+        }
+
+        return baseObservable$.pipe(
+          map(leads => isRecentOnly ? this.filterByCurrentMonth(leads) : leads)
+        );
+      })
+    );
+  }
+
+  private filterByCurrentMonth(leads: Lead[]): Lead[] {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    return leads.filter(l => {
+      const d = new Date(l.created_at);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
   }
 
@@ -55,6 +81,15 @@ export class MyLeadsComponent implements OnInit {
         this.refreshLeads();
       }
     });
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name.split(' ')
+               .map(n => n[0])
+               .join('')
+               .toUpperCase()
+               .substring(0, 2);
   }
 
   onView(lead: Lead): void {
@@ -100,10 +135,9 @@ export class MyLeadsComponent implements OnInit {
   }
 
   private refreshLeads(): void {
-    if (this.leadType === 'employee') {
-      this.leads$ = this.leadsService.getCurrentUserEmployeeLeads();
-    } else {
-      this.leads$ = this.leadsService.getCurrentUserClientLeads();
-    }
+    // Current approach with combineLatest will auto-refresh if leads$ logic is reactive.
+    // If service returns fresh data on each call, this might need a trigger subject.
+    // For now, let's re-trigger the data fetch by re-assigning (simplest fix)
+    this.ngOnInit();
   }
 }

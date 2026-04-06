@@ -31,6 +31,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { PipesModule } from '../theme/pipes/pipes.module';
 import { LeadsFormComponent } from './components/leads-form/leads-form.component';
 import { LeadDetailComponent } from './components/lead-detail/lead-detail.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -69,7 +70,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatStepperModule
+    MatStepperModule,
+    PipesModule
   ],
   declarations: [
     LeadsFormComponent,
@@ -111,7 +113,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatStepperModule
+    MatStepperModule,
+    PipesModule
   ]
 })
 export class SharedModule { }

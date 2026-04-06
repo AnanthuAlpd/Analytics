@@ -48,6 +48,13 @@
                                 <span class="value">{{ lead.lead_source }}</span>
                             </div>
                         </div>
+                        <div class="info-item">
+                            <mat-icon>person_pin</mat-icon>
+                            <div fxLayout="column">
+                                <span class="label">Added By</span>
+                                <span class="value">{{ lead.emp_name || 'System' }}</span>
+                            </div>
+                        </div>
                     </mat-card-content>
                 </mat-card>
 
