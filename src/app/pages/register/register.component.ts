@@ -5,7 +5,7 @@ import { emailValidator, matchingPasswords } from '../../theme/utils/app-validat
 import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     public fb: UntypedFormBuilder,
     public router: Router,
     public authService: AuthService,
-    private snackBar: MatSnackBar,
+    private snackbar: SnackbarService,
     private route: ActivatedRoute
   ) {
     this.settings = this.appSettings.settings;
@@ -80,7 +80,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
   public onSubmit(): void {
     if (this.form.invalid) {
-      this.snackBar.open('Please fill in all required fields correctly.', 'Close', { duration: 3000 });
+      this.snackbar.showError('Please fill in all required fields correctly.');
       return;
     }
 
@@ -91,30 +91,24 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       this.authService.register(userData).subscribe({
         next: () => {
           this.loading = false;
-          this.snackBar.open('Employee registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+          this.snackbar.showSuccess('Employee registered!');
           this.router.navigate(['/login', this.userType.toLowerCase()]);
         },
         error: (error) => {
           this.loading = false;
-          this.snackBar.open(error?.error?.message || 'Employee registration failed!', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
+          this.snackbar.showError(error?.error?.message || 'Employee registration failed!');
         }
       });
     } else if (this.userType === 'CLIENT') {
       this.authService.registerClient(userData).subscribe({
         next: () => {
           this.loading = false;
-          this.snackBar.open('Client registered!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+          this.snackbar.showSuccess('Client registered!');
           this.router.navigate(['/login', this.userType.toLowerCase()]);
         },
         error: (error) => {
           this.loading = false;
-          this.snackBar.open(error?.error?.message || 'Client registration failed!', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
+          this.snackbar.showError(error?.error?.message || 'Client registration failed!');
         }
       });
     }

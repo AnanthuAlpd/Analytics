@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Lead, LeadActivity, LeadsService } from 'src/app/services/leads.service';
 import { LeadsFormComponent } from '../leads-form/leads-form.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-lead-detail',
@@ -22,7 +22,7 @@ export class LeadDetailComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<LeadDetailComponent>,
     private leadsService: LeadsService,
-    private snackBar: MatSnackBar
+    private snackbar: SnackbarService
   ) {
     this.lead = this.data.lead;
   }
@@ -63,12 +63,12 @@ export class LeadDetailComponent implements OnInit {
       next: () => {
         this.newNote = '';
         this.savingNote = false;
-        this.snackBar.open('Note added.', 'Close', { duration: 2000 });
+        this.snackbar.showSuccess('Note added.');
         this.refreshActivities();
       },
       error: (err) => {
         this.savingNote = false;
-        this.snackBar.open('Error adding note.', 'Close', { duration: 3000 });
+        this.snackbar.showError('Error adding note.');
         console.error(err);
       }
     });

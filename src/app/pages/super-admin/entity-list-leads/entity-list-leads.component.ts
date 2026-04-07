@@ -6,7 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
 import { LeadDetailComponent } from 'src/app/shared/components/lead-detail/lead-detail.component';
 import { DashBoardService } from 'src/app/services/dashboard.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 
 @Component({
   selector: 'app-entity-list-leads',
@@ -24,7 +25,8 @@ export class EntityListLeadsComponent implements OnInit {
     private dashBoardService: DashBoardService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackbar: SnackbarService,
+    private swal: SweetAlertService
   ) { }
 
   ngOnInit(): void {
@@ -80,15 +82,21 @@ export class EntityListLeadsComponent implements OnInit {
     });
   }
 
-  onDelete(lead: Lead): void {
-    if (confirm(`Are you sure you want to delete lead for ${lead.name}?`)) {
+  async onDelete(lead: Lead): Promise<void> {
+    const confirmed = await this.swal.confirm(
+      'Are you sure?',
+      `You are about to delete lead for ${lead.name}. This action cannot be undone.`,
+      'Yes, delete it!'
+    );
+
+    if (confirmed) {
       this.dashBoardService.deleteLead(lead.id).subscribe({
         next: () => {
-          this.snackBar.open('Lead deleted.', 'Close', { duration: 2000 });
+          this.snackbar.showSuccess('Lead deleted.');
           this.refreshLeads();
         },
         error: (err) => {
-          this.snackBar.open('Error deleting lead.', 'Close', { duration: 3000 });
+          this.snackbar.showError('Error deleting lead.');
           console.error(err);
         }
       });

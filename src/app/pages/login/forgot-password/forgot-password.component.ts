@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ForgotPasswordComponent>,
-    private snackBar: MatSnackBar,
+    private snackbar: SnackbarService,
     private authService: AuthService, // Inject the service
     @Inject(MAT_DIALOG_DATA) public data: { email: string, userType: string }
   ) { }
@@ -64,19 +64,13 @@ export class ForgotPasswordComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         this.isVerified = true; // Switch view to reset password form
-        this.snackBar.open(response.message || 'Identity Verified', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar'] // Optional styling
-        });
+        this.snackbar.showSuccess(response.message || 'Identity Verified');
       },
       error: (err) => {
         this.isLoading = false;
         // Display backend error message (e.g., "Email and Mobile number do not match")
         const errorMessage = err.error?.message || 'Verification failed. Please check your details.';
-        this.snackBar.open(errorMessage, 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
+        this.snackbar.showError(errorMessage);
       }
     });
   }
@@ -95,19 +89,13 @@ export class ForgotPasswordComponent implements OnInit {
     this.authService.resetPassword(email, password).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.snackBar.open('Password reset successfully! Please login.', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
+        this.snackbar.showSuccess('Password reset successfully! Please login.');
         this.dialogRef.close(); // Close the dialog
       },
       error: (err) => {
         this.isLoading = false;
         const errorMessage = err.error?.message || 'Password reset failed. Please try again.';
-        this.snackBar.open(errorMessage, 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
+        this.snackbar.showError(errorMessage);
       }
     });
   }

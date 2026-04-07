@@ -6,13 +6,14 @@ import {
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const isRefreshRequest = req.url.includes('/refresh');
@@ -27,7 +28,12 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && !req.url.includes('/login_new')) {
+          console.warn(`[Auth Interceptor] 401 Unauthorized detected for: ${req.url}. Attempting token refresh...`);
           return this.handle401Error(authReq, next);
+        }
+        if (error.status === 403) {
+          console.error(`[Auth Interceptor] 403 Forbidden detected for: ${req.url}. Redirecting to unauthorized page.`);
+          this.router.navigate(['/unauthorized']);
         }
         return throwError(() => error);
       })
@@ -51,17 +57,22 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
           const newToken = response.access_token;
           if (newToken) {
+            console.log('[Auth Interceptor] Token refresh successful. Resubmitting original request.');
             localStorage.setItem('access_token', newToken);
             this.refreshTokenSubject.next(newToken);
             return next.handle(this.addTokenHeader(request, newToken));
           } else {
+             console.error('[Auth Interceptor] Refresh response missing token. Logging out.');
              this.authService.logout();
+             this.router.navigate(['/unauthorized']);
              return throwError(() => new Error('Refresh token failed'));
           }
         }),
         catchError((err) => {
           this.isRefreshing = false;
+          console.error('[Auth Interceptor] Refresh token request failed. Logging out.', err);
           this.authService.logout();
+          this.router.navigate(['/unauthorized']);
           return throwError(() => err);
         })
       );

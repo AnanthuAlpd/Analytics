@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { ScheduleDialogComponent } from './schedule-dialog/schedule-dialog.component';
 import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
@@ -45,9 +45,7 @@ export class ScheduleComponent implements OnInit {
       label: '<i class="material-icons icon-sm white">close</i>',
       onClick: ({event}: {event: CalendarEvent}): void => {
           this.events = this.events.filter(iEvent => iEvent !== event);
-          this.snackBar.open('Event deleted successfully!', null, {
-              duration: 1500
-          });
+          this.snackbar.showSuccess('Event deleted successfully!');
       }
   }];
   events: CalendarEvent[] = [{
@@ -84,7 +82,7 @@ export class ScheduleComponent implements OnInit {
   public settings: Settings;
   constructor(public appSettings:AppSettings, 
               public dialog: MatDialog, 
-              public snackBar: MatSnackBar){
+              public snackbar: SnackbarService){
       this.settings = this.appSettings.settings; 
   }
 

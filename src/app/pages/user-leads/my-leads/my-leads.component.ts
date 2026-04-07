@@ -6,7 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
 import { LeadDetailComponent } from 'src/app/shared/components/lead-detail/lead-detail.component';
 import { DashBoardService } from 'src/app/services/dashboard.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 
 @Component({
   selector: 'app-my-leads',
@@ -24,8 +25,9 @@ export class MyLeadsComponent implements OnInit {
     private dashBoardService: DashBoardService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackbar: SnackbarService,
+    private swal: SweetAlertService
+  ) { }
 
   ngOnInit(): void {
     this.leads$ = combineLatest([
@@ -33,16 +35,17 @@ export class MyLeadsComponent implements OnInit {
       this.route.queryParams
     ]).pipe(
       switchMap(([data, params]) => {
+        const currentType = data['type'];
+        const isRecentOnly = params['recent'] === 'true';
+
         // Wrap state updates in setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(() => {
-          this.leadType = data['type'];
+          this.leadType = currentType;
           this.title = data['breadcrumb'];
         });
 
-        const isRecentOnly = params['recent'] === 'true';
-
         let baseObservable$: Observable<Lead[]>;
-        if (this.leadType === 'employee') {
+        if (currentType === 'employee') {
           baseObservable$ = this.leadsService.getCurrentUserEmployeeLeads();
         } else {
           baseObservable$ = this.leadsService.getCurrentUserClientLeads();
@@ -67,13 +70,20 @@ export class MyLeadsComponent implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    return status ? status.toLowerCase().replace(' ', '-') : '';
+    switch (status?.toLowerCase()) {
+      case 'new': return 'status-new';
+      case 'contacted': return 'status-contacted';
+      case 'qualified': return 'status-qualified';
+      case 'lost': return 'status-lost';
+      case 'converted': return 'status-converted';
+      default: return 'status-default';
+    }
   }
 
   onAddLead(): void {
     const dialogRef = this.dialog.open(LeadsFormComponent, {
-      width: '500px',
-      data: { lead_cat: this.leadType === 'employee' ? 'Employee' : 'Client' }
+      width: '600px',
+      data: { type: this.leadType }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -86,10 +96,10 @@ export class MyLeadsComponent implements OnInit {
   getInitials(name: string): string {
     if (!name) return '';
     return name.split(' ')
-               .map(n => n[0])
-               .join('')
-               .toUpperCase()
-               .substring(0, 2);
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   }
 
   onView(lead: Lead): void {
@@ -108,8 +118,8 @@ export class MyLeadsComponent implements OnInit {
 
   onEdit(lead: Lead): void {
     const dialogRef = this.dialog.open(LeadsFormComponent, {
-      width: '500px',
-      data: { item: lead, lead_cat: lead.lead_cat }
+      width: '600px',
+      data: { lead: lead, type: this.leadType }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -119,25 +129,29 @@ export class MyLeadsComponent implements OnInit {
     });
   }
 
-  onDelete(lead: Lead): void {
-    if (confirm(`Are you sure you want to delete lead for ${lead.name}?`)) {
+  async onDelete(lead: Lead): Promise<void> {
+    const confirmed = await this.swal.confirm(
+      'Are you sure?',
+      `You are about to delete lead for ${lead.name}. This action cannot be undone.`,
+      'Yes, delete it!'
+    );
+
+    if (confirmed) {
       this.dashBoardService.deleteLead(lead.id).subscribe({
         next: () => {
-          this.snackBar.open('Lead deleted.', 'Close', { duration: 2000 });
+          this.snackbar.showSuccess('Lead deleted successfully');
           this.refreshLeads();
         },
         error: (err) => {
-          this.snackBar.open('Error deleting lead.', 'Close', { duration: 3000 });
-          console.error(err);
+          console.error('Delete error:', err);
+          this.snackbar.showError('Error deleting lead');
         }
       });
     }
   }
 
   private refreshLeads(): void {
-    // Current approach with combineLatest will auto-refresh if leads$ logic is reactive.
-    // If service returns fresh data on each call, this might need a trigger subject.
-    // For now, let's re-trigger the data fetch by re-assigning (simplest fix)
+    // Re-trigger the data fetch by re-initializing (reactivity will handle the rest)
     this.ngOnInit();
   }
 }

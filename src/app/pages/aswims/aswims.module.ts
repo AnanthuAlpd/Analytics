@@ -12,7 +12,6 @@ import { WardOverviewComponent } from './ward-overview/ward-overview.component';
 import { ClinicalEntryComponent } from './clinical-entry/clinical-entry.component';
 import { ClinicalHistoryComponent } from './clinical-history/clinical-history.component';
 import { AuthGuard } from 'src/app/services/aswims/auth.guard';
-import { AuthInterceptor } from 'src/app/services/aswims/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PatientDashbaordComponent } from './patient-dashbaord/patient-dashbaord.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -64,12 +63,6 @@ export const routes: Routes = [
         NgxChartsModule,
         RouterModule.forChild(routes)
     ],
-    providers: [
-        {
-          provide: HTTP_INTERCEPTORS,
-          useClass: AuthInterceptor,
-          multi: true
-        }
-      ],
+    providers: [],
 })
 export class AswimsModule { }

@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { SuperAdminService } from 'src/app/services/super-admin.service';
 import { MenuService } from 'src/app/theme/components/menu/menu.service';
@@ -23,7 +22,7 @@ export class UpdateRoleDeptMenuComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { type: string, title: string, item?: any },
     private fb: FormBuilder,
     private superAdminService: SuperAdminService,
-    private menuService: MenuService,private snackbar: SnackbarService,private snackBar: MatSnackBar
+    private menuService: MenuService,private snackbar: SnackbarService
   ) {}
 
   ngOnInit(): void {

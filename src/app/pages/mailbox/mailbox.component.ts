@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
 import { Mail } from './mail.model';
@@ -25,7 +25,7 @@ export class MailboxComponent implements OnInit {
 
   constructor(public appSettings:AppSettings, 
               public formBuilder: UntypedFormBuilder, 
-              public snackBar: MatSnackBar,
+              public snackbar: SnackbarService,
               private mailboxService:MailboxService) { 
     this.settings = this.appSettings.settings; 
   }
@@ -118,9 +118,7 @@ export class MailboxComponent implements OnInit {
   public onSubmit(mail){
     console.log(mail)
     if (this.form.valid) {
-      this.snackBar.open('Mail sent to ' + mail.to + ' successfully!', null, {
-        duration: 2000,
-      });
+      this.snackbar.showSuccess('Mail sent to ' + mail.to + ' successfully!');
       this.form.reset();     
     }
   }

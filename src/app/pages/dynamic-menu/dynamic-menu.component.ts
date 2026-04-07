@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { debounceTime } from 'rxjs/operators';
 import { Menu } from '../../theme/components/menu/menu.model';
 import { MenuService } from '../../theme/components/menu/menu.service';
@@ -26,7 +26,7 @@ export class DynamicMenuComponent implements OnInit {
   public form:UntypedFormGroup;
   constructor(public appSettings:AppSettings, 
               public formBuilder: UntypedFormBuilder, 
-              public snackBar: MatSnackBar,
+              public snackbar: SnackbarService,
               private menuService:MenuService,
               private dynamicMenuService:DynamicMenuService) {
     this.settings = this.appSettings.settings; 
@@ -80,9 +80,7 @@ export class DynamicMenuComponent implements OnInit {
   onSubmit(menu:Menu):void {
     if (this.form.valid) {
       this.dynamicMenuService.addNewMenuItem(VerticalMenuComponent, this.menuItems, menu);
-      this.snackBar.open('New menu item added successfully!', null, {
-        duration: 2000,
-      });
+      this.snackbar.showSuccess('New menu item added successfully!');
       this.form.reset({
         hasSubMenu:false,
         parentId:0

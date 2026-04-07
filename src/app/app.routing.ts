@@ -5,6 +5,7 @@ import { BlankComponent } from './pages/blank/blank.component';
 import { SearchComponent } from './pages/search/search.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 import { ErrorComponent } from './pages/errors/error/error.component';
+import { UnauthorizedComponent } from './pages/errors/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
     {
@@ -45,6 +46,7 @@ export const routes: Routes = [
     { path: 'register', loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterModule) },
     { path: 'aswims', loadChildren: () => import('./pages/aswims/aswims.module').then(m => m.AswimsModule) },
     { path: 'error', component: ErrorComponent, data: { breadcrumb: 'Error' } },
+    { path: 'unauthorized', component: UnauthorizedComponent, data: { breadcrumb: 'Unauthorized' } },
     { path: '**', component: NotFoundComponent },
 
 ];

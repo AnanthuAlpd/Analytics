@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackBarComponent } from 'src/app/pages/ui/snack-bar/snack-bar.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DashBoardService } from 'src/app/services/dashboard.service';
 
 @Component({
@@ -22,7 +21,7 @@ export class LeadsFormComponent implements OnInit {
     private dialogRef: MatDialogRef<LeadsFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dashBoardService: DashBoardService,
-    private snackBar: MatSnackBar
+    private snackbar: SnackbarService
   ) {}
 
   ngOnInit(): void {
@@ -44,18 +43,12 @@ export class LeadsFormComponent implements OnInit {
   
       this.dashBoardService.createLead(formData).subscribe({
         next: (response) => {
-          this.snackBar.open('✅ Lead saved successfully!', 'Close', {
-            duration: 3000,
-            panelClass: ['snack-success'] // optional styling
-          });
+          this.snackbar.showSuccess('Lead saved successfully!');
           this.loading = false;
           this.dialogRef.close(true); // closes the dialog, optionally signal success
         },
         error: (err) => {
-          this.snackBar.open('❌ Failed to save lead. Try again.', 'Close', {
-            duration: 3000,
-            panelClass: ['snack-error'] // optional styling
-          });
+          this.snackbar.showError('Failed to save lead. Try again.');
           this.loading = false;
           console.error('Error saving lead:', err);
         }

@@ -5,7 +5,7 @@ import { emailValidator } from '../../theme/utils/app-validators';
 import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { environment } from 'src/environments/environment';
 // 1. New Imports
 import { MatDialog } from '@angular/material/dialog';
@@ -29,7 +29,7 @@ export class LoginComponent {
     public fb: UntypedFormBuilder,
     public router: Router,
     public authService: AuthService,
-    public snackBar: MatSnackBar,
+    public snackbar: SnackbarService,
     private route: ActivatedRoute,
     public dialog: MatDialog // 2. Inject MatDialog
   ) {
@@ -55,10 +55,7 @@ export class LoginComponent {
     this.authService.login(loginData).subscribe({
       next: (response: any) => {
         this.loading = false;
-        this.snackBar.open('Login successful!', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
+        this.snackbar.showSuccess('Login successful!');
 
         // Fix token key
         localStorage.setItem('access_token', response.data.access_token);
@@ -83,10 +80,7 @@ export class LoginComponent {
       error: (error) => {
         this.loading = false;
         console.error('Login error:', error);
-        this.snackBar.open(error?.error?.message || 'Login failed!', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
+        this.snackbar.showError(error?.error?.message || 'Login failed!');
       }
     });
   }

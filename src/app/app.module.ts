@@ -27,6 +27,7 @@ import { BlankComponent } from './pages/blank/blank.component';
 import { SearchComponent } from './pages/search/search.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 import { ErrorComponent } from './pages/errors/error/error.component';
+import { UnauthorizedComponent } from './pages/errors/unauthorized/unauthorized.component';
 import { AppSettings } from './app.settings';
 
 import { SidenavComponent } from './theme/components/sidenav/sidenav.component';
@@ -80,6 +81,7 @@ registerLocaleData(localeIn);
     SearchComponent,
     NotFoundComponent,
     ErrorComponent,
+    UnauthorizedComponent,
     SidenavComponent,
     VerticalMenuComponent,
     HorizontalMenuComponent,

@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DashBoardService } from 'src/app/services/dashboard.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class LeadsFormComponent implements OnInit {
     private dialogRef: MatDialogRef<LeadsFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dashBoardService: DashBoardService,
-    private snackBar: MatSnackBar
+    private snackbar: SnackbarService
   ) {
     this.isEditMode = !!(this.data && this.data.item);
   }
@@ -49,12 +49,12 @@ export class LeadsFormComponent implements OnInit {
         // Assume updateLead exists or handle in service
         this.dashBoardService.updateLead(this.data.item.id, formData).subscribe({
           next: () => {
-            this.snackBar.open('✅ Lead updated successfully!', 'Close', { duration: 3000 });
+            this.snackbar.showSuccess('Lead updated successfully!');
             this.loading = false;
             this.dialogRef.close(true);
           },
           error: (err) => {
-            this.snackBar.open('❌ Error updating lead.', 'Close', { duration: 3000 });
+            this.snackbar.showError('Error updating lead.');
             this.loading = false;
             console.error('Error updating lead:', err);
           }
@@ -62,12 +62,12 @@ export class LeadsFormComponent implements OnInit {
       } else {
         this.dashBoardService.createLead(formData).subscribe({
           next: () => {
-            this.snackBar.open('✅ Lead saved successfully!', 'Close', { duration: 3000 });
+            this.snackbar.showSuccess('Lead saved successfully!');
             this.loading = false;
             this.dialogRef.close(true);
           },
           error: (err) => {
-            this.snackBar.open('❌ Failed to save lead.', 'Close', { duration: 3000 });
+            this.snackbar.showError('Failed to save lead.');
             this.loading = false;
             console.error('Error saving lead:', err);
           }

@@ -1,0 +1,61 @@
+<div fxLayout="row" fxLayoutAlign="center center" class="h-100 min-h-screen bg-unauthorized p-6 mat-typography">
+    <div fxFlex="95" fxFlex.gt-sm="40" fxFlex.sm="70">
+        <mat-card class="unauthorized-card mat-elevation-z12 box">
+            <!-- Header with Gradient and Icon -->
+            <div fxLayout="column" fxLayoutAlign="center center" class="card-header p-10 bg-gradient-auth text-white">
+                <div class="icon-orb mat-elevation-z8 mb-6">
+                    <mat-icon class="text-4xl leading-none">security</mat-icon>
+                </div>
+                <h1 class="error-code font-black mb-2 animate-pulse tracking-tight">401</h1>
+                <h2 class="error-title uppercase font-bold tracking-widest text-center opacity-90">Unauthorized Access</h2>
+            </div>
+            
+            <mat-card-content class="p-8 space-y-8 bg-white">
+                <!-- Info Message -->
+                <div class="info-box p-8 bg-slate-50 border-l-4 border-red-500 rounded-r-xl shadow-inner">
+                    <div fxLayout="row" fxLayoutAlign="start center" class="text-red-700 mb-3">
+                        <mat-icon class="mr-3">report_problem</mat-icon>
+                        <span class="text-xl font-bold tracking-tight">Session Expired or Permissions Missing</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Your session has ended or your account does not have current authority to view this analytics dashboard. 
+                        Please secure your access by logging in again as an **Employee** or **Client**.
+                    </p>
+                </div>
+                
+                <!-- Dynamic Buttons -->
+                <div fxLayout="column" fxLayoutAlign="center stretch" class="space-y-4">
+                    <!-- Primary Button (Detected Type) -->
+                    <button *ngIf="userType" mat-flat-button 
+                            color="primary" 
+                            class="action-button h-16 text-lg font-bold uppercase tracking-widest shadow-lg rounded-xl transition hover:brightness-110 active:scale-95" 
+                            (click)="goLogin()">
+                        <mat-icon class="mr-3">login</mat-icon>
+                        Return to {{userType}} Login
+                    </button>
+
+                    <!-- Secondary Buttons (Manual Choice) -->
+                    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" class="w-full">
+                        <button fxFlex mat-stroked-button 
+                                class="type-button h-16 text-md font-bold uppercase border-2 text-primary border-primary rounded-xl transition hover:bg-slate-50" 
+                                (click)="goLogin('employee')">
+                            <mat-icon class="mr-2">badge</mat-icon>
+                            Employee Login
+                        </button>
+                        <button fxFlex mat-stroked-button 
+                                class="type-button h-16 text-md font-bold uppercase border-2 text-accent border-accent rounded-xl transition hover:bg-slate-50" 
+                                (click)="goLogin('client')">
+                            <mat-icon class="mr-2">business_center</mat-icon>
+                            Client Login
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer Support Note -->
+                <div class="text-center pt-4 opacity-50 italic text-sm">
+                    If you believe this is an error, please contact your administrator.
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

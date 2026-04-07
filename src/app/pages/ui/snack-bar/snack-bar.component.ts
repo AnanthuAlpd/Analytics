@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppSettings } from '../../../app.settings';
 import { Settings } from '../../../app.settings.model';
 
@@ -9,12 +9,10 @@ import { Settings } from '../../../app.settings.model';
 })
 export class SnackBarComponent {
   public settings: Settings;
-  constructor(public appSettings:AppSettings, public snackBar: MatSnackBar) {
+  constructor(public appSettings:AppSettings, public snackbar: SnackbarService) {
     this.settings = this.appSettings.settings; 
   }
   openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 2000,
-    });
+    this.snackbar.showSuccess(message);
   }
 }
