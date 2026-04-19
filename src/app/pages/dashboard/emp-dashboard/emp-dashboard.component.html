@@ -7,7 +7,7 @@
         <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
 
             <!-- Client Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
                 <mat-card class="stat-card client-leads" [class.has-data]="clientLeads > 0">
                     <mat-card-header>
                         <div mat-card-avatar class="card-avatar primary-bg">
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Employee Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
                 <mat-card class="stat-card employee-leads" [class.has-data]="employeeLeads > 0">
                     <mat-card-header>
                         <div mat-card-avatar class="card-avatar warn-bg">
@@ -109,8 +109,49 @@
             </div>
 
 
+            <!-- Follow-Up Leads Card (NEW) -->
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
+                <mat-card class="stat-card follow-up-leads" [class.has-data]="followUpLeads > 0">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar warn-bg">
+                            <mat-icon>assignment_late</mat-icon>
+                        </div>
+                        <mat-card-title class="card-title">Pending Leads</mat-card-title>
+                        <mat-card-subtitle class="card-subtitle">Follow-ups required</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="stat-content">
+                        <div class="stat-number" [attr.data-value]="followUpLeads || 0"
+                             [class.zero]="followUpLeads === 0" style="color: #f44336;">
+                            {{ followUpLeads || 0 }}
+                        </div>
+
+                        <!-- Add empty growth div for vertical consistency -->
+                        <div class="stat-growth neutral">
+                             <mat-icon>trending_flat</mat-icon>
+                             <span>Live Action Queue</span>
+                        </div>
+
+                        <div class="sparkline-wrapper" *ngIf="followUpSparklineOptions">
+                            <apx-chart #followUpChart [series]="followUpSparklineOptions.series"
+                                [chart]="followUpSparklineOptions.chart" [stroke]="followUpSparklineOptions.stroke"
+                                [colors]="followUpSparklineOptions.colors" [fill]="followUpSparklineOptions.fill"
+                                [tooltip]="followUpSparklineOptions.tooltip" [xaxis]="followUpSparklineOptions.xaxis">
+                            </apx-chart>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
+                        <button mat-button color="warn" routerLink="/user-leads/emp-leads-list">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                        <!-- Invisible placeholder to maintain space-between flex alignment matching other cards -->
+                        <div style="width: 110px;"></div>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
             <!-- Total Earnings Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
+            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
                 <mat-card class="stat-card earnings" [class.has-data]="totalEarnings > 0">
                     <mat-card-header>
                         <div mat-card-avatar class="card-avatar accent-bg">
@@ -147,53 +188,63 @@
         </div>
     </div>
 
-    <!-- Video Section -->
-    <div class="video-section">
-        <mat-card class="video-card" elevation="2">
-            <mat-card-header class="video-header">
-                <div mat-card-avatar class="video-avatar">
-                    <mat-icon color="accent">play_circle_filled</mat-icon>
-                </div>
-                <mat-card-title class="video-title">About the Programme</mat-card-title>
-                <mat-card-subtitle class="video-subtitle">Learn more about our referral program</mat-card-subtitle>
-                <div class="header-actions">
-                    <button mat-icon-button matTooltip="Fullscreen" (click)="toggleFullscreen()">
-                        <mat-icon>fullscreen</mat-icon>
-                    </button>
-                </div>
-            </mat-card-header>
+    <!-- Resources Section -->
+    <div class="resources-section">
+        <h2 class="section-title">Training & Resources</h2>
 
-            <mat-card-content class="video-content">
-                <div class="video-container" #videoContainer>
-                    <video #videoPlayer controls class="video-player" preload="metadata" [poster]="vidJpg">
-                        <source [attr.src]="vidSrc" type="video/mp4" />
-                        <p class="video-fallback">
-                            Your browser does not support the video tag.
-                            <a [href]="vidSrc" download>Download the video</a> instead.
-                        </p>
-                    </video>
-
-                    <!-- Loading overlay -->
-                    <div class="video-loading" *ngIf="videoLoading">
-                        <mat-spinner diameter="50"></mat-spinner>
-                        <p>Loading video...</p>
-                    </div>
-                </div>
-
-                <!-- Video Controls (if needed) -->
-                <div class="video-controls" fxLayout="row" fxLayoutAlign="space-between center">
-                    <div class="video-info">
-                        <span class="video-duration">Duration: 5:30</span>
-                    </div>
-                    <div class="video-actions">
-                        <button mat-stroked-button color="accent">
-                            <mat-icon>share</mat-icon>
-                            Share
+        <!-- Video Resources -->
+        <h3 class="subsection-title">
+            <mat-icon>play_circle_outline</mat-icon>
+            Familiarization Videos
+        </h3>
+        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+            <div *ngFor="let res of trainingResources" fxFlex="100%" fxFlex.gt-sm="calc(33.33% - 12px)">
+                <mat-card class="resource-card video-resource">
+                    <mat-card-header>
+                        <div mat-card-avatar class="resource-avatar vid-bg">
+                            <mat-icon>{{res.icon}}</mat-icon>
+                        </div>
+                        <mat-card-title>{{res.title}}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{res.description}}</p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-flat-button color="primary" (click)="openResource(res)">
+                            <mat-icon>play_arrow</mat-icon>
+                            Watch Now
                         </button>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+
+        <!-- Document Resources -->
+        <h3 class="subsection-title" style="margin-top: 32px;">
+            <mat-icon>description</mat-icon>
+            Helpful Documents
+        </h3>
+        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+            <div *ngFor="let res of documentResources" fxFlex="100%" fxFlex.gt-sm="calc(33.33% - 12px)">
+                <mat-card class="resource-card doc-resource">
+                    <mat-card-header>
+                        <div mat-card-avatar class="resource-avatar doc-bg">
+                            <mat-icon>{{res.icon}}</mat-icon>
+                        </div>
+                        <mat-card-title>{{res.title}}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{res.description}}</p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-stroked-button color="accent" (click)="openResource(res)">
+                            <mat-icon>vertical_align_bottom</mat-icon>
+                            {{ res.link === '#' ? 'View' : 'Download' }}
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
     </div>
 
     <!-- Optional: Quick Actions Section -->

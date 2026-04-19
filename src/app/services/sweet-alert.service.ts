@@ -18,18 +18,18 @@ export class SweetAlertService {
   /**
    * Confirmation dialog
    */
-  async confirm(title: string, text: string = '', confirmButtonText: string = 'Yes, delete it!'): Promise<boolean> {
+  async confirm(title: string, text: string = '', confirmButtonText: string = 'Yes, delete it!', icon: 'warning' | 'question' = 'warning'): Promise<boolean> {
     const result = await Swal.fire({
       title: title,
       text: text,
-      icon: 'warning',
+      icon: icon,
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3f51b5', // Consistent with Angular Material Primary
+      cancelButtonColor: '#f44336',  // Consistent with Angular Material Warn
       confirmButtonText: confirmButtonText,
-      background: '#fff', // You can customize this for dark mode if needed
+      background: '#fff',
       customClass: {
-        popup: 'glass-swal' // Optional: hook into your existing glassmorphism if applicable
+        popup: 'rounded-sweet-alert'
       }
     });
 
@@ -44,8 +44,11 @@ export class SweetAlertService {
       title: title,
       text: text,
       icon: 'success',
-      timer: 2000,
-      showConfirmButton: false
+      timer: 2500,
+      showConfirmButton: false,
+      customClass: {
+        popup: 'rounded-sweet-alert'
+      }
     });
   }
 
@@ -57,7 +60,65 @@ export class SweetAlertService {
       title: title,
       text: text,
       icon: 'error',
-      confirmButtonText: 'Ok'
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#3f51b5',
+      customClass: {
+        popup: 'rounded-sweet-alert'
+      }
+    });
+  }
+
+  /**
+   * Warning Alert
+   */
+  warning(title: string, text: string = '') {
+    return Swal.fire({
+      title: title,
+      text: text,
+      icon: 'warning',
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#3f51b5',
+      customClass: {
+        popup: 'rounded-sweet-alert'
+      }
+    });
+  }
+
+  /**
+   * Info Alert
+   */
+  info(title: string, text: string = '') {
+    return Swal.fire({
+      title: title,
+      text: text,
+      icon: 'info',
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#3f51b5',
+      customClass: {
+        popup: 'rounded-sweet-alert'
+      }
+    });
+  }
+
+  /**
+   * Toast Alert (Optional subtle notification)
+   */
+  toast(message: string, icon: 'success' | 'error' | 'warning' | 'info' = 'success') {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    });
+
+    return Toast.fire({
+      icon: icon,
+      title: message
     });
   }
 }

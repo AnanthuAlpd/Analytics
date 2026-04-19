@@ -41,12 +41,12 @@ export class BudgetShopperService {
 
     constructor(private http: HttpClient) { }
 
-    getOptimizedList(budgetAmount: number, monthsCoverage: number = 6): Observable<BaseResponse<OptimizationData>> {
+    getOptimizedList(budgetAmount: number, monthsCoverage: number = 6): Observable<OptimizationData> {
         const payload = {
             budget: budgetAmount,
             months_coverage: monthsCoverage
         };
 
-        return this.http.post<BaseResponse<OptimizationData>>(`${this.apiUrl}/optimize-budget`, payload);
+        return this.http.post<OptimizationData>(`${this.apiUrl}/optimize-budget`, payload);
     }
 }

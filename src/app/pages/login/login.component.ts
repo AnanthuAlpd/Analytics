@@ -58,12 +58,12 @@ export class LoginComponent {
         this.snackbar.showSuccess('Login successful!');
 
         // Fix token key
-        localStorage.setItem('access_token', response.data.access_token);
-        localStorage.setItem('refresh_token', response.data.refresh_token);
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
 
         // Save user
-        const userType = response.data.user_type;
-        const user = response.data.user;
+        const userType = response.user_type;
+        const user = response.user;
 
         localStorage.setItem('userType', userType);
         localStorage.setItem('user', JSON.stringify(user));

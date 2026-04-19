@@ -7,6 +7,19 @@
             <mat-chip *ngIf="leads$ | async as leads" class="count-chip">
                 Total: {{ leads.length }}
             </mat-chip>
+
+            <button mat-stroked-button 
+                    [color]="showingFollowUps ? 'warn' : 'primary'" 
+                    (click)="toggleFollowUps()"
+                    [matBadge]="(followUpCount$ | async) || 0" 
+                    matBadgeColor="warn" 
+                    matBadgePosition="above after"
+                    class="kpi-btn"
+                    style="border-radius: 8px; font-weight: 600;">
+                <mat-icon>{{ showingFollowUps ? 'view_list' : 'assignment_late' }}</mat-icon>
+                {{ showingFollowUps ? 'Back to All Leads' : 'Pending Follow-Ups' }}
+            </button>
+
             <button mat-raised-button color="primary" (click)="onAddLead()" class="add-lead-btn">
                 <mat-icon>person_add</mat-icon>
                 Add Lead
@@ -17,8 +30,8 @@
     <!-- Main Content Card -->
     <mat-card class="leads-card">
         <mat-card-header>
-            <mat-card-title>My {{ leadType | titlecase }} Leads</mat-card-title>
-            <mat-card-subtitle>Manage and view your {{ leadType }} leads</mat-card-subtitle>
+            <mat-card-title>{{ showingFollowUps ? 'Your Follow-Up Actions' : 'My ' + (leadType | titlecase) + ' Leads' }}</mat-card-title>
+            <mat-card-subtitle>{{ showingFollowUps ? 'These leads have matured and require your attention' : 'Manage and view your ' + leadType + ' leads' }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>

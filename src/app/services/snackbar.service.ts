@@ -1,26 +1,33 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SweetAlertService } from './sweet-alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SnackbarService {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private swal: SweetAlertService) {}
 
   show(message: string, isError: boolean = false) {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: isError ? ['snackbar-error'] : ['snackbar-success']
-    });
+    if (isError) {
+      this.swal.error('Error', message);
+    } else {
+      this.swal.success('Success', message);
+    }
   }
 
   showSuccess(message: string) {
-    this.show(message, false);
+    this.swal.success('Success', message);
   }
 
   showError(message: string) {
-    this.show(message, true);
+    this.swal.error('Error', message);
+  }
+
+  showWarning(message: string) {
+    this.swal.warning('Warning', message);
+  }
+
+  showInfo(message: string) {
+    this.swal.info('Info', message);
   }
 }

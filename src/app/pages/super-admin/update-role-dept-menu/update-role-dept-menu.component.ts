@@ -92,8 +92,9 @@ export class UpdateRoleDeptMenuComponent implements OnInit {
     // Common subscribe block with global snackbar service
     request$.subscribe({
       next: () => {
+        const name = payload.name || payload.title || this.data.type;
         this.snackbar.showSuccess(
-          `${this.capitalize(this.data.type)} ${this.isEditMode ? 'updated' : 'created'} successfully ✅`
+          `${this.capitalize(this.data.type)} "${name}" ${this.isEditMode ? 'updated' : 'created'} successfully ✅`
         );
         this.dialogRef.close(true);
       },

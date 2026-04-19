@@ -5,6 +5,7 @@ import { Settings } from '../../app.settings.model';
 import { User, UserProfile, UserWork, UserContacts, UserSocial, UserSettings } from './user.model';
 import { UsersService } from './users.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 
 @Component({
   selector: 'app-users',
@@ -20,7 +21,8 @@ export class UsersComponent implements OnInit {
     public settings: Settings;
     constructor(public appSettings:AppSettings, 
                 public dialog: MatDialog,
-                public usersService:UsersService){
+                public usersService:UsersService,
+                private swal: SweetAlertService){
         this.settings = this.appSettings.settings; 
     }
 
@@ -33,13 +35,30 @@ export class UsersComponent implements OnInit {
         this.usersService.getUsers().subscribe(users => this.users = users);    
     }
     public addUser(user:User){
-        this.usersService.addUser(user).subscribe(user => this.getUsers());
+        this.usersService.addUser(user).subscribe(user => {
+            this.swal.success('Success', 'User added successfully!');
+            this.getUsers();
+        });
     }
     public updateUser(user:User){
-        this.usersService.updateUser(user).subscribe(user => this.getUsers());
+        this.usersService.updateUser(user).subscribe(user => {
+            this.swal.success('Success', 'User updated successfully!');
+            this.getUsers();
+        });
     }
-    public deleteUser(user:User){
-       this.usersService.deleteUser(user.id).subscribe(user => this.getUsers());
+    public async deleteUser(user:User){
+        const confirmed = await this.swal.confirm('Are you sure?', `You are about to delete user ${user.username}. This action cannot be undone!`);
+        if (confirmed) {
+            this.usersService.deleteUser(user.id).subscribe({
+                next: () => {
+                    this.swal.success('Deleted!', 'User has been deleted.');
+                    this.getUsers();
+                },
+                error: (err) => {
+                    this.swal.error('Error', 'Failed to delete user.');
+                }
+            });
+        }
     }
 
 

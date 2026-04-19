@@ -52,7 +52,10 @@
             "allowedCommonJsDependencies": [
               "leaflet-map",
               "dragula",
-              "clone-deep"
+              "clone-deep",
+              "core-js",
+              "raf",
+              "jspdf"
             ],
             "aot": false,
             "vendorChunk": true,
@@ -87,8 +90,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "20kb",
-                  "maximumError": "30kb"
+                  "maximumWarning": "30kb",
+                  "maximumError": "50kb"
                 }
               ]
             },

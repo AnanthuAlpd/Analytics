@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +8,8 @@ import { Department, Role, SuperAdminService } from 'src/app/services/super-admi
 import { Menu } from 'src/app/theme/components/menu/menu.model';
 import { MenuService } from 'src/app/theme/components/menu/menu.service';
 import { UpdateRoleDeptMenuComponent } from '../update-role-dept-menu/update-role-dept-menu.component';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-role-dept-menu-list',
@@ -25,7 +28,11 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
   constructor(
     public dialogRef: MatDialogRef<RoleDeptMenuListComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { type: string, title: string },
-    private superAdminService: SuperAdminService, private menuService: MenuService, private dialog: MatDialog
+    private superAdminService: SuperAdminService, 
+    private menuService: MenuService, 
+    private dialog: MatDialog,
+    private swal: SweetAlertService,
+    private snackbar: SnackbarService
   ) { }
 
   ngOnInit(): void {
@@ -136,5 +143,39 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
         this.loadData();
       }
     });
+  }
+
+  async delete(item: any): Promise<void> {
+    const type = this.data.type;
+    const name = item.name || item.title || 'this item';
+    const confirmed = await this.swal.confirm('Are you sure?', `You are about to delete ${type}: "${name}". This action cannot be undone!`);
+    
+    if (confirmed) {
+      let deleteRequest$: Observable<any>;
+      
+      if (type === 'department') {
+        deleteRequest$ = this.superAdminService.deleteDepartment(item.id);
+      } else if (type === 'role') {
+        deleteRequest$ = this.superAdminService.deleteRole(item.id);
+      } else if (type === 'menu') {
+        deleteRequest$ = this.menuService.deleteMenu(item.id);
+      } else {
+        return;
+      }
+
+      deleteRequest$.subscribe({
+        next: () => {
+          this.snackbar.showSuccess(`${this.capitalize(type)} deleted successfully!`);
+          this.loadData();
+        },
+        error: (err) => {
+          this.snackbar.showError(err?.error?.message || `Failed to delete ${type}.`);
+        }
+      });
+    }
+  }
+
+  private capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

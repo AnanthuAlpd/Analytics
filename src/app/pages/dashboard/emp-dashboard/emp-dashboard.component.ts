@@ -1,7 +1,6 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DashBoardService } from 'src/app/services/dashboard.service';
-import { environment } from '../../../../environments/environment'
 import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
 import { LeadsService, Lead } from 'src/app/services/leads.service';
 import { Router } from '@angular/router';
@@ -33,14 +32,14 @@ export type SparklineOptions = {
 })
 export class EmpDashboardComponent implements OnInit, OnDestroy {
 
-  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
-  @ViewChild('videoContainer') videoContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('clientChart') clientChartComponent!: ChartComponent;
   @ViewChild('employeeChart') employeeChartComponent!: ChartComponent;
+  @ViewChild('followUpChart') followUpChartComponent!: ChartComponent;
 
   // Stats properties
   clientLeads: number = 0;
   employeeLeads: number = 0;
+  followUpLeads: number = 0;
   totalEarnings: number = 15240; // TEST DATA: Keeping hardcoded as requested
 
   // Growth percentages (optional)
@@ -51,13 +50,60 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
   // Sparkline Chart Options
   public clientSparklineOptions: Partial<SparklineOptions>;
   public employeeSparklineOptions: Partial<SparklineOptions>;
+  public followUpSparklineOptions: Partial<SparklineOptions>;
   public earningsSparklineOptions: Partial<SparklineOptions>;
 
   // UI state
-  videoLoading: boolean = false;
   showQuickActions: boolean = true;
-  vidSrc: string;
-  vidJpg: string;
+
+  // Training Resources
+  trainingResources = [
+    {
+      title: 'PothansAI Basics',
+      description: 'A comprehensive guide to getting started with PothansAI platform.',
+      link: 'https://youtu.be/Bmez9J3MhNw?si=3I5fgfDwm_gq9tSG',
+      icon: 'smart_toy',
+      type: 'video'
+    },
+    {
+      title: 'Prabha Analytics',
+      description: 'Learn how to leverage Prabha Analytics for deeper insights.',
+      link: 'https://youtu.be/PNcDXxZJqWU?si=cRVskgMyJlxjKjnN',
+      icon: 'analytics',
+      type: 'video'
+    },
+    {
+      title: 'Niyamam SevaAI',
+      description: 'Familiarize yourself with Niyamam SevaAI features and workflows.',
+      link: 'https://youtu.be/loM60UK0ySQ?si=cezYpWfcBDek7_cD',
+      icon: 'gavel',
+      type: 'video'
+    }
+  ];
+
+  documentResources = [
+    {
+      title: 'User Guide',
+      description: 'Detailed documentation on platform features and usage.',
+      link: '#',
+      icon: 'description',
+      type: 'pdf'
+    },
+    {
+      title: 'Referral Policy',
+      description: 'Understand the terms and rewards of our referral program.',
+      link: '#',
+      icon: 'policy',
+      type: 'pdf'
+    },
+    {
+      title: 'Platform FAQs',
+      description: 'Frequently asked questions and troubleshooting tips.',
+      link: '#',
+      icon: 'help_outline',
+      type: 'pdf'
+    }
+  ];
 
   // Subscription management
   private destroy$ = new Subject<void>();
@@ -71,11 +117,8 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.vidSrc = `${environment.baseHref}assets/vid/intro.mp4`;
-    this.vidJpg = `${environment.baseHref}assets/vid/intro.jpg`;
     this.initSparklineCharts();
     this.loadDashboardData();
-    this.setupVideoEventListeners();
   }
 
   private initSparklineCharts(): void {
@@ -119,6 +162,15 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
       chart: commonChartOptions,
       stroke: commonStroke,
       colors: ['#ff00ff'],
+      fill: fillGradient,
+      tooltip: commonTooltip
+    };
+
+    this.followUpSparklineOptions = {
+      series: [{ data: new Array(30).fill(0) }],
+      chart: commonChartOptions,
+      stroke: commonStroke,
+      colors: ['#ff5722'], // deep orange/warn color
       fill: fillGradient,
       tooltip: commonTooltip
     };
@@ -245,6 +297,32 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
         }
         this.cdr.detectChanges();
       });
+
+    this.leadsService.getFollowUpLeads()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(leads => {
+        const leadsArray = leads || [];
+        this.followUpLeads = leadsArray.length;
+
+        const trend = this.getTrendData(leadsArray, 'FollowUp');
+
+        if (this.followUpSparklineOptions) {
+          this.followUpSparklineOptions = { 
+            ...this.followUpSparklineOptions, 
+            series: [{ name: 'Activity', data: [...trend.data] }],
+            xaxis: { categories: [...trend.categories] }
+          };
+
+          // Force manual refresh
+          setTimeout(() => {
+            if (this.followUpChartComponent) {
+              this.followUpChartComponent.updateOptions(this.followUpSparklineOptions);
+            }
+          }, 100);
+        }
+
+        this.cdr.detectChanges();
+      });
   }
 
   private getTrendData(leads: Lead[], type: string): { data: number[], categories: string[] } {
@@ -285,25 +363,12 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
     return Math.round(((current - previous) / previous) * 100);
   }
 
-  private setupVideoEventListeners(): void {
-    setTimeout(() => {
-      if (this.videoPlayer?.nativeElement) {
-        const video = this.videoPlayer.nativeElement;
-        video.addEventListener('loadstart', () => this.videoLoading = true);
-        video.addEventListener('canplay', () => this.videoLoading = false);
-        video.addEventListener('error', () => this.videoLoading = false);
-      }
-    });
-  }
-
-  toggleFullscreen(): void {
-    if (this.videoContainer?.nativeElement) {
-      const container = this.videoContainer.nativeElement;
-      if (!document.fullscreenElement) {
-        container.requestFullscreen().catch(err => console.error(err));
-      } else {
-        document.exitFullscreen();
-      }
+  openResource(resource: any): void {
+    if (resource.link && resource.link !== '#') {
+      window.open(resource.link, '_blank');
+    } else {
+      // Mock notification for local files
+      console.log(`Opening resource: ${resource.title}`);
     }
   }
 
@@ -314,15 +379,6 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
   viewDetails(type: 'client' | 'employee'): void {
     const route = type === 'client' ? '/user-leads/client-leads-list' : '/user-leads/emp-leads-list';
     this.router.navigate([route], { queryParams: { recent: true } });
-  }
-
-  shareVideo(): void {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({ title: 'Program', url }).catch(err => console.error(err));
-    } else {
-      navigator.clipboard.writeText(url).then(() => console.log('Copied'));
-    }
   }
 
   openLeadFormDialog(type: 'Client' | 'Employee'): void {

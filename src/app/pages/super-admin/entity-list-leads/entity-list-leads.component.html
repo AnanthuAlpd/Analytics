@@ -3,16 +3,30 @@
     <!-- Header Section -->
     <div fxLayout="row" fxLayoutAlign="space-between center" class="header-section">
         <h2 class="page-title">{{ title }}</h2>
-        <mat-chip *ngIf="leads$ | async as leads" class="count-chip">
-            Total: {{ leads.length }}
-        </mat-chip>
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+            <mat-chip *ngIf="leads$ | async as leads" class="count-chip">
+                Total: {{ leads.length }}
+            </mat-chip>
+
+            <button mat-stroked-button 
+                    [color]="showingFollowUps ? 'warn' : 'primary'" 
+                    (click)="toggleFollowUps()"
+                    [matBadge]="(followUpCount$ | async) || 0" 
+                    matBadgeColor="warn" 
+                    matBadgePosition="above after"
+                    class="kpi-btn"
+                    style="border-radius: 8px; font-weight: 600;">
+                <mat-icon>{{ showingFollowUps ? 'view_list' : 'assignment_late' }}</mat-icon>
+                {{ showingFollowUps ? 'Back to All Leads' : 'Pending Follow-Ups' }}
+            </button>
+        </div>
     </div>
 
     <!-- Main Content Card -->
     <mat-card class="leads-card">
         <mat-card-header>
-            <mat-card-title>{{ leadType | titlecase }} Leads</mat-card-title>
-            <mat-card-subtitle>Manage and view all {{ leadType }} leads</mat-card-subtitle>
+            <mat-card-title>{{ showingFollowUps ? 'All Follow-Up Actions' : (leadType | titlecase) + ' Leads' }}</mat-card-title>
+            <mat-card-subtitle>{{ showingFollowUps ? 'Global view of leads requiring follow-up attention' : 'Manage and view all ' + leadType + ' leads' }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>

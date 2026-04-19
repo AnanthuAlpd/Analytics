@@ -3,6 +3,7 @@ import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent } fr
 import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { ScheduleDialogComponent } from './schedule-dialog/schedule-dialog.component';
 import { AppSettings } from '../../app.settings';
 import { Settings } from '../../app.settings.model';
@@ -43,9 +44,12 @@ export class ScheduleComponent implements OnInit {
       }
   }, {
       label: '<i class="material-icons icon-sm white">close</i>',
-      onClick: ({event}: {event: CalendarEvent}): void => {
-          this.events = this.events.filter(iEvent => iEvent !== event);
-          this.snackbar.showSuccess('Event deleted successfully!');
+      onClick: async ({event}: {event: CalendarEvent}): Promise<void> => {
+          const confirmed = await this.swal.confirm('Are you sure?', `You are about to delete event: ${event.title}`);
+          if (confirmed) {
+              this.events = this.events.filter(iEvent => iEvent !== event);
+              this.snackbar.showSuccess('Event deleted successfully!');
+          }
       }
   }];
   events: CalendarEvent[] = [{
@@ -82,7 +86,8 @@ export class ScheduleComponent implements OnInit {
   public settings: Settings;
   constructor(public appSettings:AppSettings, 
               public dialog: MatDialog, 
-              public snackbar: SnackbarService){
+              public snackbar: SnackbarService,
+              private swal: SweetAlertService){
       this.settings = this.appSettings.settings; 
   }
 

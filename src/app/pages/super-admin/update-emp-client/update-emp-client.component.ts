@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { SuperAdminService } from 'src/app/services/super-admin.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class UpdateEmpClientComponent implements OnInit {
     private superAdmService: SuperAdminService,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<UpdateEmpClientComponent>,
+    private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: { item: any; type: string }
   ) {
     this.isEditMode = !!this.data.item;
@@ -105,39 +107,34 @@ export class UpdateEmpClientComponent implements OnInit {
         const employeeId = this.data.item.id;
         this.superAdmService.updateEmployee(employeeId, formData).subscribe({
           next: (response) => {
+            this.snackbar.showSuccess(`${this.capitalize(this.data.type)} updated successfully!`);
             this.dialogRef.close(response);
             this.isLoading = false;
           },
           error: (err) => {
+            this.snackbar.showError(err?.error?.message || `Failed to update ${this.data.type}.`);
             console.error('Error updating:', err);
             this.isLoading = false;
           }
         });
       } else {
         // Add Mode
-        if (this.data.type === 'employee') {
-          this.authService.register(formData).subscribe({
-            next: (response) => {
-              this.dialogRef.close(response);
-              this.isLoading = false;
-            },
-            error: (err) => {
-              console.error('Error adding employee:', err);
-              this.isLoading = false;
-            }
-          });
-        } else {
-          this.authService.registerClient(formData).subscribe({
-            next: (response) => {
-              this.dialogRef.close(response);
-              this.isLoading = false;
-            },
-            error: (err) => {
-              console.error('Error adding client:', err);
-              this.isLoading = false;
-            }
-          });
-        }
+        const action$ = this.data.type === 'employee' 
+          ? this.authService.register(formData) 
+          : this.authService.registerClient(formData);
+
+        action$.subscribe({
+          next: (response) => {
+            this.snackbar.showSuccess(`${this.capitalize(this.data.type)} added successfully!`);
+            this.dialogRef.close(response);
+            this.isLoading = false;
+          },
+          error: (err) => {
+            this.snackbar.showError(err?.error?.message || `Failed to add ${this.data.type}.`);
+            console.error(`Error adding ${this.data.type}:`, err);
+            this.isLoading = false;
+          }
+        });
       }
     }
   }
@@ -146,11 +143,7 @@ export class UpdateEmpClientComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  private markFormGroupTouched(): void {
-    Object.keys(this.updateForm.controls).forEach(key => {
-      const control = this.updateForm.get(key);
-      control?.markAsTouched();
-    });
+  private capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
-
 }

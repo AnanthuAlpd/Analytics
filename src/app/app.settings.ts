@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 @Injectable()
 export class AppSettings {
     public settings = new Settings(
-        'PothensAI',       //theme name
+        'PothansAI',       //theme name
         true,           //loadingSpinner
         true,           //fixedHeader
         true,           //sidenavIsOpened

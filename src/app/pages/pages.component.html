@@ -7,13 +7,14 @@
     <mat-toolbar color="primary" class="flex-p-x">
       <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100">
         <div fxLayout="row" fxLayoutAlign="center center">
-          <button *ngIf="settings.menu == 'vertical'" mat-icon-button (click)="toggleSidenav()" matTooltip="Toggle Menu">
+          <button *ngIf="settings.menu == 'vertical'" mat-icon-button (click)="toggleSidenav()"
+            matTooltip="Toggle Menu">
             <mat-icon>menu</mat-icon>
           </button>
-          <button fxShow="false" fxShow.gt-xs *ngIf="settings.menu == 'vertical'" mat-icon-button
+          <!-- <button fxShow="false" fxShow.gt-xs *ngIf="settings.menu == 'vertical'" mat-icon-button
             (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock" matTooltip="User Profile">
             <mat-icon>person</mat-icon>
-          </button>
+          </button> -->
           <a *ngIf="settings.menu == 'horizontal'" mat-raised-button color="accent" routerLink="/"
             (click)="closeSubMenus()" class="small-logo">P</a>
           <a *ngIf="settings.menu == 'horizontal'" class="logo" (click)="closeSubMenus()">{{ serviceName === 'Prabha
@@ -25,7 +26,7 @@
           </button>
         </div>
         <div fxLayout="row" fxLayoutAlign="end center">
-          <div fxLayout="row" fxLayoutAlign="start center" fxShow="false" fxShow.gt-xs class="search-bar">
+          <!-- <div fxLayout="row" fxLayoutAlign="start center" fxShow="false" fxShow.gt-xs class="search-bar">
             <form method="get">
               <input type="text" placeholder="Type to search..." class="mat-elevation-z3"
                 [class.show]="toggleSearchBar">
@@ -36,9 +37,10 @@
           </div>
           <!-- <app-flags-menu fxShow="false" fxShow.gt-sm></app-flags-menu> -->
           <app-fullscreen></app-fullscreen>
-          <!-- <app-applications fxShow="false" fxShow.gt-sm></app-applications>
+          <!-- <app-applications fxShow="false" fxShow.gt-sm></app-applications> -->
           <app-messages fxShow="false" fxShow.gt-xs></app-messages>
-          <app-user-menu></app-user-menu>  -->
+          <!-- <app-user-menu></app-user-menu>  -->
+
         </div>
       </div>
     </mat-toolbar>
@@ -71,11 +73,13 @@
     </div>
 
 
-    <div fxLayout="row" fxLayoutAlign="center center" class="options-icon" (click)="options.toggle()" matTooltip="Settings">
+    <div fxLayout="row" fxLayoutAlign="center center" class="options-icon" (click)="options.toggle()"
+      matTooltip="Settings">
       <mat-icon>settings</mat-icon>
     </div>
 
-    <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()" matTooltip="Back to Top">
+    <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()"
+      matTooltip="Back to Top">
       <mat-icon>arrow_upward</mat-icon>
     </div>
 

@@ -16,6 +16,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 })
 export class MyLeadsComponent implements OnInit {
   leads$: Observable<Lead[]>;
+  followUpCount$: Observable<number>;
+  showingFollowUps: boolean = false;
   leadType: string = '';
   title: string = '';
   displayedColumns: string[] = ['name', 'contact', 'emp_name', 'lead_source', 'status', 'created_at', 'actions'];
@@ -45,10 +47,15 @@ export class MyLeadsComponent implements OnInit {
         });
 
         let baseObservable$: Observable<Lead[]>;
-        if (currentType === 'employee') {
-          baseObservable$ = this.leadsService.getCurrentUserEmployeeLeads();
+        
+        if (this.showingFollowUps) {
+          baseObservable$ = this.leadsService.getFollowUpLeads();
         } else {
-          baseObservable$ = this.leadsService.getCurrentUserClientLeads();
+          if (currentType === 'employee') {
+            baseObservable$ = this.leadsService.getCurrentUserEmployeeLeads();
+          } else {
+            baseObservable$ = this.leadsService.getCurrentUserClientLeads();
+          }
         }
 
         return baseObservable$.pipe(
@@ -56,16 +63,46 @@ export class MyLeadsComponent implements OnInit {
         );
       })
     );
+
+    // Initialize KPI counter
+    this.followUpCount$ = this.leadsService.getFollowUpLeads().pipe(
+      map(leads => leads.length)
+    );
+  }
+
+  toggleFollowUps(): void {
+    this.showingFollowUps = !this.showingFollowUps;
+    this.refreshLeads();
+  }
+
+  private toLocalISO(date: Date): string {
+    if (!date || isNaN(date.getTime())) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private safeParseDate(dateVal: any): Date {
+    if (!dateVal) return new Date(NaN);
+    if (dateVal instanceof Date) return dateVal;
+    
+    if (typeof dateVal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateVal.trim())) {
+      const [y, m, d] = dateVal.trim().split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+    
+    return new Date(dateVal);
   }
 
   private filterByCurrentMonth(leads: Lead[]): Lead[] {
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+    const currentMonth = this.toLocalISO(now).substring(0, 7);
 
     return leads.filter(l => {
-      const d = new Date(l.created_at);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      const d = this.safeParseDate(l.created_at);
+      const leadMonth = this.toLocalISO(d).substring(0, 7);
+      return leadMonth === currentMonth;
     });
   }
 
@@ -81,9 +118,10 @@ export class MyLeadsComponent implements OnInit {
   }
 
   onAddLead(): void {
+    const cat = this.leadType === 'employee' ? 'Employee' : 'Client';
     const dialogRef = this.dialog.open(LeadsFormComponent, {
       width: '600px',
-      data: { type: this.leadType }
+      data: { lead_cat: cat }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -119,7 +157,7 @@ export class MyLeadsComponent implements OnInit {
   onEdit(lead: Lead): void {
     const dialogRef = this.dialog.open(LeadsFormComponent, {
       width: '600px',
-      data: { lead: lead, type: this.leadType }
+      data: { item: lead, lead_cat: lead.lead_cat }
     });
 
     dialogRef.afterClosed().subscribe(result => {

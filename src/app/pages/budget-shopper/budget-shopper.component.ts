@@ -203,18 +203,18 @@ export class BudgetShopperComponent implements OnInit, AfterViewInit {
 
         this.budgetShopperService.getOptimizedList(this.budget, this.monthsCoverage).subscribe({
             next: (response) => {
-                if (response.status === 'success' && response.data) {
-                    this.shoppingList = response.data.shopping_list;
+                if (response && response.shopping_list) {
+                    this.shoppingList = response.shopping_list;
                     this.dataSource.data = this.shoppingList;
-                    this.totalCost = response.data.total_investment;
-                    this.remainingBudget = response.data.remaining_budget;
+                    this.totalCost = response.total_investment;
+                    this.remainingBudget = response.remaining_budget;
                     this.appliedMonthsCoverage = this.monthsCoverage; // Lock in the coverage used for this math
 
                     // Update Sparklines with API data if available, else keep generic data
-                    if (response.data.investment_trend) {
-                        this.investmentSparklineOptions = this.getSparklineOptions(response.data.investment_trend, '#3f51b5');
-                        this.budgetSparklineOptions = this.getSparklineOptions(response.data.budget_trend || [], '#2ecc71');
-                        this.itemsSparklineOptions = this.getSparklineOptions(response.data.items_trend || [], '#f39c12');
+                    if (response.investment_trend) {
+                        this.investmentSparklineOptions = this.getSparklineOptions(response.investment_trend, '#3f51b5');
+                        this.budgetSparklineOptions = this.getSparklineOptions(response.budget_trend || [], '#2ecc71');
+                        this.itemsSparklineOptions = this.getSparklineOptions(response.items_trend || [], '#f39c12');
                     }
 
                     // Pagination & Sorting are handled auto-magically by the ViewChild setters 
@@ -225,7 +225,7 @@ export class BudgetShopperComponent implements OnInit, AfterViewInit {
                         }
                     });
                 } else {
-                    console.error("Optimization failed:", response.message);
+                    console.error("Optimization failed no data returned:", response);
                 }
                 this.isLoading = false;
             },

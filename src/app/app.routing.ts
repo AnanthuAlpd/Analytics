@@ -10,7 +10,7 @@ import { UnauthorizedComponent } from './pages/errors/unauthorized/unauthorized.
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'landing',
+        redirectTo: 'login/employee',
         pathMatch: 'full'
     },
     {

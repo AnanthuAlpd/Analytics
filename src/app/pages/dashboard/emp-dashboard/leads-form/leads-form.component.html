@@ -23,17 +23,25 @@
     <input matInput type="text" formControlName="mob_no" />
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Lead Source</mat-label>
-    <input matInput formControlName="lead_source" />
-  </mat-form-field>
+  <div fxLayout="row" fxLayoutGap="16px">
+    <mat-form-field appearance="outline" fxFlex="50">
+        <mat-label>Lead Source</mat-label>
+        <mat-select formControlName="lead_source_id">
+            <mat-option *ngFor="let source of sources" [value]="source.id">
+                {{ source.source_name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Status</mat-label>
-    <mat-select formControlName="status">
-      <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50">
+        <mat-label>Current Status</mat-label>
+        <mat-select formControlName="status_id">
+            <mat-option *ngFor="let status of statuses" [value]="status.id">
+                {{ status.status_name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+  </div>
 
   <mat-form-field appearance="fill">
     <mat-label>Remarks</mat-label>

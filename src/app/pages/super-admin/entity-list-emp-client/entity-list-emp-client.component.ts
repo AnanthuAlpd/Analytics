@@ -8,6 +8,8 @@ import { Employee, Client, SuperAdminService } from 'src/app/services/super-admi
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Optional, Inject } from '@angular/core';
 import { UpdateEmpClientComponent } from '../update-emp-client/update-emp-client.component';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-entity-list-emp-client',
@@ -33,6 +35,8 @@ export class EntityListEmpClientComponent implements OnInit {
     private location: Location, // Add this for goBack functionality
     private router: Router, // Add this if you prefer router navigation
     private dialog: MatDialog,
+    private swal: SweetAlertService,
+    private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<EntityListEmpClientComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) { }
@@ -87,8 +91,64 @@ export class EntityListEmpClientComponent implements OnInit {
 
   // Add missing action methods
   view(item: any): void {
-    console.log('View:', item);
-    // Implement view functionality
+    const isEmp = this.entityType === 'employee';
+    
+    // Avatar Color Logic
+    const colors = [
+      'linear-gradient(135deg, #7986cb, #283593)', // 0
+      'linear-gradient(135deg, #9c27b0, #7b1fa2)', // 1
+      'linear-gradient(135deg, #00acc1, #00838f)', // 2
+      'linear-gradient(135deg, #43a047, #2e7d32)', // 3
+      'linear-gradient(135deg, #f4511e, #bf360c)'  // 4
+    ];
+    const charSum = item.name ? Array.from(item.name as string).reduce((sum, char) => sum + char.charCodeAt(0), 0) : 0;
+    const bgGradient = colors[charSum % 5];
+    const initials = this.getInitials(item.name);
+
+    const rolesHtml = isEmp && item.roles ? item.roles.map((r: any) => 
+      `<span style="background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 12px; font-size: 12px; margin-right: 6px; font-weight: 600; display: inline-block; margin-top: 4px;">${r.name}</span>`
+    ).join('') : '';
+
+    const htmlContent = `
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 88px; height: 88px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; background: ${bgGradient}; box-shadow: 0 8px 24px rgba(0,0,0,0.15); color: white; font-size: 32px; font-weight: 700; letter-spacing: 1px; border: 4px solid white;">
+          ${initials}
+        </div>
+        <h2 style="margin: 0; padding: 0; font-size: 24px; font-weight: 700; color: #0f172a;">${item.name}</h2>
+        <p style="margin: 4px 0 0; color: #64748b; font-size: 14px;">${isEmp ? (item.main_department || 'Employee') : 'Client Partner'}</p>
+      </div>
+
+      <div style="text-align: left; padding: 0 12px 12px;">
+        <div style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+          <strong style="color: #64748b; font-size: 13px; text-transform: uppercase;">Contact Info</strong>
+          <p style="margin: 6px 0 0; color: #1e293b; font-size: 15px;"><mat-icon style="vertical-align: middle; font-size: 16px; color: #94a3b8;">email</mat-icon> <a href="mailto:${item.email}" style="color: #3b82f6; text-decoration: none;">${item.email}</a></p>
+          <p style="margin: 6px 0 0; color: #1e293b; font-size: 15px;"><mat-icon style="vertical-align: middle; font-size: 16px; color: #94a3b8;">phone</mat-icon> ${item.mob_no || item.phone || 'Not Provided'}</p>
+        </div>
+        
+        <div style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+          <strong style="color: #64748b; font-size: 13px; text-transform: uppercase;">Overview</strong>
+          <p style="margin: 6px 0 0; color: #1e293b; font-size: 15px;"><strong>Date Added:</strong> ${this.formatDate(item.created_at)}</p>
+        </div>
+
+        ${isEmp ? `
+        <div>
+          <strong style="color: #64748b; font-size: 13px; text-transform: uppercase;">Assigned Roles</strong>
+          <div style="margin-top: 6px;">${rolesHtml || '<span style="color: #94a3b8; font-style: italic;">No specific roles assigned.</span>'}</div>
+        </div>
+        ` : ''}
+      </div>
+    `;
+
+    this.swal.fire({
+      html: htmlContent,
+      background: '#ffffff',
+      confirmButtonText: 'Close Profile',
+      confirmButtonColor: '#3b82f6',
+      customClass: {
+        popup: 'rounded-sweet-alert shadow-lg',
+        confirmButton: 'rounded-btn'
+      }
+    });
   }
 
   edit(item: any): void {
@@ -113,10 +173,33 @@ export class EntityListEmpClientComponent implements OnInit {
     });
   }
 
-  delete(item: any): void {
-    if (confirm(`Are you sure you want to delete ${item.name}?`)) {
-      console.log('Delete confirmed for:', item);
-      // call delete method from service
+  async delete(item: any): Promise<void> {
+    const confirmed = await this.swal.confirm('Are you sure?', `You are about to delete ${item.name}. This is a soft delete - the record will be hidden but not permanently erased.`);
+    if (confirmed) {
+      if (this.entityType === 'employee') {
+        this.superAdminService.deleteEmployee(item.id).subscribe({
+          next: () => {
+            this.snackbar.showSuccess(`${item.name} deleted successfully!`);
+            this.loadData();
+          },
+          error: (err) => {
+            console.error('Delete failed', err);
+            this.swal.error('Delete Failed', 'There was an error deleting this employee.');
+          }
+        });
+      } else if (this.entityType === 'client') {
+        const id = item.client_id || item.id;
+        this.superAdminService.deleteClient(id).subscribe({
+          next: () => {
+            this.snackbar.showSuccess(`${item.name} deleted successfully!`);
+            this.loadData();
+          },
+          error: (err) => {
+            console.error('Delete failed', err);
+            this.swal.error('Delete Failed', 'There was an error deleting this client.');
+          }
+        });
+      }
     }
   }
 

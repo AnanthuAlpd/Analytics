@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -42,6 +43,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     FlexLayoutModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatBadgeModule,
     MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
@@ -71,7 +73,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
-    PipesModule
+    PipesModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   declarations: [
     LeadsFormComponent,
@@ -85,6 +89,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     FlexLayoutModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatBadgeModule,
     MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,

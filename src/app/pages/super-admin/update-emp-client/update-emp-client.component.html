@@ -1,121 +1,111 @@
-<div class="dialog-container">
-    <h2 mat-dialog-title>{{ isEditMode ? 'Update' : 'Add' }} {{ data.type === 'employee' ? 'Employee' : 'Client' }}</h2>
+<div class="form-container">
+  <form [formGroup]="updateForm" (ngSubmit)="onSave()">
+    <div mat-dialog-title class="dialog-header" fxLayout="row" fxLayoutAlign="space-between center">
+      <div fxLayout="column">
+        <span class="title">{{ isEditMode ? 'Edit Profile' : 'Create Profile' }}</span>
+        <span class="subtitle">Configure the {{ data.type }}'s account and access roles</span>
+      </div>
+      <button mat-icon-button type="button" (click)="onCancel()" class="close-icon"><mat-icon>close</mat-icon></button>
+    </div>
 
-    <mat-dialog-content>
-        <form [formGroup]="updateForm" class="form-container">
+    <mat-dialog-content class="glass-content">
+      <div fxLayout="row wrap" fxLayoutGap="16px grid">
+        <!-- Name Field -->
+        <div fxFlex="100" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Full Name</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="name" placeholder="E.g. John Doe">
+            <mat-error *ngIf="updateForm.get('name')?.hasError('required')">Name is required</mat-error>
+            <mat-error *ngIf="updateForm.get('name')?.hasError('minlength')">Minimum 2 characters</mat-error>
+          </mat-form-field>
+        </div>
 
-            <!-- Name Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Name</mat-label>
-                    <input matInput formControlName="name" placeholder="Enter full name">
-                    <mat-error *ngIf="updateForm.get('name')?.hasError('required')">
-                        Name is required
-                    </mat-error>
-                    <mat-error *ngIf="updateForm.get('name')?.hasError('minlength')">
-                        Name must be at least 2 characters long
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <!-- Email Field -->
+        <div fxFlex="100" fxFlex.gt-xs="50" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Email Address</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput formControlName="email" type="email" placeholder="john@example.com">
+            <mat-error *ngIf="updateForm.get('email')?.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="updateForm.get('email')?.hasError('email')">Invalid email</mat-error>
+          </mat-form-field>
+        </div>
 
-            <!-- Email Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Email</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="Enter email address">
-                    <mat-error *ngIf="updateForm.get('email')?.hasError('required')">
-                        Email is required
-                    </mat-error>
-                    <mat-error *ngIf="updateForm.get('email')?.hasError('email')">
-                        Please enter a valid email address
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <!-- Mobile Number Field -->
+        <div fxFlex="100" fxFlex.gt-xs="50" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Mobile Number</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="mob_no" type="tel" placeholder="+1 234 567 8900">
+            <mat-error *ngIf="updateForm.get('mob_no')?.hasError('required')">Mobile is required</mat-error>
+            <mat-error *ngIf="updateForm.get('mob_no')?.hasError('pattern')">Invalid format</mat-error>
+          </mat-form-field>
+        </div>
 
-            <!-- Mobile Number Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Mobile Number</mat-label>
-                    <input matInput formControlName="mob_no" type="tel" placeholder="Enter mobile number">
-                    <mat-error *ngIf="updateForm.get('mob_no')?.hasError('required')">
-                        Mobile number is required
-                    </mat-error>
-                    <mat-error *ngIf="updateForm.get('mob_no')?.hasError('pattern')">
-                        Please enter a valid mobile number
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <!-- Password Field -->
+        <div fxFlex="100" fxFlex.gt-xs="100" class="field-container" *ngIf="!isEditMode">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Secure Password</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput formControlName="password" type="password" placeholder="At least 6 characters">
+            <mat-error *ngIf="updateForm.get('password')?.hasError('required')">Required for new accounts</mat-error>
+            <mat-error *ngIf="updateForm.get('password')?.hasError('minlength')">Min 6 characters</mat-error>
+          </mat-form-field>
+        </div>
 
-            <!-- Password Field (Add Mode Only) -->
-            <div fxFlex="100" class="field-container" *ngIf="!isEditMode">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Password</mat-label>
-                    <input matInput formControlName="password" type="password" placeholder="Enter password">
-                    <mat-error *ngIf="updateForm.get('password')?.hasError('required')">
-                        Password is required
-                    </mat-error>
-                    <mat-error *ngIf="updateForm.get('password')?.hasError('minlength')">
-                        Password must be at least 6 characters
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <!-- Main Department -->
+        <div fxFlex="100" fxFlex.gt-xs="50" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Main Department</mat-label>
+            <mat-icon matPrefix>domain</mat-icon>
+            <mat-select formControlName="main_department">
+              <mat-option *ngFor="let dept of departments" [value]="dept.id">
+                {{ dept.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="updateForm.get('main_department')?.hasError('required')">Selection required</mat-error>
+          </mat-form-field>
+        </div>
 
-            <!-- Main Department Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Main Department</mat-label>
-                    <mat-select formControlName="main_department">
-                        <mat-option value="">Select Department</mat-option>
-                        <mat-option *ngFor="let dept of departments" [value]="dept.id">
-                            {{ dept.name }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="updateForm.get('main_department')?.hasError('required')">
-                        Main department is required
-                    </mat-error>
-                </mat-form-field>
-            </div>
+        <!-- Other Departments -->
+        <div fxFlex="100" fxFlex.gt-xs="50" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Other Departments</mat-label>
+            <mat-icon matPrefix>business_center</mat-icon>
+            <mat-select formControlName="other_departments" multiple>
+              <mat-option *ngFor="let dept of departments" [value]="dept.id">
+                {{ dept.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-            <!-- Other Departments Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Other Departments</mat-label>
-                    <mat-select formControlName="other_departments" multiple>
-                        <mat-option *ngFor="let dept of departments" [value]="dept.id">
-                            {{ dept.name }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-hint>Hold Ctrl/Cmd to select multiple departments</mat-hint>
-                </mat-form-field>
-            </div>
-
-            <!-- Roles Field -->
-            <div fxFlex="100" class="field-container">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Roles</mat-label>
-                    <mat-select formControlName="roles" multiple>
-                        <mat-option *ngFor="let role of roles" [value]="role.id">
-                            {{ role.name }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="updateForm.get('roles')?.hasError('required')">
-                        At least one role is required
-                    </mat-error>
-                    <mat-hint>Select applicable roles</mat-hint>
-                </mat-form-field>
-            </div>
-
-        </form>
+        <!-- Roles -->
+        <div fxFlex="100" class="field-container">
+          <mat-form-field appearance="outline" class="full-width premium-field">
+            <mat-label>Access Roles</mat-label>
+            <mat-icon matPrefix>shield</mat-icon>
+            <mat-select formControlName="roles" multiple>
+              <mat-option *ngFor="let role of roles" [value]="role.id">
+                {{ role.name }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Select one or multiple roles</mat-hint>
+            <mat-error *ngIf="updateForm.get('roles')?.hasError('required')">At least one role required</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
     </mat-dialog-content>
 
-    <mat-dialog-actions align="end" class="dialog-actions">
-        <button mat-button type="button" (click)="onCancel()" color="primary">
-            Cancel
-        </button>
-        <button mat-raised-button type="button" (click)="onSave()" color="primary"
-            [disabled]="updateForm.invalid || isLoading">
-            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-            <span *ngIf="!isLoading">Save</span>
-        </button>
+    <mat-dialog-actions align="end" class="dialog-actions-premium">
+      <button mat-button type="button" class="cancel-btn" (click)="onCancel()" [disabled]="isLoading">DISCARD</button>
+      <button mat-flat-button color="primary" type="submit" class="submit-btn"
+        [disabled]="updateForm.invalid || isLoading">
+        <mat-spinner diameter="20" *ngIf="isLoading" class="btn-spinner"></mat-spinner>
+        <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+        <span *ngIf="!isLoading">{{ isEditMode ? 'UPDATE' : 'CREATE' }}</span>
+      </button>
     </mat-dialog-actions>
+  </form>
 </div>

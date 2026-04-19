@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LeadsService, Lead } from '../../../services/leads.service';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { LeadsFormComponent } from 'src/app/shared/components/leads-form/leads-form.component';
 import { LeadDetailComponent } from 'src/app/shared/components/lead-detail/lead-detail.component';
@@ -16,6 +16,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 })
 export class EntityListLeadsComponent implements OnInit {
   leads$: Observable<Lead[]>;
+  followUpCount$: Observable<number>;
+  showingFollowUps: boolean = false;
   leadType: string = '';
   title: string = '';
   displayedColumns: string[] = ['name', 'contact', 'emp_name', 'lead_source', 'status', 'created_at', 'actions'];
@@ -34,12 +36,26 @@ export class EntityListLeadsComponent implements OnInit {
       this.leadType = data['type'];
       this.title = data['breadcrumb'];
 
-      if (this.leadType === 'employee') {
-        this.leads$ = this.leadsService.getEmployeeLeads();
+      if (this.showingFollowUps) {
+        this.leads$ = this.leadsService.getAllFollowUpLeads();
       } else {
-        this.leads$ = this.leadsService.getClientLeads();
+        if (this.leadType === 'employee') {
+          this.leads$ = this.leadsService.getEmployeeLeads();
+        } else {
+          this.leads$ = this.leadsService.getClientLeads();
+        }
       }
     });
+
+    // Initialize KPI counter
+    this.followUpCount$ = this.leadsService.getAllFollowUpLeads().pipe(
+      map(leads => leads.length)
+    );
+  }
+
+  toggleFollowUps(): void {
+    this.showingFollowUps = !this.showingFollowUps;
+    this.refreshLeads();
   }
 
   getInitials(name: string): string {
@@ -104,10 +120,14 @@ export class EntityListLeadsComponent implements OnInit {
   }
 
   private refreshLeads(): void {
-    if (this.leadType === 'employee') {
-      this.leads$ = this.leadsService.getEmployeeLeads();
+    if (this.showingFollowUps) {
+      this.leads$ = this.leadsService.getAllFollowUpLeads();
     } else {
-      this.leads$ = this.leadsService.getClientLeads();
+      if (this.leadType === 'employee') {
+        this.leads$ = this.leadsService.getEmployeeLeads();
+      } else {
+        this.leads$ = this.leadsService.getClientLeads();
+      }
     }
   }
 }

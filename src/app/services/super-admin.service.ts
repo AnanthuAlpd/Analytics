@@ -79,4 +79,16 @@ export class SuperAdminService {
   deleteRole(roleId: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/roles/${roleId}`);
   }
+
+  deleteDepartment(departmentId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/departments/${departmentId}`);
+  }
+
+  deleteEmployee(employeeId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete_employee/${employeeId}`);
+  }
+
+  deleteClient(clientId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete_client/${clientId}`);
+  }
 }

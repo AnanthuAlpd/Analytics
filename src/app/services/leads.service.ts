@@ -11,10 +11,13 @@ export interface Lead {
   lead_cat: 'Employee' | 'Client';
   email: string;
   mob_no: string;
-  lead_source: string;
-  status: string;
+  lead_source_id?: number;
+  status_id?: number;
+  status?: string;
+  lead_source?: string;
   remarks: string;
   created_at: string;
+  follow_up_date?: string;
 }
 
 export interface LeadActivity {
@@ -78,6 +81,26 @@ export class LeadsService {
     );
   }
 
+  getFollowUpLeads(): Observable<Lead[]> {
+    return this.http.get<any>(`${this.apiUrl}/leads/follow-ups`).pipe(
+      map(res => {
+        if (res && res.data) return res.data;
+        if (Array.isArray(res)) return res;
+        return [];
+      })
+    );
+  }
+
+  getAllFollowUpLeads(): Observable<Lead[]> {
+    return this.http.get<any>(`${this.apiUrl}/leads/follow-ups/all`).pipe(
+      map(res => {
+        if (res && res.data) return res.data;
+        if (Array.isArray(res)) return res;
+        return [];
+      })
+    );
+  }
+
   // --- Activity Tracking Methods ---
 
   getLeadActivities(leadId: number): Observable<LeadActivity[]> {
@@ -96,7 +119,14 @@ export class LeadsService {
     const url = `${this.apiUrl}/leads/activities/add`;
     return this.http.post(url, activity);
   }
-  
+
+  getLeadStatuses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/leads/statuses`);
+  }
+
+  getLeadSources(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/leads/sources`);
+  }
 }
 
 

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DashBoardService } from 'src/app/services/dashboard.service';
+import { LeadsService } from 'src/app/services/leads.service';
 
 @Component({
   selector: 'app-leads-form',
@@ -15,28 +16,50 @@ export class LeadsFormComponent implements OnInit {
   loading = false;
   isEditMode = false;
   leadCategories = ['Client', 'Employee'];
-  statusOptions = ['New', 'Contacted', 'Converted', 'Rejected'];
+  statuses: any[] = [];
+  sources: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<LeadsFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dashBoardService: DashBoardService,
+    private leadsService: LeadsService,
     private snackbar: SnackbarService
   ) {
     this.isEditMode = !!(this.data && this.data.item);
   }
 
   ngOnInit(): void {
+    this.fetchMasterData();
     const item = this.data?.item;
     this.leadForm = this.fb.group({
       name: [item?.name || '', [Validators.required, Validators.minLength(2)]],
       lead_cat: [{ value: this.data?.lead_cat || item?.lead_cat || '', disabled: !this.isEditMode }, Validators.required],
       email: [item?.email || '', [Validators.required, Validators.email]],
       mob_no: [item?.mob_no || '', [Validators.pattern(/^[+]?[\d\s\-\(\)]+$/)]],
-      lead_source: [item?.lead_source || ''],
-      status: [{ value: item?.status || 'New', disabled: !this.isEditMode }],
+      lead_source_id: [item?.lead_source_id || ''],
+      status_id: [{ value: item?.status_id || '', disabled: !this.isEditMode }],
       remarks: [item?.remarks || '']
+    });
+  }
+
+  private fetchMasterData(): void {
+    this.leadsService.getLeadStatuses().subscribe({
+      next: (data) => {
+          this.statuses = data;
+          if (!this.isEditMode) {
+              const newStatus = this.statuses.find(s => s.status_name === 'New');
+              if (newStatus) {
+                  this.leadForm.get('status_id')?.setValue(newStatus.id);
+              }
+          }
+      },
+      error: (err) => console.error('Error fetching statuses:', err)
+    });
+    this.leadsService.getLeadSources().subscribe({
+      next: (data) => this.sources = data,
+      error: (err) => console.error('Error fetching sources:', err)
     });
   }
 
