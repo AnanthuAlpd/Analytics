@@ -1,146 +1,163 @@
-<div class="dashboard-container" fxLayout="column" fxLayoutGap="50px">
+<div class="layout-container py-8 space-y-12">
 
     <!-- Stats Cards Section -->
-    <div class="stats-section">
-        <h2 class="section-title">Dashboard Overview</h2>
-        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+    <div class="space-y-6">
+        <h2 class="heading-responsive text-slate-800">Dashboard Overview</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
             <!-- Client Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
-                <mat-card class="stat-card client-leads">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar primary-bg">
+            <div class="card-premium p-6 flex flex-col justify-between group h-full">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center transition-transform group-hover:scale-110">
                             <mat-icon>group_add</mat-icon>
                         </div>
-                        <mat-card-title class="card-title">New Clients</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">This month</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number">
-                            {{ countRecentClients }}
+                        <div>
+                            <h3 class="font-bold text-slate-800">New Clients</h3>
+                            <p class="text-xs text-slate-500">Last 30 days</p>
                         </div>
-                        <div class="stat-growth" [ngClass]="{'positive': growthClients >= 0, 'negative': growthClients < 0}">
-                            <mat-icon>{{ growthClients >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-                            <span>{{ growthClients >= 0 ? '+' : ''}}{{ growthClients }}%</span>
-                        </div>
-                        <div class="sparkline-wrapper" *ngIf="clientSparklineOptions">
-                            <apx-chart 
-                                [series]="clientSparklineOptions.series" 
-                                [chart]="clientSparklineOptions.chart"
-                                [stroke]="clientSparklineOptions.stroke" 
-                                [colors]="clientSparklineOptions.colors"
-                                [fill]="clientSparklineOptions.fill" 
-                                [tooltip]="clientSparklineOptions.tooltip">
-                            </apx-chart>
-                        </div>
+                    </div>
+                </div>
 
-                    </mat-card-content>
-                    <mat-card-actions class="card-actions">
-                        <button mat-button (click)="viewDetails('client')" color="primary">
-                            <mat-icon>visibility</mat-icon>
-                            View Details
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <div class="flex items-baseline gap-4 mb-4">
+                    <span class="text-4xl font-black tracking-tight text-slate-900">{{ countRecentClients }}</span>
+                    <div class="flex items-center gap-1 text-sm font-bold" 
+                         [ngClass]="growthClients >= 0 ? 'text-green-600' : 'text-red-500'">
+                        <mat-icon class="text-sm scale-90">{{ growthClients >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                        <span>{{ growthClients >= 0 ? '+' : ''}}{{ growthClients }}%</span>
+                    </div>
+                </div>
+
+                <div class="h-16 w-full -mx-2" *ngIf="clientSparklineOptions">
+                    <apx-chart 
+                        [series]="clientSparklineOptions.series" 
+                        [chart]="clientSparklineOptions.chart"
+                        [stroke]="clientSparklineOptions.stroke" 
+                        [colors]="clientSparklineOptions.colors"
+                        [fill]="clientSparklineOptions.fill" 
+                        [tooltip]="clientSparklineOptions.tooltip">
+                    </apx-chart>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100/50">
+                    <button class="w-full h-10 rounded-xl text-primary font-bold text-sm bg-primary/5 hover:bg-primary/10 transition-colors flex items-center justify-center gap-2"
+                            (click)="viewDetails('client')">
+                        <mat-icon class="text-lg">visibility</mat-icon>
+                        View Client Details
+                    </button>
+                </div>
             </div>
 
             <!-- Employee Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
-                <mat-card class="stat-card employee-leads">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar warn-bg">
+            <div class="card-premium p-6 flex flex-col justify-between group h-full">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-500/10 text-pink-500 flex items-center justify-center transition-transform group-hover:scale-110">
                             <mat-icon>badge</mat-icon>
                         </div>
-                        <mat-card-title class="card-title">New Employees</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">This Month</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number">
-                            {{ countRecentEmployees }}
+                        <div>
+                            <h3 class="font-bold text-slate-800">New Employees</h3>
+                            <p class="text-xs text-slate-500">Last 30 days</p>
                         </div>
-                        <div class="stat-growth" [ngClass]="{'positive': growthEmployees >= 0, 'negative': growthEmployees < 0}">
-                            <mat-icon>{{ growthEmployees >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-                            <span>{{ growthEmployees >= 0 ? '+' : ''}}{{ growthEmployees }}%</span>
-                        </div>
+                    </div>
+                </div>
 
-                        <div class="sparkline-wrapper" *ngIf="employeeSparklineOptions">
-                            <apx-chart 
-                                [series]="employeeSparklineOptions.series" 
-                                [chart]="employeeSparklineOptions.chart"
-                                [stroke]="employeeSparklineOptions.stroke" 
-                                [colors]="employeeSparklineOptions.colors"
-                                [fill]="employeeSparklineOptions.fill" 
-                                [tooltip]="employeeSparklineOptions.tooltip">
-                            </apx-chart>
-                        </div>
-                    </mat-card-content>
+                <div class="flex items-baseline gap-4 mb-4">
+                    <span class="text-4xl font-black tracking-tight text-slate-900">{{ countRecentEmployees }}</span>
+                    <div class="flex items-center gap-1 text-sm font-bold" 
+                         [ngClass]="growthEmployees >= 0 ? 'text-green-600' : 'text-red-500'">
+                        <mat-icon class="text-sm scale-90">{{ growthEmployees >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+                        <span>{{ growthEmployees >= 0 ? '+' : ''}}{{ growthEmployees }}%</span>
+                    </div>
+                </div>
 
-                    <mat-card-actions class="card-actions">
-                        <button mat-button color="warn" (click)="viewDetails('employee')">
-                            <mat-icon>visibility</mat-icon>
-                            View Details
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <div class="h-16 w-full -mx-2" *ngIf="employeeSparklineOptions">
+                    <apx-chart 
+                        [series]="employeeSparklineOptions.series" 
+                        [chart]="employeeSparklineOptions.chart"
+                        [stroke]="employeeSparklineOptions.stroke" 
+                        [colors]="['#ec4899']"
+                        [fill]="employeeSparklineOptions.fill" 
+                        [tooltip]="employeeSparklineOptions.tooltip">
+                    </apx-chart>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100/50">
+                    <button class="w-full h-10 rounded-xl text-pink-600 font-bold text-sm bg-pink-50 hover:bg-pink-100 transition-colors flex items-center justify-center gap-2"
+                            (click)="viewDetails('employee')">
+                        <mat-icon class="text-lg">visibility</mat-icon>
+                        View Hiring Stats
+                    </button>
+                </div>
             </div>
 
             <!-- Total Earnings Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(33.33% - 12px)">
-                <mat-card class="stat-card earnings">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar accent-bg">
+            <div class="card-premium p-6 flex flex-col justify-between group h-full">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center transition-transform group-hover:scale-110">
                             <mat-icon>account_balance_wallet</mat-icon>
                         </div>
-                        <mat-card-title class="card-title">Total Earnings</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">All time rewards</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number earnings-amount" >
-                            <span class="currency">₹</span>
+                        <div>
+                            <h3 class="font-bold text-slate-800">Total Earnings</h3>
+                            <p class="text-xs text-slate-500">Platform Rewards</p>
                         </div>
-                        <div class="stat-growth positive">
-                            <mat-icon>trending_up</mat-icon>
-                            <span>+%</span>
-                        </div>
+                    </div>
+                </div>
 
-                        <div class="sparkline-wrapper" *ngIf="earningsSparklineOptions">
-                            <apx-chart 
-                                [series]="earningsSparklineOptions.series" 
-                                [chart]="earningsSparklineOptions.chart"
-                                [stroke]="earningsSparklineOptions.stroke" 
-                                [colors]="earningsSparklineOptions.colors"
-                                [fill]="earningsSparklineOptions.fill" 
-                                [tooltip]="earningsSparklineOptions.tooltip">
-                            </apx-chart>
-                        </div>
-                    </mat-card-content>
-                    <mat-card-actions class="card-actions">
-                        <button mat-button color="accent">
-                            <mat-icon>payment</mat-icon>
-                            View Earnings
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <div class="flex items-baseline gap-2 mb-4">
+                    <span class="text-lg font-bold text-slate-400">₹</span>
+                    <span class="text-4xl font-black tracking-tight text-slate-900">12,450</span>
+                    <div class="flex items-center gap-1 text-sm font-bold text-green-600 ml-2">
+                        <mat-icon class="text-sm scale-90">trending_up</mat-icon>
+                        <span>+12%</span>
+                    </div>
+                </div>
+
+                <div class="h-16 w-full -mx-2" *ngIf="earningsSparklineOptions">
+                    <apx-chart 
+                        [series]="earningsSparklineOptions.series" 
+                        [chart]="earningsSparklineOptions.chart"
+                        [stroke]="earningsSparklineOptions.stroke" 
+                        [colors]="['#6366f1']"
+                        [fill]="earningsSparklineOptions.fill" 
+                        [tooltip]="earningsSparklineOptions.tooltip">
+                    </apx-chart>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100/50">
+                    <button class="w-full h-10 rounded-xl text-indigo-600 font-bold text-sm bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
+                        <mat-icon class="text-lg">payments</mat-icon>
+                        View Wallet
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Optional: Quick Actions Section -->
-    <div class="quick-actions-section">
-        <h3 class="section-title">Quick Actions</h3>
-        <div fxLayout="row wrap" fxLayoutGap="12px">
-            <button mat-raised-button color="primary" class="action-btn" (click)="action('department')">
-                <mat-icon>person_add</mat-icon>
+    <!-- Quick Actions Section -->
+    <div class="bg-indigo-50/30 p-8 rounded-[2rem] border border-indigo-50/50">
+        <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <mat-icon class="text-indigo-500">offline_bolt</mat-icon>
+            System Management
+        </h3>
+        <div class="flex flex-wrap gap-4">
+            <button mat-button class="btn-modern-primary px-8 h-12 text-sm uppercase tracking-wider" 
+                    (click)="action('department')">
+                <mat-icon class="mr-2">schema</mat-icon>
                 Departments
             </button>
-            <button mat-raised-button color="warn" class="action-btn" (click)="action('role')">
-                <mat-icon>work</mat-icon>
-                Roles
+            <button mat-button class="h-12 px-8 font-bold uppercase text-sm tracking-wider rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 transition-all"
+                    (click)="action('role')">
+                <mat-icon class="mr-2">security</mat-icon>
+                User Roles
             </button>
-            <button mat-stroked-button color="accent" class="action-btn" (click)="action('menu')">
-                <mat-icon>analytics</mat-icon>
-                Menus
+            <button mat-button class="h-12 px-8 font-bold uppercase text-sm tracking-wider rounded-xl border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-all" 
+                    (click)="action('menu')">
+                <mat-icon class="mr-2">menu_open</mat-icon>
+                Navigation
             </button>
         </div>
     </div>
-</div>
+</div>

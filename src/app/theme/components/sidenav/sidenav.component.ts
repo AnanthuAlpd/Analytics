@@ -70,18 +70,17 @@ export class SidenavComponent implements OnInit {
 
   logout() {
     const userType = localStorage.getItem('userType');
+    
+    // Call centralized logout to clear all tokens and user data
+    this.authService.logout();
+    localStorage.removeItem('userType');
 
-    // Clear storage
-    localStorage.removeItem('user');
-    localStorage.removeItem('userType'); // optional if you want to reset type completely
-
-    // Decide redirect URL
-    let redirectUrl = '/login/employee'; // Default fallback since plain /login doesn't exist
+    // Decide redirect URL based on previous session type
+    let redirectUrl = '/login/employee'; 
     if (userType === 'CLIENT') {
       redirectUrl = '/login/client';
     }
 
-    // Navigate using Angular Router
     this.router.navigate([redirectUrl]);
   }
 

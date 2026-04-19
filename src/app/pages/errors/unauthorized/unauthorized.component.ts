@@ -11,9 +11,11 @@ import { Settings } from '../../../app.settings.model';
 export class UnauthorizedComponent {
   public settings: Settings;
   public userType: string | null = null;
+  public serviceName: string;
 
   constructor(public appSettings:AppSettings, public router:Router) {
     this.settings = this.appSettings.settings; 
+    this.serviceName = this.settings.name;
     this.userType = localStorage.getItem('userType');
   }
 

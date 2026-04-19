@@ -1,218 +1,224 @@
 <!-- Dashboard Container -->
-<div class="dashboard-container" fxLayout="column" fxLayoutGap="50px">
+<div class="layout-container section-spacing flex flex-col gap-12 min-h-screen">
 
     <!-- Stats Cards Section -->
-    <div class="stats-section">
-        <h2 class="section-title">Dashboard Overview</h2>
-        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+    <div class="flex flex-col gap-6">
+        <h2 class="heading-responsive">Dashboard Overview</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
             <!-- Client Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
-                <mat-card class="stat-card client-leads" [class.has-data]="clientLeads > 0">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar primary-bg">
-                            <mat-icon>group_add</mat-icon>
-                        </div>
-                        <mat-card-title class="card-title">Client Leads</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">New this month</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number" [attr.data-value]="clientLeads || 0">
-                            {{ clientLeads || 0 }}
-                        </div>
-                        <div class="stat-growth"
-                            [ngClass]="{'positive': clientLeadsGrowth > 0, 'negative': clientLeadsGrowth < 0}"
-                            *ngIf="clientLeadsGrowth !== null && clientLeadsGrowth !== undefined">
-                            <mat-icon>{{ clientLeadsGrowth >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-                            <span>{{ clientLeadsGrowth >= 0 ? '+' : ''}}{{ clientLeadsGrowth }}%</span>
-                        </div>
+            <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
+                <mat-card-header class="!p-0 mb-6">
+                    <div mat-card-avatar
+                        class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm">
+                        <mat-icon class="!text-3xl !w-7 !h-7">group_add</mat-icon>
+                    </div>
+                    <div class="flex flex-col ml-4">
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Client
+                            Leads</mat-card-title>
+                        <mat-card-subtitle class="!text-xs text-slate-500 !m-0">New this month</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
 
-                        <div class="sparkline-wrapper" *ngIf="clientSparklineOptions">
-                            <apx-chart #clientChart [series]="clientSparklineOptions.series" [chart]="clientSparklineOptions.chart"
-                                [stroke]="clientSparklineOptions.stroke" [colors]="clientSparklineOptions.colors"
-                                [fill]="clientSparklineOptions.fill" [tooltip]="clientSparklineOptions.tooltip"
-                                [xaxis]="clientSparklineOptions.xaxis">
-                            </apx-chart>
-                        </div>
+                <mat-card-content class="flex flex-col items-center justify-center py-4 flex-grow text-center">
+                    <div class="text-5xl font-light text-slate-900 mb-2 leading-none">
+                        {{ clientLeads || 0 }}
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                        [ngClass]="{'bg-green-100 text-green-700': clientLeadsGrowth >= 0, 'bg-red-100 text-red-700': clientLeadsGrowth < 0}"
+                        *ngIf="clientLeadsGrowth != null">
+                        <mat-icon class="!text-[14px] !w-auto !h-auto">{{ clientLeadsGrowth >= 0 ? 'trending_up' :
+                            'trending_down' }}</mat-icon>
+                        <span>{{ clientLeadsGrowth >= 0 ? '+' : ''}}{{ clientLeadsGrowth }}%</span>
+                    </div>
 
+                    <div class="w-full mt-6 opacity-80" *ngIf="clientSparklineOptions">
+                        <apx-chart #clientChart [series]="clientSparklineOptions.series"
+                            [chart]="clientSparklineOptions.chart" [stroke]="clientSparklineOptions.stroke"
+                            [colors]="clientSparklineOptions.colors" [fill]="clientSparklineOptions.fill"
+                            [tooltip]="clientSparklineOptions.tooltip" [xaxis]="clientSparklineOptions.xaxis">
+                        </apx-chart>
+                    </div>
+                </mat-card-content>
 
-                    </mat-card-content>
-                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
-                        <button mat-button color="primary" (click)="viewDetails('client')">
-                            <mat-icon>visibility</mat-icon>
-                            View Details
-                        </button>
-                        <button mat-stroked-button color="primary" (click)="openLeadFormDialog('Client')"
-                            class="card-action-btn">
-                            <mat-icon>person_add</mat-icon>
-                            Add Lead
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
+                <mat-card-actions
+                    class="!p-0 pt-4 flex flex-row justify-between items-center border-t border-slate-100">
+                    <button mat-button color="primary" (click)="viewDetails('client')"
+                        class="!text-xs !font-bold capitalize !px-2">
+                        <mat-icon class="!mr-1">visibility</mat-icon> Details
+                    </button>
+                    <button mat-stroked-button color="primary" (click)="openLeadFormDialog('Client')"
+                        class="!rounded-lg !text-xs !font-bold !px-3 hover:shadow-sm">
+                        <mat-icon class="!mr-1">person_add</mat-icon> Add
+                    </button>
+                </mat-card-actions>
+            </mat-card>
 
             <!-- Employee Leads Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
-                <mat-card class="stat-card employee-leads" [class.has-data]="employeeLeads > 0">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar warn-bg">
-                            <mat-icon>badge</mat-icon>
-                        </div>
-                        <mat-card-title class="card-title">Employee Leads</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">New this month</mat-card-subtitle>
-                    </mat-card-header>
+            <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
+                <mat-card-header class="!p-0 mb-6">
+                    <div mat-card-avatar
+                        class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm">
+                        <mat-icon class="!text-3xl !w-7 !h-7">badge</mat-icon>
+                    </div>
+                    <div class="flex flex-col ml-4">
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Employee
+                            Leads</mat-card-title>
+                        <mat-card-subtitle class="!text-xs text-slate-500 !m-0">New this month</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
 
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number" [attr.data-value]="employeeLeads || 0"
-                            [class.zero]="employeeLeads === 0">
-                            {{ employeeLeads || 0 }}
-                        </div>
+                <mat-card-content class="flex flex-col items-center justify-center py-4 flex-grow text-center">
+                    <div class="text-5xl font-light text-slate-900 mb-2 leading-none"
+                        [class.text-slate-300]="employeeLeads === 0">
+                        {{ employeeLeads || 0 }}
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                        [ngClass]="{'bg-green-100 text-green-700': employeeLeadsGrowth > 0, 'bg-red-100 text-red-700': employeeLeadsGrowth < 0, 'bg-slate-100 text-slate-500': employeeLeadsGrowth === 0}"
+                        *ngIf="employeeLeadsGrowth != null">
+                        <mat-icon class="!text-[14px] !w-auto !h-auto">{{ employeeLeadsGrowth > 0 ? 'trending_up' :
+                            employeeLeadsGrowth < 0 ? 'trending_down' : 'trending_flat' }}</mat-icon>
+                                <span>{{ employeeLeadsGrowth > 0 ? '+' : ''}}{{ employeeLeadsGrowth }}%</span>
+                    </div>
 
-                        <div class="stat-growth" [ngClass]="{
-          positive: employeeLeadsGrowth > 0,
-          negative: employeeLeadsGrowth < 0,
-          neutral: employeeLeadsGrowth === 0
-        }" *ngIf="employeeLeadsGrowth !== null">
-                            <mat-icon>
-                                {{
-                                employeeLeadsGrowth > 0
-                                ? 'trending_up'
-                                : employeeLeadsGrowth < 0 ? 'trending_down' : 'trending_flat' }} </mat-icon>
-                                    <span>
-                                        {{
-                                        employeeLeadsGrowth > 0
-                                        ? '+' + employeeLeadsGrowth + '%'
-                                        : employeeLeadsGrowth < 0 ? employeeLeadsGrowth + '%' : '0%' }} </span>
-                        </div>
+                    <div class="w-full mt-6 opacity-80" *ngIf="employeeSparklineOptions">
+                        <apx-chart #employeeChart [series]="employeeSparklineOptions.series"
+                            [chart]="employeeSparklineOptions.chart" [stroke]="employeeSparklineOptions.stroke"
+                            [colors]="employeeSparklineOptions.colors" [fill]="employeeSparklineOptions.fill"
+                            [tooltip]="employeeSparklineOptions.tooltip" [xaxis]="employeeSparklineOptions.xaxis">
+                        </apx-chart>
+                    </div>
+                </mat-card-content>
 
-                        <div class="sparkline-wrapper" *ngIf="employeeSparklineOptions">
-                            <apx-chart #employeeChart [series]="employeeSparklineOptions.series"
-                                [chart]="employeeSparklineOptions.chart" [stroke]="employeeSparklineOptions.stroke"
-                                [colors]="employeeSparklineOptions.colors" [fill]="employeeSparklineOptions.fill"
-                                [tooltip]="employeeSparklineOptions.tooltip" [xaxis]="employeeSparklineOptions.xaxis">
-                            </apx-chart>
-                        </div>
-                    </mat-card-content>
+                <mat-card-actions
+                    class="!p-0 pt-4 flex flex-row justify-between items-center border-t border-slate-100">
+                    <button mat-button color="warn" (click)="viewDetails('employee')"
+                        class="!text-xs !font-bold capitalize !px-2">
+                        <mat-icon class="!mr-1">visibility</mat-icon> Details
+                    </button>
+                    <button mat-stroked-button color="warn" (click)="openLeadFormDialog('Employee')"
+                        class="!rounded-lg !text-xs !font-bold !px-3 hover:shadow-sm">
+                        <mat-icon class="!mr-1">badge</mat-icon> Add
+                    </button>
+                </mat-card-actions>
+            </mat-card>
 
-                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
-                        <button mat-button color="warn" (click)="viewDetails('employee')">
-                            <mat-icon>visibility</mat-icon>
-                            View Details
-                        </button>
-                        <button mat-stroked-button color="warn" (click)="openLeadFormDialog('Employee')"
-                            class="card-action-btn">
-                            <mat-icon>badge</mat-icon>
-                            Add Lead
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
+            <!-- Pending Leads Card -->
+            <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
+                <mat-card-header class="!p-0 mb-6">
+                    <div mat-card-avatar
+                        class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600 border border-rose-100 shadow-sm">
+                        <mat-icon class="!text-3xl !w-7 !h-7">assignment_late</mat-icon>
+                    </div>
+                    <div class="flex flex-col ml-4">
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Pending
+                            Leads</mat-card-title>
+                        <mat-card-subtitle class="!text-xs text-slate-500 !m-0">Follow-ups required</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
 
+                <mat-card-content class="flex flex-col items-center justify-center py-4 flex-grow text-center">
+                    <div class="text-5xl font-light text-rose-600 mb-2 leading-none"
+                        [class.text-slate-300]="followUpLeads === 0">
+                        {{ followUpLeads || 0 }}
+                    </div>
+                    <div
+                        class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-50 text-slate-500 border border-slate-100">
+                        <mat-icon class="!text-[14px] !w-auto !h-auto">bolt</mat-icon>
+                        <span>Live Queue</span>
+                    </div>
 
-            <!-- Follow-Up Leads Card (NEW) -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
-                <mat-card class="stat-card follow-up-leads" [class.has-data]="followUpLeads > 0">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar warn-bg">
-                            <mat-icon>assignment_late</mat-icon>
-                        </div>
-                        <mat-card-title class="card-title">Pending Leads</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">Follow-ups required</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number" [attr.data-value]="followUpLeads || 0"
-                             [class.zero]="followUpLeads === 0" style="color: #f44336;">
-                            {{ followUpLeads || 0 }}
-                        </div>
+                    <div class="w-full mt-6 opacity-80" *ngIf="followUpSparklineOptions">
+                        <apx-chart #followUpChart [series]="followUpSparklineOptions.series"
+                            [chart]="followUpSparklineOptions.chart" [stroke]="followUpSparklineOptions.stroke"
+                            [colors]="followUpSparklineOptions.colors" [fill]="followUpSparklineOptions.fill"
+                            [tooltip]="followUpSparklineOptions.tooltip" [xaxis]="followUpSparklineOptions.xaxis">
+                        </apx-chart>
+                    </div>
+                </mat-card-content>
 
-                        <!-- Add empty growth div for vertical consistency -->
-                        <div class="stat-growth neutral">
-                             <mat-icon>trending_flat</mat-icon>
-                             <span>Live Action Queue</span>
-                        </div>
+                <mat-card-actions class="!p-0 pt-4 flex flex-row items-center border-t border-slate-100">
+                    <button mat-button color="warn" routerLink="/user-leads/emp-leads-list"
+                        class="!text-xs !font-bold capitalize !px-2 flex-grow text-left">
+                        <mat-icon class="!mr-1">visibility</mat-icon> Action Queue
+                    </button>
+                    <div class="w-12 h-1 flex-shrink-0"></div>
+                </mat-card-actions>
+            </mat-card>
 
-                        <div class="sparkline-wrapper" *ngIf="followUpSparklineOptions">
-                            <apx-chart #followUpChart [series]="followUpSparklineOptions.series"
-                                [chart]="followUpSparklineOptions.chart" [stroke]="followUpSparklineOptions.stroke"
-                                [colors]="followUpSparklineOptions.colors" [fill]="followUpSparklineOptions.fill"
-                                [tooltip]="followUpSparklineOptions.tooltip" [xaxis]="followUpSparklineOptions.xaxis">
-                            </apx-chart>
-                        </div>
-                    </mat-card-content>
-                    <mat-card-actions class="card-actions" fxLayout="row" fxLayoutAlign="space-between center">
-                        <button mat-button color="warn" routerLink="/user-leads/emp-leads-list">
-                            <mat-icon>visibility</mat-icon>
-                            View Details
-                        </button>
-                        <!-- Invisible placeholder to maintain space-between flex alignment matching other cards -->
-                        <div style="width: 110px;"></div>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
+            <!-- Earnings Card -->
+            <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
+                <mat-card-header class="!p-0 mb-6">
+                    <div mat-card-avatar
+                        class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm">
+                        <mat-icon class="!text-3xl !w-7 !h-7">account_balance_wallet</mat-icon>
+                    </div>
+                    <div class="flex flex-col ml-4">
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Total
+                            Earnings</mat-card-title>
+                        <mat-card-subtitle class="!text-xs text-slate-500 !m-0">All time rewards</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
 
-            <!-- Total Earnings Card -->
-            <div fxFlex="100%" fxFlex.gt-sm="calc(50% - 12px)" fxFlex.gt-md="calc(25% - 12px)">
-                <mat-card class="stat-card earnings" [class.has-data]="totalEarnings > 0">
-                    <mat-card-header>
-                        <div mat-card-avatar class="card-avatar accent-bg">
-                            <mat-icon>account_balance_wallet</mat-icon>
-                        </div>
-                        <mat-card-title class="card-title">Total Earnings</mat-card-title>
-                        <mat-card-subtitle class="card-subtitle">All time rewards</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content class="stat-content">
-                        <div class="stat-number earnings-amount" [attr.data-value]="totalEarnings || 0">
-                            <span class="currency">₹</span>{{ (totalEarnings || 0) | number:'1.0-2' }}
-                        </div>
-                        <div class="stat-growth positive" *ngIf="earningsGrowth">
-                            <mat-icon>trending_up</mat-icon>
-                            <span>+{{ earningsGrowth }}%</span>
-                        </div>
+                <mat-card-content class="flex flex-col items-center justify-center py-4 flex-grow text-center">
+                    <div class="text-4xl font-light text-emerald-600 mb-2 leading-none tracking-tight">
+                        <span class="text-2xl text-slate-400 font-normal mr-1">₹</span>{{ (totalEarnings || 0) |
+                        number:'1.0-2' }}
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1 bg-green-50 rounded-full text-xs font-semibold text-green-700"
+                        *ngIf="earningsGrowth">
+                        <mat-icon class="!text-[14px] !w-auto !h-auto">trending_up</mat-icon>
+                        <span>+{{ earningsGrowth }}%</span>
+                    </div>
 
-                        <div class="sparkline-wrapper" *ngIf="earningsSparklineOptions">
-                            <apx-chart [series]="earningsSparklineOptions.series"
-                                [chart]="earningsSparklineOptions.chart" [stroke]="earningsSparklineOptions.stroke"
-                                [colors]="earningsSparklineOptions.colors" [fill]="earningsSparklineOptions.fill"
-                                [tooltip]="earningsSparklineOptions.tooltip" [xaxis]="earningsSparklineOptions.xaxis">
-                            </apx-chart>
-                        </div>
-                    </mat-card-content>
-                    <mat-card-actions class="card-actions">
-                        <button mat-button color="accent">
-                            <mat-icon>payment</mat-icon>
-                            View Earnings
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
+                    <div class="w-full mt-6 opacity-80" *ngIf="earningsSparklineOptions">
+                        <apx-chart [series]="earningsSparklineOptions.series" [chart]="earningsSparklineOptions.chart"
+                            [stroke]="earningsSparklineOptions.stroke" [colors]="earningsSparklineOptions.colors"
+                            [fill]="earningsSparklineOptions.fill" [tooltip]="earningsSparklineOptions.tooltip"
+                            [xaxis]="earningsSparklineOptions.xaxis">
+                        </apx-chart>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions class="!p-0 pt-4 border-t border-slate-100">
+                    <button mat-button color="accent"
+                        class="w-full !text-xs !font-bold capitalize flex items-center justify-center">
+                        <mat-icon class="!mr-1">payment</mat-icon> View Earnings
+                    </button>
+                </mat-card-actions>
+            </mat-card>
         </div>
     </div>
 
     <!-- Resources Section -->
-    <div class="resources-section">
-        <h2 class="section-title">Training & Resources</h2>
+    <div class="flex flex-col gap-8">
+        <h2 class="heading-responsive">Training & Resources</h2>
 
         <!-- Video Resources -->
-        <h3 class="subsection-title">
-            <mat-icon>play_circle_outline</mat-icon>
-            Familiarization Videos
-        </h3>
-        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
-            <div *ngFor="let res of trainingResources" fxFlex="100%" fxFlex.gt-sm="calc(33.33% - 12px)">
-                <mat-card class="resource-card video-resource">
-                    <mat-card-header>
-                        <div mat-card-avatar class="resource-avatar vid-bg">
+        <div class="flex flex-col gap-4">
+            <h3
+                class="flex items-center gap-2 text-lg font-bold text-slate-700 px-1 border-l-4 border-rose-500 bg-slate-50 py-1 transition-all">
+                <mat-icon class="text-rose-500">play_circle_outline</mat-icon>
+                Familiarization Videos
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <mat-card *ngFor="let res of trainingResources"
+                    class="card-premium !p-0 !overflow-hidden flex flex-col group border-l-0 hover:border-l-4 border-rose-500">
+                    <mat-card-header class="!p-4 bg-slate-50/50 group-hover:bg-rose-50/30 transition-colors">
+                        <div mat-card-avatar
+                            class="w-10 h-10 rounded-lg bg-rose-100 text-rose-500 flex items-center justify-center">
                             <mat-icon>{{res.icon}}</mat-icon>
                         </div>
-                        <mat-card-title>{{res.title}}</mat-card-title>
+                        <mat-card-title class="!text-base !font-bold ml-3 text-slate-800">{{res.title}}</mat-card-title>
                     </mat-card-header>
-                    <mat-card-content>
-                        <p>{{res.description}}</p>
+                    <mat-card-content class="!p-4 flex-grow">
+                        <p class="text-sm text-slate-500 italic leading-relaxed line-clamp-3">{{res.description}}</p>
                     </mat-card-content>
-                    <mat-card-actions>
-                        <button mat-flat-button color="primary" (click)="openResource(res)">
-                            <mat-icon>play_arrow</mat-icon>
-                            Watch Now
+                    <mat-card-actions class="!p-4 border-t border-slate-100 mt-auto">
+                        <button mat-flat-button color="primary" (click)="openResource(res)"
+                            class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide">
+                            <mat-icon class="!mr-1">play_arrow</mat-icon> Watch Now
                         </button>
                     </mat-card-actions>
                 </mat-card>
@@ -220,25 +226,29 @@
         </div>
 
         <!-- Document Resources -->
-        <h3 class="subsection-title" style="margin-top: 32px;">
-            <mat-icon>description</mat-icon>
-            Helpful Documents
-        </h3>
-        <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
-            <div *ngFor="let res of documentResources" fxFlex="100%" fxFlex.gt-sm="calc(33.33% - 12px)">
-                <mat-card class="resource-card doc-resource">
-                    <mat-card-header>
-                        <div mat-card-avatar class="resource-avatar doc-bg">
+        <div class="flex flex-col gap-4">
+            <h3
+                class="flex items-center gap-2 text-lg font-bold text-slate-700 px-1 border-l-4 border-blue-500 bg-slate-50 py-1 transition-all">
+                <mat-icon class="text-blue-500">description</mat-icon>
+                Helpful Documents
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <mat-card *ngFor="let res of documentResources"
+                    class="card-premium !p-0 !overflow-hidden flex flex-col group border-l-0 hover:border-l-4 border-blue-500">
+                    <mat-card-header class="!p-4 bg-slate-50/50 group-hover:bg-blue-50/30 transition-colors">
+                        <div mat-card-avatar
+                            class="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
                             <mat-icon>{{res.icon}}</mat-icon>
                         </div>
-                        <mat-card-title>{{res.title}}</mat-card-title>
+                        <mat-card-title class="!text-base !font-bold ml-3 text-slate-800">{{res.title}}</mat-card-title>
                     </mat-card-header>
-                    <mat-card-content>
-                        <p>{{res.description}}</p>
+                    <mat-card-content class="!p-4 flex-grow">
+                        <p class="text-sm text-slate-500 italic leading-relaxed line-clamp-3">{{res.description}}</p>
                     </mat-card-content>
-                    <mat-card-actions>
-                        <button mat-stroked-button color="accent" (click)="openResource(res)">
-                            <mat-icon>vertical_align_bottom</mat-icon>
+                    <mat-card-actions class="!p-4 border-t border-slate-100 mt-auto">
+                        <button mat-stroked-button color="accent" (click)="openResource(res)"
+                            class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide">
+                            <mat-icon class="!mr-1">vertical_align_bottom</mat-icon>
                             {{ res.link === '#' ? 'View' : 'Download' }}
                         </button>
                     </mat-card-actions>
@@ -246,16 +256,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Optional: Quick Actions Section -->
-
-    <!-- <div class="quick-actions-section" *ngIf="showQuickActions">
-        <h3 class="section-title">Quick Reports</h3>
-        <div fxLayout="row wrap" fxLayoutGap="12px">
-            <button mat-stroked-button color="accent" class="action-btn">
-                <mat-icon>analytics</mat-icon>
-                View Reports
-            </button>
-        </div>
-    </div> -->
 </div>

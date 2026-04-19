@@ -1,256 +1,52 @@
-// Dashboard Styles (Light Premium Glassmorphism)
-.dashboard-container {
-    padding: 24px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-    min-height: 100vh;
-    color: #334155;
+/* 
+ * Admin Dashboard Styles
+ * ----------------------
+ * Modernized using Tailwind and Global Design Tokens.
+ */
 
-    @media (max-width: 768px) {
-        padding: 16px;
+.layout-container {
+    padding-left: 24px;
+    padding-right: 24px;
+
+    @media (max-width: 640px) {
+        padding-left: 16px;
+        padding-right: 16px;
     }
 }
 
-.section-title {
-    margin: 0 0 20px 0;
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-// Stats Cards Section
-.stats-section {
-    .stat-card {
-        height: 100%;
-        background: rgba(255, 255, 255, 0.55);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 20px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: hidden;
-        padding: 12px;
-        box-sizing: border-box;
-
-        &.client-leads:hover {
-            box-shadow: 0 15px 35px rgba(0, 153, 255, 0.15);
-            border-color: rgba(0, 153, 255, 0.4);
-            transform: translateY(-5px);
-        }
-
-        &.employee-leads:hover {
-            box-shadow: 0 15px 35px rgba(153, 0, 255, 0.15);
-            border-color: rgba(153, 0, 255, 0.4);
-            transform: translateY(-5px);
-        }
-
-        &.earnings:hover {
-            box-shadow: 0 15px 35px rgba(0, 200, 83, 0.15);
-            border-color: rgba(0, 200, 83, 0.4);
-            transform: translateY(-5px);
-        }
-
-        .mat-card-header {
-            padding: 12px 12px 8px;
-
-            .card-avatar {
-                width: 50px;
-                height: 50px;
-                border-radius: 14px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-
-                mat-icon {
-                    font-size: 26px;
-                    width: 26px;
-                    height: 26px;
-                }
-
-                &.primary-bg {
-                    background: linear-gradient(135deg, rgba(0, 153, 255, 0.15) 0%, rgba(0, 102, 255, 0.05) 100%);
-                    color: #0077ff;
-                    border: 1px solid rgba(0, 153, 255, 0.2);
-                }
-
-                &.warn-bg {
-                    background: linear-gradient(135deg, rgba(153, 0, 255, 0.15) 0%, rgba(102, 0, 255, 0.05) 100%);
-                    color: #8800ff;
-                    border: 1px solid rgba(153, 0, 255, 0.2);
-                }
-
-                &.accent-bg {
-                    background: linear-gradient(135deg, rgba(0, 200, 83, 0.15) 0%, rgba(0, 150, 60, 0.05) 100%);
-                    color: #00b34a;
-                    border: 1px solid rgba(0, 200, 83, 0.2);
-                }
-            }
-
-            .card-title {
-                font-size: 1.15rem;
-                font-weight: 500;
-                margin-bottom: 4px;
-                color: #1e293b;
-            }
-
-            .card-subtitle {
-                font-size: 0.85rem;
-                color: #64748b;
-                margin: 0;
-            }
-        }
-
-        .stat-content {
-            padding: 10px 20px;
-            text-align: center;
-
-            .stat-number {
-                font-size: 3rem;
-                font-weight: 300;
-                line-height: 1.1;
-                color: #0f172a;
-                margin-bottom: 6px;
-                font-family: 'Inter', sans-serif;
-                
-                &.earnings-amount {
-                    color: #00b34a;
-                    .currency {
-                        font-size: 2rem;
-                        vertical-align: top;
-                        color: #64748b;
-                    }
-                }
-            }
-
-            .stat-growth {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 4px;
-                font-size: 0.9rem;
-                font-weight: 500;
-                padding: 4px 10px;
-                border-radius: 12px;
-                background: rgba(255,255,255,0.8);
-                border: 1px solid rgba(0,0,0,0.03);
-
-                &.positive {
-                    color: #16a34a; 
-                    background: rgba(22, 163, 74, 0.1);
-                }
-
-                &.negative {
-                    color: #dc2626; 
-                    background: rgba(220, 38, 38, 0.1);
-                }
-
-                mat-icon {
-                    font-size: 16px;
-                    width: 16px;
-                    height: 16px;
-                }
-            }
-            
-            .sparkline-wrapper {
-                margin-top: 15px;
-                width: 100%;
-                opacity: 0.9;
-                transition: opacity 0.3s;
-            }
-        }
-
-        &:hover .sparkline-wrapper {
-            opacity: 1;
-        }
-
-        .card-actions {
-            padding: 10px 20px 20px;
-            justify-content: center;
-
-            button {
-                border-radius: 8px;
-                text-transform: none;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                background: rgba(255,255,255,0.7);
-                color: #334155;
-                border: 1px solid rgba(0,0,0,0.05);
-                padding: 0 20px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-                
-                &:hover {
-                    background: #ffffff;
-                    color: #0f172a;
-                    border-color: rgba(0,0,0,0.1);
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-                }
-            }
+::ng-deep {
+    .apexcharts-tooltip {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        border-radius: 12px !important;
+        color: #1e293b !important;
+        
+        .apexcharts-tooltip-title {
+            background: rgba(0, 0, 0, 0.03) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+            font-weight: 700 !important;
         }
     }
 }
 
-// Quick Actions Section
-.quick-actions-section {
-    margin-top: 20px;
-
-    .section-title {
-        font-size: 1.4rem;
-    }
-
-    .action-btn {
-        border-radius: 12px;
-        text-transform: none;
-        font-weight: 500;
-        padding: 6px 24px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        color: #334155;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        transition: all 0.3s ease;
-
-        mat-icon {
-            margin-right: 10px;
-            opacity: 0.8;
-        }
-
-        &:hover {
-            transform: translateY(-2px);
-            background: #ffffff;
-            color: #0f172a;
-            border-color: rgba(0, 0, 0, 0.15);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-        }
-    }
-}
-
-// Animations
-@keyframes fadeZoomIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.stat-card {
-    animation: fadeZoomIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    // Stagger delays
+// Entrance animations for the dashboard cards
+.card-premium {
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    
     &:nth-child(1) { animation-delay: 0.1s; }
     &:nth-child(2) { animation-delay: 0.2s; }
     &:nth-child(3) { animation-delay: 0.3s; }
 }
 
-// Media Queries
-@media (max-width: 960px) {
-    .stats-section {
-        .stat-card {
-            .stat-content .stat-number {
-                font-size: 2.2rem;
-            }
-        }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

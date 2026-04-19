@@ -1,67 +1,100 @@
 <button mat-icon-button [matMenuTriggerFor]="messagesMenu" (click)="openMessagesMenu()">
     <mat-icon [matBadge]="followUpLeads.length" [matBadgeHidden]="followUpLeads.length === 0" matBadgeColor="warn">notifications</mat-icon>
 </button>
+
 <mat-menu #messagesMenu="matMenu" [overlapTrigger]="false" class="toolbar-dropdown-menu messages">
-    <!--<span (mouseleave)="onMouseLeave()">-->
-        <mat-tab-group backgroundColor="primary" (click)="stopClickPropagate($event)" [selectedIndex]="selectedTab">
+    <mat-tab-group backgroundColor="primary" (click)="stopClickPropagate($event)" [selectedIndex]="selectedTab">
+        
+        <!-- CRM Follow-Up Leads Tab -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon [color]="followUpLeads.length > 0 ? 'warn' : ''" matTooltip="{{ followUpLeads.length }} Pending Actions">assignment_late</mat-icon>
+            </ng-template>
             
-            <!-- CRM Follow-Up Leads Tab -->
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <mat-icon [color]="followUpLeads.length > 0 ? 'warn' : ''" matTooltip="{{ followUpLeads.length }} Pending Actions">assignment_late</mat-icon>
-                </ng-template>
-                <mat-card class="content" perfectScrollbar>
-                  <div fxLayout="column" fxLayoutAlign="none" class="notification-list">
-                      <div class="notification-header" fxLayout="row" fxLayoutAlign="space-between center" style="padding: 10px 16px; background: #f5f5f5; border-bottom: 1px solid #eee;">
-                          <span style="font-weight: 600; font-size: 13px;">Follow-up Requirements</span>
-                          <span class="badge warn-badge" *ngIf="followUpLeads.length > 0">{{ followUpLeads.length }}</span>
-                      </div>
+            <mat-card class="content !p-0 shadow-none" perfectScrollbar>
+                <div class="flex flex-col w-full">
+                    <!-- Notification Header -->
+                    <div class="flex flex-row justify-between items-center p-3 px-4 bg-slate-50 border-b border-slate-200">
+                        <span class="font-semibold text-xs uppercase tracking-wider text-slate-600">Follow-up Requirements</span>
+                        <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full" *ngIf="followUpLeads.length > 0">
+                            {{ followUpLeads.length }}
+                        </span>
+                    </div>
 
-                      <button mat-button *ngFor="let lead of followUpLeads" routerLink="/user-leads/emp-leads-list" class="notification-item">
-                          <div fxLayout="column" fxLayoutAlign="none" class="w-100">
-                              <div fxLayout="row" fxLayoutAlign="space-between start">
-                                  <span class="name" style="font-weight: 600; color: #333;">{{lead.name}}</span>
-                                  <span class="info"><mat-icon>phone</mat-icon> {{lead.mob_no}}</span>
-                              </div>
-                              <span class="text muted-text">{{lead.remarks || 'No remarks provided'}}</span>
-                          </div>
-                      </button>
+                    <!-- Notification List -->
+                    <div class="flex flex-col">
+                        <button mat-button *ngFor="let lead of followUpLeads" routerLink="/user-leads/emp-leads-list" 
+                            class="group !flex flex-row items-center w-full p-4 odd:bg-white even:bg-slate-50/50 hover:bg-white transition-all border-b border-slate-100 last:border-0 !h-auto !text-left hover:shadow-md hover:-translate-y-0.5 z-10">
+                            
+                            <!-- Avatar Column -->
+                            <div class="flex-shrink-0 mr-4">
+                                <div [class]="getAvatarColor(lead.name) + ' w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white ring-offset-2 ring-offset-transparent group-hover:ring-offset-indigo-100 transition-all'">
+                                    {{ getInitials(lead.name) }}
+                                </div>
+                            </div>
 
-                      <div *ngIf="followUpLeads.length === 0" style="padding: 40px 16px; text-align: center; color: #888;">
-                          <mat-icon style="font-size: 40px; height: 40px; width: 40px; opacity: 0.3; margin-bottom: 10px;">check_circle_outline</mat-icon>
-                          <p style="margin: 0; font-size: 14px;">Great job! No pending follow-ups.</p>
-                      </div>
+                            <!-- Content Column -->
+                            <div class="flex-grow min-w-0">
+                                <div class="flex flex-row justify-between items-center w-full mb-0.5">
+                                    <span class="font-bold text-sm text-slate-900 capitalize truncate group-hover:text-indigo-600 transition-colors">{{lead.name}}</span>
+                                    <span [class]="lead.lead_cat === 'Client' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700' + ' text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter'">
+                                        {{ lead.lead_cat }}
+                                    </span>
+                                </div>
 
-                      <div class="notification-footer" *ngIf="followUpLeads.length > 0" style="padding: 8px; border-top: 1px solid #eee; text-align: center;">
-                          <button mat-button color="primary" routerLink="/user-leads/emp-leads-list" style="width: 100%; font-size: 12px;">
-                              VIEW ALL PENDING ACTIONS
-                          </button>
-                      </div>
-                    </div>             
-                </mat-card>
-            </mat-tab>
+                                <div class="flex items-center text-slate-500 text-[11px] mb-1">
+                                    <div class="flex items-center mr-3">
+                                        <mat-icon class="!text-[13px] !w-auto !h-auto mr-1 text-slate-400">phone</mat-icon>
+                                        {{lead.mob_no}}
+                                    </div>
+                                    <div class="flex items-center">
+                                        <mat-icon class="!text-[13px] !w-auto !h-auto mr-1 text-slate-400">schedule</mat-icon>
+                                        Follow-up
+                                    </div>
+                                </div>
+                                
+                                <span class="text-[11px] text-slate-400 line-clamp-1 italic group-hover:text-slate-600 transition-colors">
+                                    {{lead.remarks || 'No remarks provided'}}
+                                </span>
+                            </div>
 
-            <!-- Standard sections commented as requested -->
-            <!-- 
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <mat-icon>message</mat-icon>
-                </ng-template>
-                ...
-            </mat-tab>
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <mat-icon>description</mat-icon>
-                </ng-template>
-                ...
-            </mat-tab>
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <mat-icon>event</mat-icon>
-                </ng-template>
-                ...
-            </mat-tab>
-            -->
-        </mat-tab-group>
-    <!--</span>-->
+                            <!-- Action Column (Chevron) -->
+                            <div class="ml-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
+                                <mat-icon class="text-slate-300">chevron_right</mat-icon>
+                            </div>
+                        </button>
+
+                        <!-- Empty State -->
+                        <div *ngIf="followUpLeads.length === 0" class="flex flex-col items-center justify-center py-16 px-6 text-center bg-slate-50/30">
+                            <div class="relative mb-4">
+                                <div class="absolute inset-0 bg-green-100 rounded-full blur-xl opacity-50 scale-150 animate-pulse"></div>
+                                <div class="relative bg-white p-5 rounded-full shadow-sm border border-slate-100">
+                                    <mat-icon class="!text-5xl !w-12 !h-12 text-green-500 opacity-80">done_all</mat-icon>
+                                </div>
+                            </div>
+                            <h3 class="text-slate-800 font-bold text-base mb-1">All Caught Up!</h3>
+                            <p class="text-slate-400 text-sm max-w-[200px]">You have no pending follow-up requirements at this time.</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action -->
+                    <div class="p-2 border-t border-slate-100" *ngIf="followUpLeads.length > 0">
+                        <button mat-button color="primary" routerLink="/user-leads/emp-leads-list" class="w-full !text-[11px] font-bold tracking-wide">
+                            VIEW ALL PENDING ACTIONS
+                        </button>
+                    </div>
+                </div>
+            </mat-card>
+        </mat-tab>
+
+        <!-- Standard sections commented as requested -->
+        <!-- 
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>message</mat-icon>
+            </ng-template>
+            ...
+        </mat-tab>
+        -->
+    </mat-tab-group>
 </mat-menu>

@@ -1,15 +1,30 @@
-<div fxLayout="row wrap" *ngIf="router.url != '/'">
-    <div fxFlex="100" class="flex-p">
-        <mat-card fxLayout="row" class="breadcrumb">
-            <a *ngIf="router.url != '/'"  class="breadcrumb-item" fxLayout="row" fxLayoutAlign="start center" (click)="closeSubMenus()">
-                <mat-icon>home</mat-icon>
-                <span class="breadcrumb-title">Home</span>
-            </a>
-            <div *ngFor="let breadcrumb of breadcrumbs; let i = index;" class="breadcrumb-item" fxLayout="row" fxLayoutAlign="start center">                 
-                <a [hidden]="i == (breadcrumbs.length - 1)">{{breadcrumb.name}}</a>   
-                <span [hidden]="i != (breadcrumbs.length - 1)" class="breadcrumb-title active">{{breadcrumb.name}}</span>
-            </div> 
-        </mat-card>
-    </div> 
-</div>
+<div class="flex items-center w-full bg-slate-50 border-b border-slate-200/50" *ngIf="router.url != '/'">
+    <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap py-3 px-4 md:px-8 text-sm font-medium w-full" 
+         aria-label="Breadcrumb">
+        
+        <!-- Home Link -->
+        <a class="flex items-center gap-1 text-slate-500 hover:text-primary transition-colors cursor-pointer group" 
+           (click)="closeSubMenus()" 
+           routerLink="/">
+            <mat-icon class="text-lg leading-none opacity-80 group-hover:opacity-100">home</mat-icon>
+            <span class="hidden sm:inline">Home</span>
+        </a>
 
+        <!-- Breadcrumb Path -->
+        <div *ngFor="let breadcrumb of breadcrumbs; let i = index; let last = last" 
+             class="flex items-center gap-1">
+            
+            <mat-icon class="text-slate-300 text-lg">chevron_right</mat-icon>
+
+            <a *ngIf="!last" 
+               class="text-slate-500 hover:text-primary transition-colors cursor-pointer">
+                {{ breadcrumb.name }}
+            </a>
+
+            <span *ngIf="last" 
+                  class="font-extrabold text-primary tracking-tight">
+                {{ breadcrumb.name }}
+            </span>
+        </div>
+    </nav>
+</div>

@@ -1,61 +1,74 @@
-<div fxLayout="row" fxLayoutAlign="center center" class="h-100 min-h-screen bg-unauthorized p-6 mat-typography">
-    <div fxFlex="95" fxFlex.gt-sm="40" fxFlex.sm="70">
-        <mat-card class="unauthorized-card mat-elevation-z12 box">
-            <!-- Header with Gradient and Icon -->
-            <div fxLayout="column" fxLayoutAlign="center center" class="card-header p-10 bg-gradient-auth text-white">
-                <div class="icon-orb mat-elevation-z8 mb-6">
-                    <mat-icon class="text-4xl leading-none">security</mat-icon>
+<div class="flex items-center justify-center min-h-screen bg-slate-50 p-4 md:p-8 overflow-hidden relative">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
+
+    <div class="w-full max-w-2xl animate-fade-in-up">
+        <div class="card-premium overflow-hidden border-none shadow-2xl">
+            <!-- Header with Deep Gradient -->
+            <div class="card-header bg-gradient-to-br from-red-600 to-red-900 text-white p-8 md:p-12 flex flex-col items-center justify-center relative">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden">
+                    <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <circle cx="20" cy="20" r="40" fill="white" />
+                        <circle cx="80" cy="80" r="40" fill="white" />
+                    </svg>
                 </div>
-                <h1 class="error-code font-black mb-2 animate-pulse tracking-tight">401</h1>
-                <h2 class="error-title uppercase font-bold tracking-widest text-center opacity-90">Unauthorized Access</h2>
+
+                <div class="icon-orb mat-elevation-z8 mb-6 ring-4 ring-white/10">
+                    <mat-icon class="text-4xl text-white">security</mat-icon>
+                </div>
+                <h1 class="text-7xl md:text-8xl font-black mb-2 animate-pulse tracking-tighter drop-shadow-lg">401</h1>
+                <h2 class="text-lg md:text-xl uppercase font-bold tracking-[0.2em] text-center text-white/90">
+                    Unauthorized Access
+                </h2>
             </div>
             
-            <mat-card-content class="p-8 space-y-8 bg-white">
-                <!-- Info Message -->
-                <div class="info-box p-8 bg-slate-50 border-l-4 border-red-500 rounded-r-xl shadow-inner">
-                    <div fxLayout="row" fxLayoutAlign="start center" class="text-red-700 mb-3">
-                        <mat-icon class="mr-3">report_problem</mat-icon>
-                        <span class="text-xl font-bold tracking-tight">Session Expired or Permissions Missing</span>
+            <div class="p-6 md:p-10 space-y-8 bg-white/80 backdrop-blur-sm">
+                <!-- Status Message -->
+                <div class="p-6 md:p-8 bg-red-50/50 border border-red-100 rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-4">
+                    <div class="p-3 bg-red-100 rounded-xl text-red-600">
+                        <mat-icon class="text-3xl">report_problem</mat-icon>
                     </div>
-                    <p class="text-slate-600 leading-relaxed font-medium">
-                        Your session has ended or your account does not have current authority to view this analytics dashboard. 
-                        Please secure your access by logging in again as an **Employee** or **Client**.
-                    </p>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-red-900 mb-2">Access Restricted</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            Your session has expired or your current role does not have permission to access the **{{serviceName || 'Analytics'}}** dashboard. 
+                            Please log in again to continue securely.
+                        </p>
+                    </div>
                 </div>
                 
-                <!-- Dynamic Buttons -->
-                <div fxLayout="column" fxLayoutAlign="center stretch" class="space-y-4">
-                    <!-- Primary Button (Detected Type) -->
-                    <button *ngIf="userType" mat-flat-button 
-                            color="primary" 
-                            class="action-button h-16 text-lg font-bold uppercase tracking-widest shadow-lg rounded-xl transition hover:brightness-110 active:scale-95" 
+                <!-- Action Grid -->
+                <div class="flex flex-col gap-4">
+                    <!-- Primary Re-login -->
+                    <button *ngIf="userType" mat-button 
+                            class="btn-modern-primary w-full h-16 uppercase tracking-widest text-sm"
                             (click)="goLogin()">
-                        <mat-icon class="mr-3">login</mat-icon>
+                        <mat-icon class="mr-2">sync</mat-icon>
                         Return to {{userType}} Login
                     </button>
 
-                    <!-- Secondary Buttons (Manual Choice) -->
-                    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" class="w-full">
-                        <button fxFlex mat-stroked-button 
-                                class="type-button h-16 text-md font-bold uppercase border-2 text-primary border-primary rounded-xl transition hover:bg-slate-50" 
+                    <!-- Type Selection -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button mat-stroked-button 
+                                class="h-14 font-bold uppercase rounded-xl border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all"
                                 (click)="goLogin('employee')">
                             <mat-icon class="mr-2">badge</mat-icon>
-                            Employee Login
+                            Staff Login
                         </button>
-                        <button fxFlex mat-stroked-button 
-                                class="type-button h-16 text-md font-bold uppercase border-2 text-accent border-accent rounded-xl transition hover:bg-slate-50" 
+                        <button mat-stroked-button 
+                                class="h-14 font-bold uppercase rounded-xl border-2 border-accent/20 text-accent hover:bg-accent/5 transition-all"
                                 (click)="goLogin('client')">
-                            <mat-icon class="mr-2">business_center</mat-icon>
+                            <mat-icon class="mr-2">corporate_fare</mat-icon>
                             Client Login
                         </button>
                     </div>
                 </div>
 
-                <!-- Footer Support Note -->
-                <div class="text-center pt-4 opacity-50 italic text-sm">
-                    If you believe this is an error, please contact your administrator.
+                <div class="text-center text-slate-400 text-xs italic font-medium pt-2">
+                    Systems monitored for security. For help, contact IT Support.
                 </div>
-            </mat-card-content>
-        </mat-card>
+            </div>
+        </div>
     </div>
 </div>

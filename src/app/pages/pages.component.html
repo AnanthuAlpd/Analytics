@@ -5,8 +5,8 @@
   </mat-sidenav>
   <mat-sidenav-content id="main" perfectScrollbar [disabled]="settings.fixedHeader" (psScrollY)="onPsScrollY($event)">
     <mat-toolbar color="primary" class="flex-p-x">
-      <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100">
-        <div fxLayout="row" fxLayoutAlign="center center">
+      <div class="w-full flex flex-row justify-between items-center">
+        <div class="flex flex-row justify-center items-center">
           <button *ngIf="settings.menu == 'vertical'" mat-icon-button (click)="toggleSidenav()"
             matTooltip="Toggle Menu">
             <mat-icon>menu</mat-icon>
@@ -19,13 +19,13 @@
             (click)="closeSubMenus()" class="small-logo">P</a>
           <a *ngIf="settings.menu == 'horizontal'" class="logo" (click)="closeSubMenus()">{{ serviceName === 'Prabha
             Analytics' ? 'PRABHA' : 'POTHANSAI' }}</a>
-          <button fxHide.xs mat-icon-button *ngIf="settings.menu == 'vertical'"
-            (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned" class="pin-btn"
+          <button mat-icon-button *ngIf="settings.menu == 'vertical'"
+            (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned" class="pin-btn hidden sm:block"
             [matTooltip]="settings.sidenavIsPinned ? 'Unpin Sidebar' : 'Pin Sidebar'">
             <mat-icon>{{ settings.sidenavIsPinned ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
           </button>
         </div>
-        <div fxLayout="row" fxLayoutAlign="end center">
+        <div class="flex flex-row justify-end items-center">
           <!-- <div fxLayout="row" fxLayoutAlign="start center" fxShow="false" fxShow.gt-xs class="search-bar">
             <form method="get">
               <input type="text" placeholder="Type to search..." class="mat-elevation-z3"
@@ -35,10 +35,9 @@
               </button>
             </form>
           </div>
-          <!-- <app-flags-menu fxShow="false" fxShow.gt-sm></app-flags-menu> -->
           <app-fullscreen></app-fullscreen>
-          <!-- <app-applications fxShow="false" fxShow.gt-sm></app-applications> -->
-          <app-messages fxShow="false" fxShow.gt-xs></app-messages>
+          <!-- <app-applications class="hidden lg:block"></app-applications> -->
+          <app-messages></app-messages>
           <!-- <app-user-menu></app-user-menu>  -->
 
         </div>
@@ -47,7 +46,7 @@
 
     <mat-toolbar id="horizontal-menu" color="primary" *ngIf="settings.menu == 'horizontal'"
       class="horizontal-menu flex-p-x transition-2" [class.fixed-top]="!settings.fixedHeader">
-      <div fxLayout="row" fxLayoutAlign="center center" class="w-100">
+      <div class="w-full flex flex-row justify-center items-center">
         <app-horizontal-menu [menuParentId]="0"></app-horizontal-menu>
       </div>
     </mat-toolbar>
@@ -58,7 +57,7 @@
       <div [class.has-footer]="settings.hasFooter">
         <router-outlet></router-outlet>
       </div>
-      <div *ngIf="settings.hasFooter" fxLayout="row" fxLayoutAlign="space-between center" class="footer bg-primary">
+      <div *ngIf="settings.hasFooter" class="footer bg-primary flex flex-row justify-between items-center">
         <!-- <div>
           <a mat-raised-button color="accent"
             href=""
@@ -73,12 +72,12 @@
     </div>
 
 
-    <div fxLayout="row" fxLayoutAlign="center center" class="options-icon" (click)="options.toggle()"
+    <div class="options-icon flex flex-row justify-center items-center" (click)="options.toggle()"
       matTooltip="Settings">
       <mat-icon>settings</mat-icon>
     </div>
 
-    <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()"
+    <div #backToTop class="back-to-top flex flex-row justify-center items-center" (click)="scrollToTop()"
       matTooltip="Back to Top">
       <mat-icon>arrow_upward</mat-icon>
     </div>
@@ -87,48 +86,48 @@
 
   <mat-sidenav #options position="end" class="options">
 
-    <div fxLayout="row" fxLayoutAlign="center center" class="control mat-elevation-z1">
+    <div class="control mat-elevation-z1 flex flex-row justify-center items-center">
       <h2>Settings</h2>
     </div>
 
     <div perfectScrollbar>
 
-      <div fxLayout="column" class="control">
+      <div class="control flex flex-col">
         <h4>Layout</h4>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>Fixed header</span>
           <mat-slide-toggle [checked]="settings.fixedHeader" (change)="settings.fixedHeader = !settings.fixedHeader"
             labelPosition="before"></mat-slide-toggle>
         </div>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>RTL</span>
           <mat-slide-toggle [checked]="settings.rtl" (change)="settings.rtl = !settings.rtl" labelPosition="before">
           </mat-slide-toggle>
         </div>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>Has Footer</span>
           <mat-slide-toggle [checked]="settings.hasFooter" (change)="settings.hasFooter = !settings.hasFooter"
             labelPosition="before"></mat-slide-toggle>
         </div>
       </div>
 
-      <div fxLayout="column" class="control">
+      <div class="control flex flex-col">
         <h4>Choose menu</h4>
         <mat-radio-group [(ngModel)]="menuOption" (change)="chooseMenu()">
           <mat-radio-button *ngFor="let menu of menus" [value]="menu">{{menu}}</mat-radio-button>
         </mat-radio-group>
       </div>
 
-      <div fxLayout="column" class="control">
+      <div class="control flex flex-col">
         <h4>Choose menu type</h4>
         <mat-radio-group [(ngModel)]="menuTypeOption" (change)="chooseMenuType()">
           <mat-radio-button *ngFor="let menuType of menuTypes" [value]="menuType">{{menuType}}</mat-radio-button>
         </mat-radio-group>
       </div>
 
-      <div fxLayout="column" class="control">
+      <div class="control flex flex-col">
         <h4>Choose theme skin</h4>
-        <div fxLayout="row" fxLayoutAlign="space-around center">
+        <div class="flex flex-row justify-around items-center">
           <div class="skin-primary indigo-light" (click)="changeTheme('indigo-light')">
             <div class="skin-secondary"></div>
           </div>
@@ -150,19 +149,19 @@
         </div>
       </div>
 
-      <div fxLayout="column" class="control">
+      <div class="control flex flex-col">
         <h4>Sidenav options</h4>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>Opened sidenav</span>
           <mat-slide-toggle [checked]="settings.sidenavIsOpened"
             (change)="settings.sidenavIsOpened = !settings.sidenavIsOpened" labelPosition="before"></mat-slide-toggle>
         </div>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>Pinned sidenav</span>
           <mat-slide-toggle [checked]="settings.sidenavIsPinned"
             (change)="settings.sidenavIsPinned = !settings.sidenavIsPinned" labelPosition="before"></mat-slide-toggle>
         </div>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="flex flex-row justify-between items-center">
           <span>Sidenav user info</span>
           <mat-slide-toggle [checked]="settings.sidenavUserBlock"
             (change)="settings.sidenavUserBlock = !settings.sidenavUserBlock" labelPosition="before"></mat-slide-toggle>

@@ -1,19 +1,29 @@
-.breadcrumb{
-    padding: 8px;
-    .mat-icon{
-        font-size: 20px;
-        height: 20px;
-        width: 20px;
-        padding: 0 6px;
+/* 
+ * Breadcrumb Component Styles
+ * ---------------------------
+ * Modernized using global design tokens and mobile-first swipeable layout.
+ */
+
+:host {
+    display: block;
+    width: 100%;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    
+    &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
     }
-    .breadcrumb-title.active{
-        text-transform: uppercase;
-        font-weight: 500;
-    }
-    .breadcrumb-item+.breadcrumb-item:before{
-        display: inline-block;
-        padding-right: .5rem;
-        padding-left: .5rem;
-        content: "/";
-    }
+}
+
+.nav-link {
+    transition: all 0.2s ease-in-out;
+}
+
+mat-icon {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    font-size: 1.25rem !important;
 }

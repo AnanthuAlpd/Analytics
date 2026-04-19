@@ -47,7 +47,7 @@ export class PagesComponent implements OnInit {
         this.serviceName = client.service_name || null;
       }
     }
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth < 960) {
       this.settings.menu = 'vertical';
       this.settings.sidenavIsOpened = false;
       this.settings.sidenavIsPinned = false;
@@ -70,7 +70,7 @@ export class PagesComponent implements OnInit {
         if (!this.settings.sidenavIsPinned) {
           this.sidenav.close();
         }
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth < 960) {
           this.sidenav.close();
         }
       }
@@ -136,10 +136,9 @@ export class PagesComponent implements OnInit {
 
   @HostListener('window:resize')
   public onWindowResize(): void {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth < 960) {
       this.settings.sidenavIsOpened = false;
       this.settings.sidenavIsPinned = false;
-      this.settings.menu = 'vertical'
     }
     else {
       (this.defaultMenu == 'horizontal') ? this.settings.menu = 'horizontal' : this.settings.menu = 'vertical'

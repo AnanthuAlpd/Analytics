@@ -31,6 +31,11 @@
   right:0;  
   padding: $inner-sidenav-content-padding;
   min-height: calc(100% - (#{$toolbar-height} + #{$inner-sidenav-content-padding}*2));
+  
+  @media screen and (max-width: 600px) {
+    padding: 8px; // Smaller padding for mobile screens
+  }
+
   .has-footer{  
     min-height: calc(100% - (45px + #{$footer-height}));
   }
@@ -38,6 +43,14 @@
     height: $footer-height;
     margin: 0 -8px -8px -8px; 
     padding: 0 16px;
+    
+    @media screen and (max-width: 600px) {
+       flex-direction: column;
+       justify-content: center;
+       text-align: center;
+       height: auto;
+       padding: 10px;
+    }
   }
 }
 
