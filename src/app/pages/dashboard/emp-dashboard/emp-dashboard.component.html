@@ -191,7 +191,110 @@
         </div>
     </div>
 
-    <!-- Resources Section -->
+    <!-- Compact Calendar & Notifications Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- 📅 Compact Tailwind Calendar -->
+        <div class="lg:col-span-2 flex flex-col gap-4">
+            <div class="flex items-center justify-between px-2">
+                <h2 class="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                    <mat-icon class="text-primary !text-lg !w-5 !h-5">calendar_today</mat-icon>
+                    Activity
+                </h2>
+                <div class="flex items-center bg-white rounded-lg shadow-sm border border-slate-100 p-0.5">
+                    <button mat-icon-button (click)="prevMonth()" class="!w-8 !h-8 hover:bg-slate-50 transition-colors">
+                        <mat-icon class="!text-lg">chevron_left</mat-icon>
+                    </button>
+                    <span class="px-3 font-black text-slate-700 min-w-[110px] text-center uppercase tracking-tighter text-[11px]">
+                        {{ monthNames[currentDate.getMonth()] }} {{ currentDate.getFullYear() }}
+                    </span>
+                    <button mat-icon-button (click)="nextMonth()" class="!w-8 !h-8 hover:bg-slate-50 transition-colors">
+                        <mat-icon class="!text-lg">chevron_right</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-premium p-3 sm:p-4 bg-white shadow-lg shadow-slate-200/40">
+                <!-- Day Labels -->
+                <div class="grid grid-cols-7 mb-2 border-b border-slate-50 pb-2">
+                    <div *ngFor="let day of ['S', 'M', 'T', 'W', 'T', 'F', 'S']" 
+                         class="text-center text-[9px] font-black text-slate-400 tracking-tighter">
+                        {{ day }}
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 gap-1">
+                    <div *ngFor="let d of calendarDays" 
+                         (click)="selectDate(d)"
+                         class="h-9 sm:h-10 flex flex-col items-center justify-center rounded-xl relative cursor-pointer transition-all duration-300 group/day"
+                         [ngClass]="{
+                            'bg-primary text-white shadow-md shadow-primary/30 scale-105 z-10': d.selected,
+                            'hover:bg-slate-50': !d.selected && d.currentMonth,
+                            'opacity-10 pointer-events-none': !d.currentMonth,
+                            'ring-1 ring-primary ring-offset-2 ring-offset-white': d.isToday && !d.selected
+                         }">
+                        <span class="text-xs font-bold" [ngClass]="d.selected ? 'text-white' : 'text-slate-700'">{{ d.day }}</span>
+                        <div *ngIf="d.hasActivity" 
+                             class="absolute bottom-1.5 w-1 h-1 rounded-full"
+                             [ngClass]="d.selected ? 'bg-white' : 'bg-primary/40'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔔 Compact Lead Notifications -->
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col px-2">
+                <h2 class="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                    <mat-icon class="text-accent !text-lg !w-5 !h-5">notifications_active</mat-icon>
+                    Feed
+                </h2>
+                <span class="text-[10px] font-bold text-primary/60 uppercase tracking-tighter mt-1">
+                    {{ selectedDate | date:'fullDate' }}
+                </span>
+            </div>
+            
+            <div class="flex flex-col gap-2 min-h-[200px]">
+                <!-- Notification Cards -->
+                <div *ngFor="let note of leadNotifications" 
+                     class="group bg-white p-3 rounded-xl shadow-sm border border-surface-100 flex gap-3 transition-all duration-300 hover:shadow-premium hover:-translate-y-0.5 cursor-pointer active:scale-95">
+                    
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                         [ngClass]="{
+                            'bg-blue-50 text-blue-500': note.color === 'blue',
+                            'bg-rose-50 text-rose-500': note.color === 'rose',
+                            'bg-emerald-50 text-emerald-500': note.color === 'emerald',
+                            'bg-amber-50 text-amber-500': note.color === 'amber'
+                         }">
+                        <mat-icon class="!text-lg !w-5 !h-5">{{ note.icon }}</mat-icon>
+                    </div>
+
+                    <div class="flex-1 min-w-0 py-0.5">
+                        <div class="flex justify-between items-start mb-0.5">
+                            <h4 class="text-[11px] font-black text-surface-900 truncate group-hover:text-primary transition-colors leading-none">{{ note.title }}</h4>
+                            <span class="text-[8px] font-bold text-slate-400 whitespace-nowrap ml-2 uppercase">{{ note.time }}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 leading-tight line-clamp-1 italic">{{ note.description }}</p>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div *ngIf="leadNotifications.length === 0" 
+                     class="flex-1 flex flex-col items-center justify-center text-center p-6 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100">
+                    <mat-icon class="text-slate-200 !text-4xl !w-10 !h-10 mb-2">event_busy</mat-icon>
+                    <h5 class="text-[11px] font-black text-slate-400 uppercase tracking-wider">No Activity</h5>
+                    <p class="text-[10px] text-slate-300 italic">Relax! Nothing scheduled for today.</p>
+                </div>
+
+                <button mat-button color="primary" 
+                        class="w-full h-8 !text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mt-auto">
+                    View All Activity
+                </button>
+            </div>
+        </div>
+
+    </div>
     <div class="flex flex-col gap-8">
         <h2 class="heading-responsive">Training & Resources</h2>
 

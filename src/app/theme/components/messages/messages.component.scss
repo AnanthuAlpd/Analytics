@@ -1,17 +1,70 @@
-.messages {
-    .mat-tab-label {
-        min-width: 93.3px;
-        height: 40px;
-    }
-    
-    .content {
-        padding: 0;
-        height: 320px; // Slightly increased for better view
-        display: block;
-    }
+.messages-menu-wrapper {
+    max-width: 380px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    margin-top: 10px !important;
 
-    // Material menu overrides
     .mat-menu-content {
         padding: 0 !important;
+    }
+
+    .messages-container {
+        display: flex;
+        flex-direction: column;
+        width: 320px;
+        
+        .compact-tabs {
+            .mat-tab-header {
+                border-bottom: none;
+                background: #f8fafc;
+            }
+            .mat-tab-label {
+                min-width: 50%;
+                height: 44px;
+                opacity: 1;
+                color: #64748b;
+                &.mat-tab-label-active {
+                    color: #4338ca;
+                }
+            }
+            .mat-ink-bar {
+                height: 3px;
+                border-radius: 3px 3px 0 0;
+            }
+        }
+
+        .scrollable-content {
+            height: 380px;
+            overflow-y: auto;
+            background: white;
+            
+            // Force striped background even on material buttons
+            .notification-item {
+                background-color: white !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                display: flex !important;
+                padding: 16px !important;
+                width: 100% !important;
+                transition: all 0.2s ease-in-out !important;
+                
+                &:nth-child(odd) {
+                    background-color: #f8fafc !important;
+                }
+                
+                &:hover, &:active {
+                    background-color: #f1f5f9 !important;
+                    box-shadow: inset 4px 0 0 #4338ca !important;
+                    
+                    .mat-icon.text-primary {
+                        transform: translateX(2px);
+                    }
+                }
+
+                // High density text overrides
+                span, p {
+                    white-space: normal !important;
+                }
+            }
+        }
     }
 }

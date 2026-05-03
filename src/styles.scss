@@ -59,42 +59,40 @@
 }
 
 .heading-responsive {
-    font-weight: 700;
-    color: var(--brand-surface-900);
-    letter-spacing: -0.025em;
-    margin: 0;
-    /* Responsive sizing handled via standard CSS or utility classes in HTML */
-    font-size: 1.5rem; 
-}
-
-@media (min-width: 640px) {
-    .heading-responsive { font-size: 1.875rem; }
-}
-
-@media (min-width: 1024px) {
-    .heading-responsive { font-size: 2.25rem; }
+    @apply font-bold text-slate-900 tracking-tight m-0 text-2xl;
+    
+    @screen sm {
+        @apply text-3xl;
+    }
+    @screen lg {
+        @apply text-4xl;
+    }
 }
 
 .layout-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    max-width: none;
+    @apply px-4 mx-auto w-full max-w-none;
+    
+    @screen sm {
+        @apply px-6;
+    }
+    @screen lg {
+        @apply px-8;
+    }
+    @screen 2xl {
+        @apply px-12;
+    }
 }
-
-@media (min-width: 640px) { .layout-container { padding-left: 1.5rem; padding-right: 1.5rem; } }
-@media (min-width: 1024px) { .layout-container { padding-left: 2rem; padding-right: 2rem; } }
-@media (min-width: 1536px) { .layout-container { padding-left: 3rem; padding-right: 3rem; } }
 
 .section-spacing {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    @apply py-8;
+    
+    @screen sm {
+        @apply py-12;
+    }
+    @screen lg {
+        @apply py-16;
+    }
 }
-
-@media (min-width: 640px) { .section-spacing { padding-top: 3rem; padding-bottom: 3rem; } }
-@media (min-width: 1024px) { .section-spacing { padding-top: 4rem; padding-bottom: 4rem; } }
 
 // for npm roboto-fontface package (to load local files)
 $roboto-font-path: "~roboto-fontface/fonts" !default;

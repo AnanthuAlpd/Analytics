@@ -6,6 +6,7 @@ import { Settings } from '../app.settings.model';
 import { AuthService } from '../services/auth.service';
 import { MenuService } from '../theme/components/menu/menu.service';
 import { DashboardModeService } from '../services/dashboard-mode.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-pages',
@@ -29,11 +30,16 @@ export class PagesComponent implements OnInit {
   serviceName: string | null = null;
   isClient: boolean = false;
   dashboardMode: 'admin' | 'employee' = 'admin';
+  public staticWebsiteUrl: string = environment.staticWebSiteUrl;
   constructor(public appSettings: AppSettings, public router: Router,
     public authService: AuthService,
     public dashboardModeService: DashboardModeService
   ) {
     this.settings = this.appSettings.settings;
+  }
+
+  get isDemoDashboard(): boolean {
+    return this.router.url.includes('/dashboard/demo');
   }
 
   ngOnInit() {

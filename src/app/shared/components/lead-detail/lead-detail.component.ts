@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Lead, LeadActivity, LeadsService } from 'src/app/services/leads.service';
+import { Lead, LeadActivity, LeadsService, LeadStage } from 'src/app/services/leads.service';
 import { LeadsFormComponent } from '../leads-form/leads-form.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 
@@ -17,6 +17,13 @@ export class LeadDetailComponent implements OnInit {
   newNote = '';
   savingNote = false;
 
+  activityTypes: any[] = [];
+  selectedActivityType = '';
+
+  pipelineStages: LeadStage[] = [];
+  loadingStages = false;
+  advancingStage = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { lead: Lead },
     private dialog: MatDialog,
@@ -29,6 +36,67 @@ export class LeadDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshActivities();
+    if (this.lead.lead_cat === 'Employee') {
+      this.fetchPipelineStages();
+    }
+    this.leadsService.getActivityTypes().subscribe(res => {
+      this.activityTypes = res;
+      // Default to the first type if none selected
+      if (this.activityTypes && this.activityTypes.length > 0) {
+          this.selectedActivityType = this.activityTypes[0].name;
+      }
+    });
+  }
+
+  fetchPipelineStages(): void {
+    this.loadingStages = true;
+    this.leadsService.getPipelineStages().subscribe({
+      next: (stages) => {
+        this.pipelineStages = stages;
+        this.loadingStages = false;
+      },
+      error: (err) => {
+        console.error('Error fetching pipeline stages:', err);
+        this.loadingStages = false;
+      }
+    });
+  }
+
+  advanceStage(stage: LeadStage): void {
+    if (this.advancingStage || !stage.next_stage_id) return;
+    this.advancingStage = true;
+    this.leadsService.advanceLeadStage(this.lead.id, stage.next_stage_id).subscribe({
+      next: (res) => {
+        this.snackbar.showSuccess('Lead advanced to next stage successfully!');
+        this.lead.stage_id = stage.next_stage_id;
+        if(res.stage_name) {
+             this.lead.stage_name = res.stage_name;
+        }
+        if(res.follow_up_date) {
+            this.lead.follow_up_date = res.follow_up_date;
+        }
+        this.advancingStage = false;
+        this.refreshActivities();
+      },
+      error: (err) => {
+        this.snackbar.showError('Error advancing lead.');
+        this.advancingStage = false;
+        console.error(err);
+      }
+    });
+  }
+
+  getStageClass(stage: LeadStage): string {
+    if (!this.lead.stage_id) {
+        if (stage.order_no === 1) return 'current';
+        return 'locked';
+    }
+    const currentStage = this.pipelineStages.find(s => s.id === this.lead.stage_id);
+    if (!currentStage) return 'locked';
+    
+    if (stage.id === this.lead.stage_id) return 'current';
+    if (stage.order_no < currentStage.order_no) return 'completed';
+    return 'locked';
   }
 
   refreshActivities(): void {
@@ -49,13 +117,16 @@ export class LeadDetailComponent implements OnInit {
   }
 
   addNote(): void {
-    if (!this.newNote.trim()) return;
+    if (!this.selectedActivityType) {
+        this.snackbar.showError('Select an activity type.');
+        return;
+    }
 
     this.savingNote = true;
-    const activity: Partial<LeadActivity> = {
+    const activity: any = {
       lead_id: this.lead.id,
-      action_type: 'Note Added',
-      details: this.newNote,
+      activity_type_name: this.selectedActivityType,
+      details: this.newNote.trim() || 'No remarks provided',
       created_at: new Date().toISOString()
     };
 

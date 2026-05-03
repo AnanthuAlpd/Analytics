@@ -26,10 +26,15 @@ export class SidenavComponent implements OnInit {
   serviceName: string | null = null;
   isClient: boolean = false;
   loginUrl: any;
+  public staticWebsiteUrl: string;
   constructor(public appSettings: AppSettings, public menuService: MenuService,
-    private router: Router, private authService: AuthService,
+    public router: Router, private authService: AuthService,
     public dashboardModeService: DashboardModeService) {
     this.settings = this.appSettings.settings;
+  }
+
+  get isDemoDashboard(): boolean {
+    return this.router.url.includes('/dashboard/demo');
   }
 
   ngOnInit() {
@@ -52,7 +57,7 @@ export class SidenavComponent implements OnInit {
     });
     this.userImage = `${environment.baseHref}assets/img/users/profile.png`;
     this.logoImage = `${environment.baseHref}assets/img/logo/logo.jpeg`;
-    // this.menuItems = this.menuService.getVerticalMenuItems();
+    this.staticWebsiteUrl = environment.staticWebSiteUrl;
     this.userName = this.authService.getUserName();
     this.deptName = this.authService.getDepartment();
     const userType = localStorage.getItem('userType');

@@ -142,18 +142,18 @@
             <mat-icon class="text-indigo-500">offline_bolt</mat-icon>
             System Management
         </h3>
-        <div class="flex flex-wrap gap-4">
-            <button mat-button class="btn-modern-primary px-8 h-12 text-sm uppercase tracking-wider" 
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button mat-button class="btn-modern-primary w-full sm:w-auto px-8 h-12 text-sm uppercase tracking-wider transition-all hover:shadow-lg hover:shadow-indigo-200 active:scale-95" 
                     (click)="action('department')">
                 <mat-icon class="mr-2">schema</mat-icon>
                 Departments
             </button>
-            <button mat-button class="h-12 px-8 font-bold uppercase text-sm tracking-wider rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 transition-all"
+            <button mat-button class="h-12 w-full sm:w-auto px-8 font-bold uppercase text-sm tracking-wider rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 hover:shadow-lg hover:shadow-pink-100 transition-all active:scale-95"
                     (click)="action('role')">
                 <mat-icon class="mr-2">security</mat-icon>
                 User Roles
             </button>
-            <button mat-button class="h-12 px-8 font-bold uppercase text-sm tracking-wider rounded-xl border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-all" 
+            <button mat-button class="h-12 w-full sm:w-auto px-8 font-bold uppercase text-sm tracking-wider rounded-xl border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:shadow-lg hover:shadow-indigo-50 transition-all active:scale-95" 
                     (click)="action('menu')">
                 <mat-icon class="mr-2">menu_open</mat-icon>
                 Navigation

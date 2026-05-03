@@ -15,12 +15,10 @@
             (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock" matTooltip="User Profile">
             <mat-icon>person</mat-icon>
           </button> -->
-          <a *ngIf="settings.menu == 'horizontal'" mat-raised-button color="accent" routerLink="/"
-            (click)="closeSubMenus()" class="small-logo">P</a>
-          <a *ngIf="settings.menu == 'horizontal'" class="logo" (click)="closeSubMenus()">{{ serviceName === 'Prabha
-            Analytics' ? 'PRABHA' : 'POTHANSAI' }}</a>
+          <!-- Branding removed from top nav per request -->
           <button mat-icon-button *ngIf="settings.menu == 'vertical'"
-            (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned" class="pin-btn hidden sm:block"
+            (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned" 
+            class="hidden sm:block ml-2 text-white"
             [matTooltip]="settings.sidenavIsPinned ? 'Unpin Sidebar' : 'Pin Sidebar'">
             <mat-icon>{{ settings.sidenavIsPinned ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
           </button>

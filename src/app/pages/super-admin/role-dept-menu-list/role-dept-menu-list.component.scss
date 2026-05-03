@@ -11,12 +11,12 @@
     }
   }
   .dialog-content {
-    min-width: 800px;
-    max-width: 1200px;
+    width: 100%;
     min-height: 400px;
-    max-height: 70vh;
-    padding: 20px;
-    overflow: auto;
+    max-height: 75vh;
+    padding: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   
   .search-container {
@@ -143,17 +143,12 @@
   
   // Responsive design
   @media (max-width: 768px) {
-    .dialog-content {
-      min-width: 90vw;
-      padding: 16px;
-    }
-  
-    .search-container .search-field {
-      width: 100%;
-    }
-  
-    .table {
-      font-size: 12px;
+    .dialog-header {
+        padding: 0 16px;
+        h2 { font-size: 18px; }
     }
 
-  }
+    .dialog-content {
+      padding: 12px;
+    }
+  }

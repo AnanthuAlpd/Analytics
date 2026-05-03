@@ -4,23 +4,32 @@ module.exports = {
     "./src/**/*.{html,ts}",
   ],
   theme: {
+    screens: {
+      'xs': '480px',
+      'sm': '640px',
+      'md': '768px',
+      'tablet': '960px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         'primary': {
-          DEFAULT: '#3f51b5',
-          light: '#757de8',
-          dark: '#002984',
+          DEFAULT: '#6366f1',
+          light: '#818cf8',
+          dark: '#4f46e5',
         },
         'accent': {
-          DEFAULT: '#e91e63',
-          light: '#ff6090',
-          dark: '#b0003a',
+          DEFAULT: '#ec4899',
+          light: '#f472b6',
+          dark: '#db2777',
         },
         'surface': {
           50: '#f8fafc',
           100: '#f1f5f9',
           200: '#e2e8f0',
-          800: '#1e293b',
+          800: '#334155',
           900: '#0f172a',
         }
       },

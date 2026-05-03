@@ -1,125 +1,287 @@
-<div class="detail-container">
-    <div class="header-section" fxLayout="row" fxLayoutAlign="space-between center">
-        <div fxLayout="column">
-            <h2 class="lead-name">{{ lead.name }}</h2>
-            <span class="lead-id">Lead ID: #{{ lead.id }}</span>
+<div class="flex flex-col h-full max-h-[95vh] bg-white/80 backdrop-blur-2xl rounded-[32px] overflow-hidden border border-white/40 shadow-2xl">
+    
+    <!-- 🚀 Premium Header -->
+    <div class="px-6 py-5 flex items-center justify-between bg-white/40 border-b border-slate-100/50">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                <mat-icon class="scale-110">contact_page</mat-icon>
+            </div>
+            <div class="flex flex-col">
+                <h2 class="text-xl font-black text-slate-900 leading-none m-0 uppercase tracking-tight">{{ lead.name }}</h2>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                    Lead ID: #{{ lead.id }} • {{ lead.lead_cat }}
+                </span>
+            </div>
         </div>
-        <button mat-icon-button mat-dialog-close class="close-btn">
-            <mat-icon>close</mat-icon>
+        <button mat-icon-button mat-dialog-close class="!bg-slate-100/50 hover:!bg-slate-200/50 transition-all">
+            <mat-icon class="text-slate-500">close</mat-icon>
         </button>
     </div>
 
-    <mat-dialog-content class="glass-content">
-        <div fxLayout="row wrap" fxLayoutGap="24px">
-            
-            <!-- Left Column: Core Info -->
-            <div fxFlex="100" fxFlex.gt-sm="40" fxLayout="column" fxLayoutGap="20px" class="info-column">
-                <mat-card class="info-card">
-                    <mat-card-header>
-                        <mat-icon mat-card-avatar>person</mat-icon>
-                        <mat-card-title>Contact Information</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content fxLayout="column" fxLayoutGap="12px">
-                        <div class="info-item">
-                            <mat-icon>email</mat-icon>
-                            <div fxLayout="column">
-                                <span class="label">Email</span>
-                                <span class="value">{{ lead.email }}</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <mat-icon>phone</mat-icon>
-                            <div fxLayout="column">
-                                <span class="label">Mobile</span>
-                                <span class="value">{{ lead.mob_no }}</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <mat-icon>category</mat-icon>
-                            <div fxLayout="column">
-                                <span class="label">Category</span>
-                                <span class="value">{{ lead.lead_cat }}</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <mat-icon>source</mat-icon>
-                            <div fxLayout="column">
-                                <span class="label">Source</span>
-                                <span class="value">{{ lead.lead_source }}</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <mat-icon>person_pin</mat-icon>
-                            <div fxLayout="column">
-                                <span class="label">Added By</span>
-                                <span class="value">{{ lead.emp_name || 'System' }}</span>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
+    <mat-dialog-content class="!p-0 !m-0 !overflow-x-hidden">
+        <div class="flex flex-col p-4 md:p-8 gap-6">
 
-                <mat-card class="status-card">
-                    <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
-                        <div fxLayout="column">
-                            <span class="label">Current Status</span>
-                            <span class="status-badge" [ngClass]="lead.status.toLowerCase()">{{ lead.status }}</span>
-                        </div>
-                        <button mat-stroked-button color="primary" (click)="onEditLead()">
-                            <mat-icon>edit</mat-icon> Edit
-                        </button>
-                    </mat-card-content>
-                </mat-card>
-            </div>
+            <!-- 🛤️ Pipeline Section (Employee Only) -->
+            <div *ngIf="lead.lead_cat === 'Employee'" class="bg-indigo-900/5 rounded-3xl p-6 border border-indigo-100/50">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-200">
+                        <mat-icon class="!text-sm">auto_graph</mat-icon>
+                    </div>
+                    <div class="flex flex-col">
+                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight m-0">Conversion Pipeline</h3>
+                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">Stage: {{ lead.stage_name || 'Prospect' }}</span>
+                    </div>
+                </div>
 
-            <!-- Right Column: Timeline -->
-            <div fxFlex="100" fxFlex.gt-sm="55" class="timeline-column">
-                <h3 class="section-title">Activity Timeline</h3>
-                
-                <div class="timeline-container">
-                    <mat-spinner *ngIf="loadingActivities" diameter="40" class="timeline-spinner"></mat-spinner>
-                    
-                    <div *ngIf="!loadingActivities" class="timeline">
-                        <!-- Timeline Items Loop -->
-                        <div *ngFor="let activity of activities" class="timeline-item">
-                            <div class="timeline-marker" [ngClass]="activity.action_type.toLowerCase().replace(' ', '-')">
-                                <mat-icon>{{ getActionIcon(activity.action_type) }}</mat-icon>
-                            </div>
-                            <div class="timeline-content">
-                                <div fxLayout="row" fxLayoutAlign="space-between start">
-                                    <span class="activity-type">{{ activity.action_type }}</span>
-                                    <span class="activity-date">{{ activity.created_at | date:'MMM dd, HH:mm' }}</span>
-                                </div>
-                                <p class="activity-details">{{ activity.details }}</p>
-                                <div *ngIf="activity.old_value" class="value-change">
-                                    <span class="old">{{ activity.old_value }}</span>
-                                    <mat-icon>arrow_forward</mat-icon>
-                                    <span class="new">{{ activity.new_value }}</span>
-                                </div>
-                                <span class="activity-user">{{ activity.emp_name }}</span>
-                            </div>
+                <!-- 📱 Mobile Vertical Stepper (< md) -->
+                <div class="md:hidden flex flex-col gap-4 mt-4 pl-4 border-l-2 border-slate-100 relative">
+                    <div *ngFor="let stage of pipelineStages; let i = index" 
+                         class="relative flex items-start gap-4">
+                        
+                        <!-- Connecting vertical line segment (custom) -->
+                        <div *ngIf="i < pipelineStages.length - 1" 
+                             class="absolute left-[-17px] top-6 w-[2px] h-[calc(100%+8px)] bg-slate-100"
+                             [ngClass]="{'!bg-emerald-500': getStageClass(pipelineStages[i+1]) !== 'locked'}">
                         </div>
 
-                        <!-- Empty State Message -->
-                        <div *ngIf="activities.length === 0" class="empty-timeline" fxLayout="column" fxLayoutAlign="center center">
-                            <mat-icon>history</mat-icon>
-                            <p>No activity recorded yet.</p>
+                        <!-- Node -->
+                        <div class="absolute left-[-25px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm z-10"
+                             [ngClass]="{
+                                'bg-emerald-500': getStageClass(stage) === 'completed',
+                                'bg-primary scale-125 shadow-lg shadow-primary/30': getStageClass(stage) === 'current',
+                                'bg-slate-200': getStageClass(stage) === 'locked'
+                             }">
+                        </div>
+
+                        <div class="flex flex-col pb-6">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Day {{ stage.day_number }}</span>
+                                <span *ngIf="getStageClass(stage) === 'current'" class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest animate-pulse">Active</span>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 mt-1 leading-tight" [ngClass]="{'text-primary': getStageClass(stage) === 'current'}">
+                                {{ stage.stage_name }}
+                            </span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Quick Note Entry -->
-                    <div class="note-entry">
-                        <mat-form-field appearance="outline" class="note-field">
-                            <mat-label>Add a follow-up note...</mat-label>
-                            <textarea matInput [(ngModel)]="newNote" rows="2" [disabled]="savingNote"></textarea>
-                            <button mat-icon-button matSuffix (click)="addNote()" [disabled]="!newNote || savingNote">
-                                <mat-icon *ngIf="!savingNote">send</mat-icon>
-                                <mat-spinner *ngIf="savingNote" diameter="20"></mat-spinner>
+                <!-- 💻 Desktop Horizontal Stepper (>= md) -->
+                <div class="hidden md:block relative overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                    <div class="flex items-start min-w-max gap-0">
+                        <div *ngFor="let stage of pipelineStages; let i = index" 
+                             class="flex flex-col items-center group w-32 relative">
+                            
+                            <!-- Connecting Line -->
+                            <div *ngIf="i < pipelineStages.length - 1" 
+                                 class="absolute top-4 left-[50%] w-full h-[2px] bg-slate-200 z-0"
+                                 [ngClass]="{'!bg-emerald-500': getStageClass(pipelineStages[i+1]) !== 'locked'}">
+                            </div>
+
+                            <!-- Node -->
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center z-10 transition-all border-2 border-white shadow-sm"
+                                 [ngClass]="{
+                                    'bg-emerald-500 text-white scale-110': getStageClass(stage) === 'completed',
+                                    'bg-primary text-white scale-125 shadow-lg shadow-primary/30': getStageClass(stage) === 'current',
+                                    'bg-slate-100 text-slate-400': getStageClass(stage) === 'locked'
+                                 }">
+                                <mat-icon *ngIf="getStageClass(stage) === 'completed'" class="!text-sm">check</mat-icon>
+                                <span *ngIf="getStageClass(stage) !== 'completed'" class="text-[10px] font-black">{{ i + 1 }}</span>
+                            </div>
+
+                            <div class="mt-3 text-center">
+                                <span class="block text-[8px] font-black text-slate-400 uppercase tracking-widest">Day {{ stage.day_number }}</span>
+                                <span class="block text-[10px] font-bold text-slate-600 mt-1 max-w-[100px] leading-tight">{{ stage.stage_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Panel -->
+                <div *ngFor="let stage of pipelineStages">
+                    <div *ngIf="getStageClass(stage) === 'current'" class="mt-6 p-5 bg-white rounded-2xl border border-indigo-100 shadow-sm">
+                        <div class="flex items-center gap-2 mb-4 text-indigo-600">
+                            <mat-icon class="!text-lg">verified</mat-icon>
+                            <span class="text-[11px] font-black uppercase tracking-widest">Stage Tasks</span>
+                        </div>
+                        <ul class="space-y-3 m-0 p-0 list-none">
+                            <li *ngFor="let act of stage.actions" class="flex gap-3 text-xs text-slate-600 leading-relaxed">
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 shrink-0"></span>
+                                <div><strong class="text-slate-900">{{ act.action_name }}:</strong> {{ act.description }}</div>
+                            </li>
+                        </ul>
+                                      <div class="mt-6 flex justify-end">
+                            <button mat-flat-button color="primary" 
+                                    class="!rounded-xl h-10 !font-black uppercase tracking-widest text-[9px] sm:text-[10px] px-4 sm:px-6 shadow-lg shadow-primary/20 transition-all active:scale-95"
+                                    (click)="advanceStage(stage)" 
+                                    [disabled]="advancingStage || !stage.next_stage_id">
+                                <mat-spinner *ngIf="advancingStage" diameter="16" class="mr-2"></mat-spinner>
+                                <span class="hidden sm:inline">{{ stage.next_stage_id ? 'Complete & Advance' : 'Finalized' }}</span>
+                                <span class="sm:hidden">{{ stage.next_stage_id ? 'Advance' : 'Done' }}</span>
                             </button>
-                        </mat-form-field>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 📊 Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- 📁 Left Column: Information -->
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    
+                    <!-- Contact Details Card -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center">
+                                <mat-icon class="!text-sm">person</mat-icon>
+                            </div>
+                            <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest m-0">Core Information</h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 group p-3 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                                    <mat-icon class="!text-lg">alternate_email</mat-icon>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Email Address</span>
+                                    <span class="text-sm font-bold text-slate-700">{{ lead.email }}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 group p-3 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors">
+                                    <mat-icon class="!text-lg">phone_iphone</mat-icon>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Number</span>
+                                    <span class="text-sm font-bold text-slate-700">{{ lead.mob_no }}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 group p-3 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
+                                    <mat-icon class="!text-lg">hub</mat-icon>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Lead Source</span>
+                                    <span class="text-sm font-bold text-slate-700 uppercase tracking-tight">{{ lead.lead_source }}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 group p-3 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                    <mat-icon class="!text-lg">badge</mat-icon>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Acquisition By</span>
+                                    <span class="text-sm font-bold text-slate-700">{{ lead.emp_name || 'System' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Quick Action Card -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Lifecycle Status</span>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-sm font-black text-slate-900 uppercase tracking-widest">{{ lead.status }}</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button color="primary" (click)="onEditLead()" class="!rounded-xl !font-black uppercase tracking-widest text-[9px] h-9 px-4">
+                            <mat-icon class="!text-sm !w-4 !h-4">edit</mat-icon> Update
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- 🕒 Right Column: Activities -->
+                <div class="lg:col-span-7 flex flex-col gap-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                                <mat-icon class="!text-sm">history</mat-icon>
+                            </div>
+                            <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest m-0">Activity Timeline</h3>
+                        </div>
+                    </div>
+
+                    <div class="relative bg-white/50 rounded-3xl p-6 border border-slate-100 min-h-[400px]">
+                        
+                        <!-- Timeline Vertical Thread -->
+                        <div class="absolute left-[39px] top-8 bottom-32 w-[2px] bg-slate-100"></div>
+
+                        <div *ngIf="loadingActivities" class="flex flex-col items-center justify-center py-20 text-center">
+                            <mat-spinner diameter="30" strokeWidth="2"></mat-spinner>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">Syncing timeline...</span>
+                        </div>
+
+                        <div *ngIf="!loadingActivities" class="space-y-8">
+                            <div *ngFor="let activity of activities" class="relative pl-12 group">
+                                <!-- Marker -->
+                                <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm transition-all group-hover:border-primary group-hover:scale-110">
+                                    <mat-icon class="!text-[14px] !w-auto !h-auto text-slate-400 group-hover:text-primary">{{ getActionIcon(activity.action_type) }}</mat-icon>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:border-slate-200">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-[10px] font-black text-slate-900 uppercase tracking-widest px-2 py-0.5 rounded-lg bg-slate-50 border border-slate-100">{{ activity.action_type }}</span>
+                                        <span class="text-[10px] font-bold text-slate-400">{{ activity.created_at | date:'MMM dd, HH:mm' }}</span>
+                                    </div>
+                                    <p class="text-[13px] md:text-sm text-slate-600 leading-relaxed m-0 font-medium">{{ activity.details }}</p>
+                                    
+                                    <div *ngIf="activity.old_value" class="mt-3 flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                        <span class="text-[10px] font-bold text-rose-400 line-through truncate max-w-[100px]">{{ activity.old_value }}</span>
+                                        <mat-icon class="!text-[10px] !w-auto !h-auto text-slate-300">arrow_forward</mat-icon>
+                                        <span class="text-[10px] font-black text-emerald-500 truncate">{{ activity.new_value }}</span>
+                                    </div>
+
+                                    <div class="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
+                                        <span class="text-[10px] font-black text-primary uppercase tracking-widest">{{ activity.emp_name }}</span>
+                                        <mat-icon class="!text-[11px] !w-auto !h-auto text-slate-200">bolt</mat-icon>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div *ngIf="activities.length === 0" class="flex flex-col items-center justify-center py-20 opacity-40">
+                                <mat-icon class="!text-5xl !w-auto !h-auto mb-4">history_toggle_off</mat-icon>
+                                <p class="text-[10px] font-black uppercase tracking-widest m-0">No activities found</p>
+                            </div>
+                        </div>
+
+                        <!-- 📝 Quick Note Entry -->
+                        <div class="sticky bottom-0 left-0 right-0 pt-8 pb-2 bg-white/80 backdrop-blur-md">
+                            <div class="flex flex-col gap-3 p-4 bg-white rounded-2xl border border-primary/20 shadow-lg shadow-primary/5">
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                                    <mat-form-field appearance="outline" class="sm:col-span-4 !m-0 !text-xs">
+                                        <mat-label>Action Type</mat-label>
+                                        <mat-select [(ngModel)]="selectedActivityType" [disabled]="savingNote">
+                                            <mat-option *ngFor="let type of activityTypes" [value]="type.name" class="!text-xs">{{ type.name }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="sm:col-span-8 !m-0 !text-xs">
+                                        <mat-label>Remarks / Notes</mat-label>
+                                        <textarea matInput [(ngModel)]="newNote" rows="1" [disabled]="savingNote || !selectedActivityType" class="!text-xs"></textarea>
+                                        <button mat-icon-button matSuffix 
+                                                class="!bg-primary/10 hover:!bg-primary/20 text-primary transition-all scale-75"
+                                                (click)="addNote()" 
+                                                [disabled]="!selectedActivityType || savingNote">
+                                            <mat-icon *ngIf="!savingNote" class="!text-sm">send</mat-icon>
+                                            <mat-spinner *ngIf="savingNote" diameter="16"></mat-spinner>
+                                        </button>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </mat-dialog-content>
 </div>

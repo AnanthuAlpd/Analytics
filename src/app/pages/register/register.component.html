@@ -1,101 +1,101 @@
-<div class="login-container">
-  <mat-toolbar class="navbar">
-    <a class="logo" [href]="staticWebsiteUrl">
-      <img src="assets/img/logo/logo.jpeg" alt="POTHANSAI Logo">
-      <span class="logo-text">PothansAI</span>
+<div class="min-h-screen bg-slate-900 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black flex items-start sm:items-center justify-center pt-28 pb-10 px-4 sm:p-6">
+  <nav class="fixed top-0 left-0 right-0 bg-white/10 backdrop-blur-md border-b border-white/10 z-50 px-6 py-3 flex items-center justify-between shadow-lg">
+    <a class="flex items-center gap-3 no-underline" [href]="staticWebsiteUrl">
+      <img src="assets/img/logo/logo.jpeg" alt="POTHANSAI Logo" class="h-10 w-auto rounded-lg shadow-sm">
+      <span class="text-xl font-bold text-white tracking-wide">PothansAI</span>
     </a>
-    <span class="flex-spacer"></span>
-    <a mat-icon-button class="logo-mobile" [href]="staticWebsiteUrl" color="primary">
+    <a mat-icon-button [href]="staticWebsiteUrl" class="text-white">
       <mat-icon>home</mat-icon>
     </a>
-  </mat-toolbar>
+  </nav>
 
-  <div class="login-card mat-elevation-z12">
-    <div class="login-header">
-      <div class="logo-icon">
-        <mat-icon>person_add</mat-icon>
+  <div class="w-full max-w-4xl bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/20 overflow-hidden transform transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+      <div class="relative z-10">
+        <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-4 border border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)] hover:shadow-[0_0_30px_rgba(255,255,255,0.8)] hover:scale-110 hover:bg-white/30 transition-all duration-500 group cursor-pointer">
+          <mat-icon class="text-white text-3xl h-8 w-8 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform duration-500">person_add</mat-icon>
+        </div>
+        <h2 class="m-0 font-semibold text-white tracking-wide text-2xl drop-shadow-md">
+          Register {{ userType === 'EMPLOYEE' ? 'Hero' : 'Legends' }}
+        </h2>
       </div>
-      <h2>Register {{userType | lowercase}}</h2>
     </div>
 
-    <div class="login-content">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+    <div class="p-8 sm:p-10 bg-white">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Full Name</mat-label>
             <input matInput formControlName="name" placeholder="Enter your full name">
-            <mat-icon matPrefix>person</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">person</mat-icon>
             <mat-error *ngIf="form.controls.name.errors?.required">Full Name is required</mat-error>
             <mat-error *ngIf="form.controls.name.hasError('minlength')">
               Full Name must be at least 3 characters
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Email Address</mat-label>
             <input matInput formControlName="email" type="email" placeholder="Enter your email">
-            <mat-icon matPrefix>email</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">email</mat-icon>
             <mat-error *ngIf="form.controls.email.errors?.required">Email is required</mat-error>
             <mat-error *ngIf="form.controls.email.hasError('invalidEmail')">Invalid email address</mat-error>
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Mobile Number</mat-label>
             <input matInput formControlName="mob_no" type="tel" placeholder="Enter your mobile number">
-            <mat-icon matPrefix>phone</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">phone</mat-icon>
             <mat-error *ngIf="form.controls.mob_no.errors?.required">Mobile number is required</mat-error>
             <mat-error *ngIf="form.controls.mob_no.hasError('minlength')">Invalid mobile number</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Referred By</mat-label>
             <mat-select formControlName="parent_id">
               <mat-option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>group</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">group</mat-icon>
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field" *ngIf="userType === 'EMPLOYEE'">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white" *ngIf="userType === 'EMPLOYEE'">
             <mat-label>Department</mat-label>
             <mat-select formControlName="department_id">
               <mat-option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>business</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">business</mat-icon>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field" *ngIf="userType === 'CLIENT'">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white" *ngIf="userType === 'CLIENT'">
             <mat-label>Service</mat-label>
             <mat-select formControlName="service_id">
               <mat-option *ngFor="let s of services" [value]="s.id">{{ s.name }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>assignment</mat-icon>
+            <mat-icon matPrefix class="text-gray-400 mr-2">assignment</mat-icon>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Password</mat-label>
-            <input matInput formControlName="password" [type]="hide ? 'password' : 'text'"
-              placeholder="Choose a password">
-            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" placeholder="Choose a password">
+            <mat-icon matPrefix class="text-gray-400 mr-2">lock</mat-icon>
             <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
-              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              <mat-icon class="text-gray-500">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
             <mat-error *ngIf="form.controls.password.errors?.required">Password is required</mat-error>
             <mat-error *ngIf="form.controls.password.hasError('minlength')">
               Password must be at least 6 characters
             </mat-error>
           </mat-form-field>
-        </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="w-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md rounded-xl bg-white">
             <mat-label>Confirm Password</mat-label>
-            <input matInput formControlName="confirm_password" [type]="hide ? 'password' : 'text'"
-              placeholder="Confirm your password">
-            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput formControlName="confirm_password" [type]="hide ? 'password' : 'text'" placeholder="Confirm your password">
+            <mat-icon matPrefix class="text-gray-400 mr-2">lock_outline</mat-icon>
             <mat-error *ngIf="form.controls.confirm_password.errors?.required">Confirm Password is required</mat-error>
             <mat-error *ngIf="form.controls.confirm_password.hasError('mismatchedPasswords')">
               Passwords do not match
@@ -103,13 +103,13 @@
           </mat-form-field>
         </div>
 
-        <div class="login-actions">
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading">
+        <div class="mt-6 flex flex-col gap-4 max-w-md mx-auto w-full">
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading" class="w-full py-6 text-lg rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
             {{ loading ? 'SIGNING UP...' : 'SIGN UP' }}
           </button>
-          <div class="signup-footer mt-2">
-            <span>Already have an account? </span>
-            <a [routerLink]="['/login', userType | lowercase]">Sign in!</a>
+          <div class="text-center mt-6 pt-6 border-t border-gray-100">
+            <span class="text-gray-500">Already have an account? </span>
+            <a [routerLink]="['/login', userType | lowercase]" class="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors ml-1">Sign in!</a>
           </div>
         </div>
       </form>

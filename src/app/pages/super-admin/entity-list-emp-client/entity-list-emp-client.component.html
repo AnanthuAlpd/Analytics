@@ -1,236 +1,244 @@
-<mat-card class="entity-list-card" [ngClass]="{'is-dialog': data && data.type}">
-  
-  <!-- 🏷️ Professional Header -->
-  <mat-card-header>
-    <mat-card-title class="primary-color">{{ data?.title || (entityType | titlecase) + ' List' }}</mat-card-title>
-    <div class="spacer"></div>
-    <div class="header-actions">
-      <button mat-icon-button class="close-btn" (click)="goBack()" matTooltip="Close">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-  </mat-card-header>
-
-  <mat-card-content class="entity-list-content">
-
-    <!-- ⏳ Loading Overlay -->
-    <div class="loading-overlay" *ngIf="loading">
-      <mat-spinner diameter="48" strokeWidth="3" color="primary"></mat-spinner>
-      <p>Fetching {{ entityType }} records...</p>
-    </div>
-
-    <!-- 🚫 No Data State -->
-    <div *ngIf="!loading && dataSource.data.length === 0" class="no-data-state">
-      <mat-icon>person_search</mat-icon>
-      <h3>No {{ entityType }}s found</h3>
-      <p>We couldn't find any results matching your filters.</p>
-      <button mat-stroked-button color="primary" style="margin-top: 16px;" (click)="loadInitialData()">
-        <mat-icon>refresh</mat-icon> Reset View
-      </button>
-    </div>
-
-    <ng-container *ngIf="!loading && dataSource.data.length > 0">
-      
-      <div class="table-header-actions">
-        <mat-form-field appearance="fill" class="search-field">
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput (keyup)="applyFilter($event)" [placeholder]="'Search ' + entityType + 's...'">
-        </mat-form-field>
-
-        <button mat-flat-button class="add-btn gradient-primary white" (click)="addNew()">
-          <mat-icon>add</mat-icon>
-          <span class="btn-text">Add {{ entityType | titlecase }}</span>
-        </button>
-      </div>
-
-      <!-- 📋 Modern Table (Employee) -->
-      <div class="table-container" *ngIf="entityType === 'employee'">
-        <mat-table [dataSource]="dataSource" matSort>
-
-          <!-- Name & Avatar -->
-          <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Member</mat-header-cell>
-            <mat-cell *matCellDef="let employee; let i = index">
-              <div class="entity-info">
-                <div class="entity-avatar" [ngClass]="'color-' + (i % 5)">
-                  {{ getInitials(employee.name) }}
+<div class="p-0 sm:p-4" [ngClass]="{'bg-surface-50 min-h-screen': !data?.type}">
+    <mat-card class="!rounded-3xl shadow-premium border-none overflow-hidden" [ngClass]="{'!shadow-none': data?.type}">
+        
+        <!-- 🏷️ Professional Header -->
+        <div class="bg-primary p-6 flex justify-between items-center text-white">
+            <div class="flex items-center gap-3">
+                <mat-icon class="scale-125">people</mat-icon>
+                <div class="flex flex-col">
+                    <h2 class="!m-0 text-lg font-black uppercase tracking-widest leading-none">{{ data?.title || (entityType | titlecase) + ' Directory' }}</h2>
+                    <p class="text-[10px] opacity-70 font-medium uppercase tracking-wider mt-1">Manage platform members & access</p>
                 </div>
-                <div class="name-wrapper">
-                  <div class="entity-name primary-color text-truncate" style="max-width: 150px;">{{ employee.name }}</div>
-                  <div class="entity-subtext text-truncate" style="max-width: 150px;">{{ employee.email }}</div>
+            </div>
+            <button mat-icon-button (click)="goBack()" class="hover:bg-white/10 transition-colors">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <mat-card-content class="!p-0 relative">
+            <!-- ⏳ Loading Overlay -->
+            <div *ngIf="loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-12 text-center">
+                <mat-spinner diameter="40" strokeWidth="3"></mat-spinner>
+                <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-4">Synchronizing {{ entityType }} records...</p>
+            </div>
+
+            <!-- 📋 Header Actions -->
+            <div class="p-4 sm:p-6 bg-slate-50/50 border-b border-slate-100">
+                <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+                    <div class="relative flex-1 max-w-md group">
+                        <input (keyup)="applyFilter($event)" [placeholder]="'Search ' + entityType + 's...'" 
+                               class="w-full h-11 pl-11 pr-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none text-sm font-medium">
+                        <mat-icon class="absolute left-4 top-2.5 text-slate-300 group-hover:text-primary transition-colors !text-xl">search</mat-icon>
+                    </div>
+
+                    <button mat-flat-button color="primary" (click)="addNew()"
+                            class="!rounded-2xl h-11 px-6 !font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all active:scale-95">
+                        <mat-icon class="mr-2 !text-sm !w-4 !h-4">person_add</mat-icon> Create {{ entityType | titlecase }}
+                    </button>
                 </div>
-              </div>
-            </mat-cell>
-          </ng-container>
+            </div>
 
-          <!-- Department -->
-          <ng-container matColumnDef="department">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-sm>Dept</mat-header-cell>
-            <mat-cell *matCellDef="let employee" fxHide.lt-sm>
-              <div class="modern-pill-set">
-                <span class="pill" [ngClass]="employee.main_department ? 'primary' : 'warning'">
-                  {{ employee.main_department || 'Unassigned' }}
-                </span>
-              </div>
-            </mat-cell>
-          </ng-container>
-
-          <!-- Roles -->
-          <ng-container matColumnDef="roles">
-            <mat-header-cell *matHeaderCellDef fxHide.lt-md>Roles</mat-header-cell>
-            <mat-cell *matCellDef="let employee" fxHide.lt-md>
-              <div class="modern-pill-set">
-                <span class="pill success" *ngFor="let role of employee.roles">{{ role.name }}</span>
-                <span class="pill warning" *ngIf="employee.roles?.length === 0">No Access</span>
-              </div>
-            </mat-cell>
-          </ng-container>
-
-          <!-- Mobile -->
-          <ng-container matColumnDef="mobile">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Contact</mat-header-cell>
-            <mat-cell *matCellDef="let employee" fxHide.lt-lg>
-              <span class="entity-subtext">{{ employee.mob_no || '---' }}</span>
-            </mat-cell>
-          </ng-container>
-
-          <!-- Created -->
-          <ng-container matColumnDef="created">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Joined</mat-header-cell>
-            <mat-cell *matCellDef="let employee" fxHide.lt-lg>
-              <span class="entity-subtext">{{ formatDate(employee.created_at) }}</span>
-            </mat-cell>
-          </ng-container>
-
-          <!-- Action Buttons -->
-          <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
-            <mat-cell *matCellDef="let employee">
-              <!-- Desktop Actions -->
-              <div class="action-group" fxHide.lt-md>
-                <button mat-icon-button class="btn-view" matTooltip="View Detail" (click)="view(employee)">
-                  <mat-icon>visibility</mat-icon>
-                </button>
-                <button mat-icon-button class="btn-edit" matTooltip="Edit Record" (click)="edit(employee)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="btn-delete" matTooltip="Remove Member" (click)="delete(employee)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-
-              <!-- Mobile/Tablet Action Menu -->
-              <div fxHide.gt-sm>
-                <button mat-icon-button [matMenuTriggerFor]="empMenu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #empMenu="matMenu">
-                  <button mat-menu-item (click)="view(employee)">
-                    <mat-icon color="primary">visibility</mat-icon>
-                    <span>View Detail</span>
-                  </button>
-                  <button mat-menu-item (click)="edit(employee)">
-                    <mat-icon color="accent">edit</mat-icon>
-                    <span>Edit Record</span>
-                  </button>
-                  <button mat-menu-item (click)="delete(employee)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    <span>Remove Member</span>
-                  </button>
-                </mat-menu>
-              </div>
-            </mat-cell>
-          </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-        <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
-      </div>
-
-      <!-- 👥 Modern Table (Client) -->
-      <div class="table-container" *ngIf="entityType === 'client'">
-        <mat-table [dataSource]="dataSource" matSort>
-
-          <!-- Name & Avatar -->
-          <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Company / Client</mat-header-cell>
-            <mat-cell *matCellDef="let client; let i = index">
-              <div class="entity-info">
-                <div class="entity-avatar" [ngClass]="'color-' + (i % 5)">
-                  {{ getInitials(client.name) }}
+            <!-- 🚫 No Data State -->
+            <div *ngIf="!loading && dataSource.data.length === 0" class="flex flex-col items-center justify-center p-20 text-center">
+                <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-300 mb-6 border border-slate-100">
+                    <mat-icon class="!text-5xl !w-12 !h-12">person_search</mat-icon>
                 </div>
-                <div class="name-wrapper">
-                  <div class="entity-name primary-color text-truncate" style="max-width: 180px;">{{ client.name }}</div>
-                  <div class="entity-subtext text-truncate" style="max-width: 180px;">{{ client.email }}</div>
+                <h3 class="text-xl font-black text-surface-900 mb-2 uppercase tracking-tight">No Records Found</h3>
+                <p class="text-slate-400 text-sm italic mb-8">We couldn't find any results matching your filters.</p>
+                <button mat-stroked-button (click)="loadInitialData()" class="!rounded-xl !border-slate-200 font-bold uppercase tracking-widest text-[10px]">
+                    <mat-icon class="mr-2">refresh</mat-icon> Reset Filters
+                </button>
+            </div>
+
+            <ng-container *ngIf="!loading && dataSource.data.length > 0">
+                
+                <!-- 📱 Mobile Card View (< md) -->
+                <div class="flex flex-col gap-3 p-4 md:hidden">
+                    <div *ngFor="let item of dataSource.filteredData; let i = index" 
+                         class="group bg-white p-4 rounded-2xl shadow-premium border border-slate-100/60 transition-all hover:shadow-premium-hover active:scale-[0.98]">
+                        
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-base shadow-md uppercase transition-transform group-hover:rotate-3"
+                                     [ngClass]="'bg-gradient-to-br ' + (i % 3 === 0 ? 'from-indigo-500 to-purple-600' : (i % 3 === 1 ? 'from-blue-500 to-indigo-600' : 'from-violet-500 to-indigo-600'))">
+                                    {{ getInitials(item.name) }}
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[8px] font-black uppercase tracking-[0.15em] leading-none mb-1 px-1.5 py-0.5 rounded bg-slate-50 text-slate-400 border border-slate-100 w-max truncate"
+                                          [ngClass]="getDeptClass(item.main_department)">
+                                        {{ entityType === 'employee' ? (item.main_department || 'General') : 'Client Entity' }}
+                                    </span>
+                                    <h4 class="m-0 font-bold text-surface-900 text-base tracking-tight truncate">{{ item.name }}</h4>
+                                    <span class="text-[10px] text-slate-400 font-medium truncate">{{ item.email }}</span>
+                                </div>
+                            </div>
+                            <button mat-icon-button [matMenuTriggerFor]="mobileMenu" class="!w-8 !h-8 !leading-8">
+                                <mat-icon class="!text-lg">more_vert</mat-icon>
+                            </button>
+                        </div>
+
+                        <!-- Info Pills (Smaller for Mobile) -->
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            <div *ngIf="item.mob_no || item.phone" class="inline-flex items-center px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider bg-slate-50 text-slate-500 border border-slate-100">
+                                <mat-icon class="!text-[10px] !w-2.5 !h-2.5 mr-1 text-slate-300">phone</mat-icon> {{ item.mob_no || item.phone }}
+                            </div>
+                            <ng-container *ngIf="entityType === 'employee'">
+                                <div *ngFor="let role of item.roles" class="inline-flex items-center px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider border"
+                                     [ngClass]="getRoleClass(role.name)">
+                                    <mat-icon class="!text-[10px] !w-2.5 !h-2.5 mr-1 opacity-70">security</mat-icon> {{ role.name }}
+                                </div>
+                            </ng-container>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-50/50">
+                            <span class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Added {{ formatDate(item.created_at) }}</span>
+                            <div class="flex gap-2">
+                                <button mat-icon-button color="primary" class="!w-8 !h-8 !bg-primary/5 hover:!bg-primary/10" (click)="view(item)">
+                                    <mat-icon class="!text-lg">visibility</mat-icon>
+                                </button>
+                                <button mat-icon-button color="accent" class="!w-8 !h-8 !bg-accent/5 hover:!bg-accent/10" (click)="edit(item)">
+                                    <mat-icon class="!text-lg">edit</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <mat-menu #mobileMenu="matMenu" class="!rounded-2xl">
+                            <button mat-menu-item (click)="delete(item)" class="text-rose-500 font-bold uppercase tracking-widest text-[10px]">
+                                <mat-icon color="warn">delete</mat-icon> Delete Account
+                            </button>
+                        </mat-menu>
+                    </div>
                 </div>
-              </div>
-            </mat-cell>
-          </ng-container>
 
-          <!-- Phone -->
-          <ng-container matColumnDef="phone">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-md>Phone</mat-header-cell>
-            <mat-cell *matCellDef="let client" fxHide.lt-md>
-              <span class="entity-subtext">{{ client.phone || '---' }}</span>
-            </mat-cell>
-          </ng-container>
+                <!-- 📋 Desktop Table View (>= md) -->
+                <div class="hidden md:block overflow-hidden bg-white">
+                    <table mat-table [dataSource]="dataSource" matSort class="w-full !table-fixed border-separate border-spacing-0">
+                        
+                        <!-- Profile Column (Wider for Identity) -->
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100 w-[30%]">
+                                <div class="px-6 py-5 whitespace-nowrap">Identity</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item; let i = index" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4 flex items-center gap-4 min-w-0">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm uppercase shadow-sm shrink-0"
+                                         [ngClass]="'bg-gradient-to-br ' + (i % 3 === 0 ? 'from-indigo-400 to-indigo-600' : (i % 3 === 1 ? 'from-blue-400 to-indigo-600' : 'from-violet-400 to-indigo-600'))">
+                                        {{ getInitials(item.name) }}
+                                    </div>
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="font-bold text-surface-900 leading-tight truncate">{{ item.name }}</span>
+                                        <span class="text-xs text-slate-400 font-medium italic truncate">{{ item.email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </ng-container>
 
-          <!-- Created -->
-          <ng-container matColumnDef="createdAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-lg>Acquired</mat-header-cell>
-            <mat-cell *matCellDef="let client" fxHide.lt-lg>
-              <span class="entity-subtext">{{ formatDate(client.created_at) }}</span>
-            </mat-cell>
-          </ng-container>
+                        <!-- Context Column (Dept/Company) -->
+                        <ng-container matColumnDef="department">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Department</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap border"
+                                          [ngClass]="getDeptClass(item.main_department)">
+                                        {{ item.main_department || 'Unassigned' }}
+                                    </span>
+                                </div>
+                            </td>
+                        </ng-container>
 
-          <!-- Actions -->
-          <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
-            <mat-cell *matCellDef="let client">
-              <!-- Desktop Actions -->
-              <div class="action-group" fxHide.lt-md>
-                <button mat-icon-button class="btn-view" (click)="view(client)" matTooltip="View Details">
-                  <mat-icon>visibility</mat-icon>
-                </button>
-                <button mat-icon-button class="btn-edit" (click)="edit(client)" matTooltip="Edit Profile">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="btn-delete" (click)="delete(client)" matTooltip="Delete Client">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
+                        <!-- Roles Column -->
+                        <ng-container matColumnDef="roles">
+                            <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Access Roles</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4 flex flex-wrap gap-1.5">
+                                    <span *ngFor="let role of item.roles" class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border whitespace-nowrap"
+                                          [ngClass]="getRoleClass(role.name)">
+                                        {{ role.name }}
+                                    </span>
+                                    <span *ngIf="item.roles?.length === 0" class="text-[9px] font-bold text-slate-300 uppercase italic">No roles</span>
+                                </div>
+                            </td>
+                        </ng-container>
 
-              <!-- Mobile/Tablet Action Menu -->
-              <div fxHide.gt-sm>
-                <button mat-icon-button [matMenuTriggerFor]="clientMenu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #clientMenu="matMenu">
-                  <button mat-menu-item (click)="view(client)">
-                    <mat-icon color="primary">visibility</mat-icon>
-                    <span>View Details</span>
-                  </button>
-                  <button mat-menu-item (click)="edit(client)">
-                    <mat-icon color="accent">edit</mat-icon>
-                    <span>Edit Profile</span>
-                  </button>
-                  <button mat-menu-item (click)="delete(client)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    <span>Delete Client</span>
-                  </button>
-                </mat-menu>
-              </div>
-            </mat-cell>
-          </ng-container>
+                        <!-- Contact Column -->
+                        <ng-container matColumnDef="mobile">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Contact</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4 flex items-center gap-2 text-slate-500 font-medium text-sm whitespace-nowrap">
+                                    <mat-icon class="!text-sm !w-4 !h-4 text-slate-300">phone</mat-icon>
+                                    {{ item.mob_no || item.phone || '---' }}
+                                </div>
+                            </td>
+                        </ng-container>
 
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-        <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
-      </div>
+                        <!-- Joined Column -->
+                        <ng-container matColumnDef="created">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Registered</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4">
+                                    <span class="text-xs text-slate-500 font-medium whitespace-nowrap">{{ formatDate(item.created_at) }}</span>
+                                </div>
+                            </td>
+                        </ng-container>
 
-    </ng-container>
+                        <!-- Client specific columns -->
+                        <ng-container matColumnDef="phone">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Phone</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50">
+                                <div class="px-6 py-4 text-sm font-medium text-slate-600 whitespace-nowrap">
+                                    {{ item.phone || '---' }}
+                                </div>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="createdAt">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                <div class="px-6 py-5 whitespace-nowrap">Acquired</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50 text-xs text-slate-500">
+                                <div class="px-6 py-4 text-xs text-slate-500 whitespace-nowrap">
+                                    {{ formatDate(item.created_at) }}
+                                </div>
+                            </td>
+                        </ng-container>
 
-  </mat-card-content>
-</mat-card>
+                        <!-- Actions Column (Pinned Width) -->
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100 w-[120px]">
+                                <div class="px-6 py-5 text-right whitespace-nowrap">Actions</div>
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="!p-0 border-b border-slate-50 text-right">
+                                <div class="px-6 py-4 flex justify-end gap-1">
+                                    <button mat-icon-button color="primary" class="hover:bg-primary/5 transition-all hover:scale-110" matTooltip="View Detail" (click)="view(item)">
+                                        <mat-icon class="!text-lg">visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="accent" class="hover:bg-accent/5 transition-all hover:scale-110" matTooltip="Edit" (click)="edit(item)">
+                                        <mat-icon class="!text-lg">edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" class="hover:bg-red-50 transition-all hover:scale-110" matTooltip="Delete" (click)="delete(item)">
+                                        <mat-icon class="!text-lg">delete</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                            class="even:bg-slate-50/50 hover:bg-primary/5 transition-colors cursor-pointer group"></tr>
+                    </table>
+
+                    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons class="!bg-slate-50/30 !border-t !border-slate-100"></mat-paginator>
+                </div>
+            </ng-container>
+        </mat-card-content>
+    </mat-card>
+</div>

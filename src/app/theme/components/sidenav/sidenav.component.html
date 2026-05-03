@@ -1,17 +1,16 @@
-<mat-toolbar color="primary" 
-    class="sidenav-header flex items-center justify-center">
-    <div class="header-container flex items-center w-full" 
+<mat-toolbar class="sidenav-header shadow-sm">
+    <div class="header-container flex items-center w-full px-4" 
         [class.justify-between]="settings.menuType != 'mini'"
         [class.justify-center]="settings.menuType == 'mini'">
-        <a mat-raised-button color="accent" (click)="closeSubMenus()" class="small-logo">P</a>
-        <a *ngIf="settings.menuType == 'default'" class="logo" (click)="closeSubMenus()">
-            {{ serviceName === 'Prabha Analytics' ? 'PRABHA' : 'POTHANSAI' }}
+        <a class="logo-wrapper flex items-center no-underline" [href]="staticWebsiteUrl">
+            <img src="assets/img/logo/logo.jpeg" alt="Logo" class="logo-img">
+            <div *ngIf="settings.menuType == 'default'" class="flex flex-col ml-3">
+                <span class="logo-text">PothansAI</span>
+                <span *ngIf="isDemoDashboard || (serviceName && router.url.includes('/dashboard/client'))" class="text-[9px] font-black text-[#764ba2] opacity-60 tracking-[0.2em] uppercase mt-[-2px] whitespace-nowrap">
+                    {{ isDemoDashboard ? 'Prabha Analytics' : serviceName }}
+                </span>
+            </div>
         </a>
-        <svg *ngIf="settings.menuType != 'mini'" class="pin" (click)="settings.sidenavIsPinned = !settings.sidenavIsPinned">
-            <path *ngIf="!settings.sidenavIsPinned" d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" />
-            <path *ngIf="settings.sidenavIsPinned"
-                d="M2,5.27L3.28,4L20,20.72L18.73,22L12.8,16.07V22H11.2V16H6V14L8,12V11.27L2,5.27M16,12L18,14V16H17.82L8,6.18V4H7V2H17V4H16V12Z" />
-        </svg>
     </div>
 </mat-toolbar>
 

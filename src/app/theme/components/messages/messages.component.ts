@@ -35,6 +35,13 @@ export class MessagesComponent implements OnInit {
   }
 
   private loadFollowUpLeads() {
+    // Only fetch leads if a user is logged in
+    const currentUser = this.authService.getLoggedInUser();
+    if (!currentUser) {
+        console.log('[MessagesComponent] No user logged in. Skipping follow-up leads fetch.');
+        return;
+    }
+
     const isAdmin = this.authService.hasRole(1);
     const leads$ = isAdmin ? this.leadsService.getAllFollowUpLeads() : this.leadsService.getFollowUpLeads();
     

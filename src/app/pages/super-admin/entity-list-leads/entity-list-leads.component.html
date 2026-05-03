@@ -1,180 +1,254 @@
-<div class="leads-container" fxLayout="column" fxGap="20px">
+<div class="p-0 sm:p-6 bg-slate-50/50 min-h-screen">
+    <div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+        
+        <!-- 🚀 Modern Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl shadow-premium border border-slate-100">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 shadow-sm">
+                    <mat-icon class="scale-125">admin_panel_settings</mat-icon>
+                </div>
+                <div class="flex flex-col">
+                    <h2 class="text-2xl font-black text-slate-900 leading-none m-0 uppercase tracking-tight">{{ title }}</h2>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                        Global Management • {{ (leads$ | async)?.length || 0 }} Total Records
+                    </p>
+                </div>
+            </div>
 
-    <!-- Header Section -->
-    <div fxLayout="row" fxLayoutAlign="space-between center" class="header-section">
-        <h2 class="page-title">{{ title }}</h2>
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
-            <mat-chip *ngIf="leads$ | async as leads" class="count-chip">
-                Total: {{ leads.length }}
-            </mat-chip>
-
-            <button mat-stroked-button 
-                    [color]="showingFollowUps ? 'warn' : 'primary'" 
-                    (click)="toggleFollowUps()"
-                    [matBadge]="(followUpCount$ | async) || 0" 
-                    matBadgeColor="warn" 
-                    matBadgePosition="above after"
-                    class="kpi-btn"
-                    style="border-radius: 8px; font-weight: 600;">
-                <mat-icon>{{ showingFollowUps ? 'view_list' : 'assignment_late' }}</mat-icon>
-                {{ showingFollowUps ? 'Back to All Leads' : 'Pending Follow-Ups' }}
-            </button>
+            <div class="flex flex-row items-center gap-2 w-full md:w-auto">
+                <button mat-flat-button 
+                        [color]="showingFollowUps ? 'warn' : 'primary'" 
+                        (click)="toggleFollowUps()"
+                        class="!rounded-xl h-10 md:h-11 !font-black uppercase tracking-widest text-[9px] md:text-[10px] flex-1 md:flex-none shadow-lg transition-all px-3 md:px-6"
+                        [ngClass]="showingFollowUps ? 'shadow-rose-200' : 'shadow-primary/20'">
+                    <mat-icon class="md:mr-2 !text-xs md:!text-sm !w-4 !h-4">{{ showingFollowUps ? 'view_list' : 'assignment_late' }}</mat-icon>
+                    <span class="hidden sm:inline">{{ showingFollowUps ? 'View All Leads' : 'Global Follow-Ups' }}</span>
+                    <span class="sm:hidden">{{ showingFollowUps ? 'All' : 'Pending' }}</span>
+                    <span *ngIf="(followUpCount$ | async) as count" class="ml-1 md:ml-2 bg-white/20 px-1 py-0.5 rounded text-[8px] md:text-[9px]">{{ count }}</span>
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- Main Content Card -->
-    <mat-card class="leads-card">
-        <mat-card-header>
-            <mat-card-title>{{ showingFollowUps ? 'All Follow-Up Actions' : (leadType | titlecase) + ' Leads' }}</mat-card-title>
-            <mat-card-subtitle>{{ showingFollowUps ? 'Global view of leads requiring follow-up attention' : 'Manage and view all ' + leadType + ' leads' }}</mat-card-subtitle>
-        </mat-card-header>
+        <!-- 📋 Main Content Card -->
+        <mat-card class="!rounded-3xl shadow-premium border-none overflow-hidden !p-0 bg-white">
+            <mat-card-content class="relative">
+                <div *ngIf="leads$ | async as leads; else loading">
 
-        <mat-card-content>
-            <div *ngIf="leads$ | async as leads; else loading">
-
-                <!-- Table Container -->
-                <div class="table-container" *ngIf="leads.length > 0; else emptyState">
-                    <table mat-table [dataSource]="leads" class="leads-table">
-
-                        <!-- Name & Avatar Column -->
-                        <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef>Lead Profile</th>
-                            <td mat-cell *matCellDef="let lead" class="name-cell">
-                                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
-                                    <div class="lead-avatar" [style.background-color]="lead.name | initialColor">
-                                        {{ getInitials(lead.name) }}
+                    <div *ngIf="leads.length > 0; else emptyState">
+                        
+                        <!-- 📱 Mobile Card View (< md) -->
+                        <div class="flex flex-col gap-3 p-4 md:hidden">
+                            <div *ngFor="let lead of leads; let i = index" 
+                                 class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 transition-all active:scale-[0.98]">
+                                
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm uppercase shadow-sm shrink-0"
+                                             [style.background-color]="lead.name | initialColor">
+                                            {{ getInitials(lead.name) }}
+                                        </div>
+                                        <div class="flex flex-col min-w-0">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-100">
+                                                    ID: #{{ lead.id }}
+                                                </span>
+                                                <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border"
+                                                      [ngClass]="getStatusClass(lead.status)">
+                                                    {{ lead.status }}
+                                                </span>
+                                            </div>
+                                            <h4 class="m-0 font-bold text-slate-900 text-base tracking-tight truncate leading-tight">{{ lead.name }}</h4>
+                                        </div>
                                     </div>
-                                    <div fxLayout="column">
-                                        <span class="lead-name text-truncate">{{ lead.name }}</span>
-                                        <span class="lead-id">ID: #{{ lead.id }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <!-- Combined Contact Column -->
-                        <ng-container matColumnDef="contact">
-                            <th mat-header-cell *matHeaderCellDef fxHide.lt-md>Contact Info</th>
-                            <td mat-cell *matCellDef="let lead" class="contact-cell" fxHide.lt-md>
-                                <div fxLayout="column" fxLayoutGap="4px">
-                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-                                        <mat-icon class="mini-icon">email</mat-icon>
-                                        <span class="small-text">{{ lead.email }}</span>
-                                    </div>
-                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-                                        <mat-icon class="mini-icon">phone</mat-icon>
-                                        <span class="small-text">{{ lead.mob_no }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <!-- Added By Column -->
-                        <ng-container matColumnDef="emp_name">
-                            <th mat-header-cell *matHeaderCellDef fxHide.lt-lg>Added By</th>
-                            <td mat-cell *matCellDef="let lead" class="added-by-cell" fxHide.lt-lg>
-                                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-                                    <mat-icon class="mini-icon">person</mat-icon>
-                                    <span class="small-text">{{ lead.emp_name || 'System' }}</span>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <!-- Lead Source Column -->
-                        <ng-container matColumnDef="lead_source">
-                            <th mat-header-cell *matHeaderCellDef fxHide.lt-md>Source</th>
-                            <td mat-cell *matCellDef="let lead" fxHide.lt-md>
-                                <span class="badge source-badge">{{ lead.lead_source }}</span>
-                            </td>
-                        </ng-container>
-
-                        <!-- Status Column -->
-                        <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef>Status</th>
-                            <td mat-cell *matCellDef="let lead">
-                                <span class="badge status-badge" [ngClass]="getStatusClass(lead.status)">
-                                    {{ lead.status }}
-                                </span>
-                            </td>
-                        </ng-container>
-
-                        <!-- Created Date Column -->
-                        <ng-container matColumnDef="created_at">
-                            <th mat-header-cell *matHeaderCellDef fxHide.lt-lg>Added On</th>
-                            <td mat-cell *matCellDef="let lead" class="date-cell" fxHide.lt-lg>
-                                <div fxLayout="column">
-                                    <span class="date-text">{{ lead.created_at | date:'MMM dd, yyyy' }}</span>
-                                    <span class="time-ago">{{ lead.created_at | timeAgo }}</span>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <!-- Actions Column -->
-                        <ng-container matColumnDef="actions">
-                            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
-                            <td mat-cell *matCellDef="let lead" class="actions-cell">
-                                <!-- Desktop-only Actions -->
-                                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxHide.lt-md>
-                                    <button mat-icon-button class="action-btn view-btn" matTooltip="View Detail" (click)="onView(lead)">
-                                        <mat-icon>remove_red_eye</mat-icon>
-                                    </button>
-                                    <button mat-icon-button class="action-btn edit-btn" matTooltip="Update" (click)="onEdit(lead)">
-                                        <mat-icon>edit_note</mat-icon>
-                                    </button>
-                                    <button mat-icon-button class="action-btn delete-btn" matTooltip="Remove" (click)="onDelete(lead)">
-                                        <mat-icon>delete_outline</mat-icon>
+                                    <button mat-icon-button [matMenuTriggerFor]="mobileMenu" class="!w-8 !h-8 !leading-8 !bg-slate-50/50">
+                                        <mat-icon class="!text-lg text-slate-400">more_vert</mat-icon>
                                     </button>
                                 </div>
 
-                                <!-- Mobile/Tablet Action Menu -->
-                                <div fxHide.gt-sm>
-                                    <button mat-icon-button [matMenuTriggerFor]="actionMenu">
-                                        <mat-icon>more_vert</mat-icon>
-                                    </button>
-                                    <mat-menu #actionMenu="matMenu">
-                                        <button mat-menu-item (click)="onView(lead)">
-                                            <mat-icon class="view-icon">remove_red_eye</mat-icon>
-                                            <span>View Details</span>
+                                <!-- Contact Info (Mobile) -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="flex items-center gap-2 bg-slate-50/50 p-2 rounded-lg border border-slate-100/50">
+                                        <mat-icon class="!text-xs !w-3.5 !h-3.5 text-slate-300">phone</mat-icon>
+                                        <span class="text-[10px] font-bold text-slate-600 truncate">{{ lead.mob_no }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-slate-50/50 p-2 rounded-lg border border-slate-100/50">
+                                        <mat-icon class="!text-xs !w-3.5 !h-3.5 text-slate-300">hub</mat-icon>
+                                        <span class="text-[10px] font-bold text-slate-600 truncate uppercase">{{ lead.lead_source }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                                    <div class="flex flex-col">
+                                        <span class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Registered {{ lead.created_at | date:'MMM dd, yyyy' }}</span>
+                                        <span class="text-[9px] font-bold text-primary truncate">Assigned: {{ lead.emp_name || 'System' }}</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button mat-icon-button color="primary" class="!w-8 !h-8 !bg-primary/5 hover:!bg-primary/10" (click)="onView(lead)">
+                                            <mat-icon class="!text-lg">visibility</mat-icon>
                                         </button>
-                                        <button mat-menu-item (click)="onEdit(lead)">
-                                            <mat-icon class="edit-icon">edit_note</mat-icon>
-                                            <span>Edit Lead</span>
+                                        <button mat-icon-button color="accent" class="!w-8 !h-8 !bg-accent/5 hover:!bg-accent/10" (click)="onEdit(lead)">
+                                            <mat-icon class="!text-lg">edit_note</mat-icon>
                                         </button>
-                                        <button mat-menu-item (click)="onDelete(lead)">
-                                            <mat-icon class="delete-icon text-danger">delete_outline</mat-icon>
-                                            <span class="text-danger">Delete Lead</span>
-                                        </button>
-                                    </mat-menu>
+                                    </div>
                                 </div>
-                            </td>
-                        </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+                                <mat-menu #mobileMenu="matMenu" class="!rounded-2xl">
+                                    <button mat-menu-item (click)="onDelete(lead)" class="text-rose-500 font-bold uppercase tracking-widest text-[10px]">
+                                        <mat-icon color="warn">delete_outline</mat-icon> Remove Global Record
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </div>
 
-                    </table>
+                        <!-- 💻 Desktop Table View (>= md) -->
+                        <div class="hidden md:block overflow-hidden">
+                            <table mat-table [dataSource]="leads" class="w-full !table-fixed border-separate border-spacing-0">
+
+                                <!-- Lead Profile Column -->
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100 w-[25%]">
+                                        <div class="px-6 py-5">Global Lead Profile</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50">
+                                        <div class="px-6 py-4 flex items-center gap-4 min-w-0">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm uppercase shadow-sm shrink-0"
+                                                 [style.background-color]="lead.name | initialColor">
+                                                {{ getInitials(lead.name) }}
+                                            </div>
+                                            <div class="flex flex-col min-w-0">
+                                                <span class="font-bold text-slate-900 leading-tight truncate">{{ lead.name }}</span>
+                                                <span class="text-[10px] text-slate-400 font-bold uppercase mt-0.5">ID: #{{ lead.id }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Contact Info Column -->
+                                <ng-container matColumnDef="contact">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                        <div class="px-6 py-5">Contact Details</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50">
+                                        <div class="px-6 py-4 flex flex-col gap-1 min-w-0">
+                                            <div class="flex items-center gap-2 text-slate-600 text-xs font-medium truncate">
+                                                <mat-icon class="!text-xs !w-3.5 !h-3.5 text-slate-300">email</mat-icon>
+                                                {{ lead.email }}
+                                            </div>
+                                            <div class="flex items-center gap-2 text-slate-600 text-xs font-bold truncate">
+                                                <mat-icon class="!text-xs !w-3.5 !h-3.5 text-slate-300">phone</mat-icon>
+                                                {{ lead.mob_no }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Source Column -->
+                                <ng-container matColumnDef="lead_source">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                        <div class="px-6 py-5 text-center">Source</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50 text-center">
+                                        <div class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest border border-slate-200">
+                                                {{ lead.lead_source }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Status Column -->
+                                <ng-container matColumnDef="status">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                        <div class="px-6 py-5 text-center">Lifecycle</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50 text-center">
+                                        <div class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border inline-block min-w-[80px]"
+                                                  [ngClass]="getStatusClass(lead.status)">
+                                                {{ lead.status }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Added By Column -->
+                                <ng-container matColumnDef="emp_name">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                        <div class="px-6 py-5">Assigned Agent</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50">
+                                        <div class="px-6 py-4 flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                                                <mat-icon class="!text-[14px] !w-auto !h-auto">person</mat-icon>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-600 truncate">{{ lead.emp_name || 'System' }}</span>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Created Date Column -->
+                                <ng-container matColumnDef="created_at">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
+                                        <div class="px-6 py-5">Registration</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50">
+                                        <div class="px-6 py-4 flex flex-col">
+                                            <span class="text-xs font-bold text-slate-700 leading-none">{{ lead.created_at | date:'MMM dd, yyyy' }}</span>
+                                            <span class="text-[10px] font-medium text-slate-400 mt-1 uppercase">{{ lead.created_at | timeAgo }}</span>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Actions Column -->
+                                <ng-container matColumnDef="actions">
+                                    <th mat-header-cell *matHeaderCellDef class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100 w-[140px]">
+                                        <div class="px-6 py-5 text-right">Actions</div>
+                                    </th>
+                                    <td mat-cell *matCellDef="let lead" class="!p-0 border-b border-slate-50">
+                                        <div class="px-6 py-4 flex justify-end gap-1">
+                                            <button mat-icon-button color="primary" class="hover:bg-primary/5 transition-all hover:scale-110" matTooltip="View Details" (click)="onView(lead)">
+                                                <mat-icon class="!text-lg">visibility</mat-icon>
+                                            </button>
+                                            <button mat-icon-button color="accent" class="hover:bg-accent/5 transition-all hover:scale-110" matTooltip="Edit Lead" (click)="onEdit(lead)">
+                                                <mat-icon class="!text-lg">edit_note</mat-icon>
+                                            </button>
+                                            <button mat-icon-button color="warn" class="hover:bg-rose-50 transition-all hover:scale-110" matTooltip="Delete" (click)="onDelete(lead)">
+                                                <mat-icon class="!text-lg">delete_outline</mat-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                                    class="even:bg-slate-50/50 hover:bg-primary/5 transition-colors cursor-pointer group"></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 🚫 Empty State -->
+                    <ng-template #emptyState>
+                        <div class="flex flex-col items-center justify-center py-32 px-8 text-center">
+                            <div class="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center text-slate-200 mb-6 border border-slate-100 animate-pulse">
+                                <mat-icon class="!text-6xl !w-16 !h-16">cloud_off</mat-icon>
+                            </div>
+                            <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">No {{ leadType }} leads found</h3>
+                            <p class="text-slate-400 text-sm max-w-[300px] leading-relaxed">The global directory is currently empty.</p>
+                        </div>
+                    </ng-template>
+
                 </div>
 
-                <!-- Empty State -->
-                <ng-template #emptyState>
-                    <div fxLayout="column" fxLayoutAlign="center center" class="empty-state">
-                        <mat-icon class="empty-icon">inbox</mat-icon>
-                        <h3>No {{ leadType }} leads found</h3>
-                        <p>There are currently no leads in this category.</p>
+                <!-- ⏳ Loading Template -->
+                <ng-template #loading>
+                    <div class="flex flex-col items-center justify-center py-32 text-center">
+                        <mat-spinner diameter="40" strokeWidth="3"></mat-spinner>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-6">Global database sync in progress...</p>
                     </div>
                 </ng-template>
 
-            </div>
-
-            <!-- Loading Template -->
-            <ng-template #loading>
-                <div fxLayout="column" fxLayoutAlign="center center" class="loading-state">
-                    <mat-spinner diameter="50"></mat-spinner>
-                    <p>Loading leads...</p>
-                </div>
-            </ng-template>
-
-        </mat-card-content>
-    </mat-card>
-
+            </mat-card-content>
+        </mat-card>
+    </div>
 </div>

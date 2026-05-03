@@ -166,11 +166,11 @@
                 </div>
             </div>
 
-            <div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 16px;">
-                <mat-form-field appearance="outline" style="width: 100%; max-width: 320px;">
-                    <mat-label>Filter Products</mat-label>
+            <div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 20px;">
+                <mat-form-field appearance="outline" class="w-full sm:max-w-xs shadow-sm bg-white rounded-lg">
+                    <mat-label>Search Products</mat-label>
                     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Wireless Mouse" #input>
-                    <mat-icon matSuffix>search</mat-icon>
+                    <mat-icon matSuffix class="text-primary">search</mat-icon>
                 </mat-form-field>
             </div>
 
@@ -179,7 +179,8 @@
                 Removed the duplicate from the parent .table-container.
                 The mat-elevation-z2 shadow is combined into this single div.
             -->
-            <div class="mat-elevation-z2 table-scroll-wrapper">
+            <!-- Desktop Table View -->
+            <div class="mat-elevation-z2 table-scroll-wrapper hidden md:block">
                 <table mat-table [dataSource]="dataSource" matSort class="premium-table">
 
                     <!-- Product Name Column -->
@@ -245,11 +246,56 @@
                         </td>
                     </tr>
                 </table>
-
-                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons
-                    aria-label="Select page of products">
-                </mat-paginator>
             </div>
+
+            <!-- Mobile Card View -->
+            <div class="flex flex-col gap-4 md:hidden pb-10">
+                <div class="group/product bg-white p-5 rounded-2xl shadow-premium border border-surface-100 transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-1 active:scale-[0.98]" 
+                     *ngFor="let item of dataSource.filteredData">
+                    
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-50 transition-colors group-hover/product:border-primary/10">
+                        <div class="font-bold text-surface-900 text-lg leading-tight transition-colors group-hover/product:text-primary">{{ item.name }}</div>
+                        <div class="bg-primary text-white text-[11px] font-black px-3 py-1 rounded-full shadow-lg shadow-primary/20 whitespace-nowrap transition-all group-hover/product:scale-110 group-hover/product:shadow-primary/40">
+                            {{ item.recommended_qty }} Units
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-4 gap-x-6">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 tracking-wider transition-colors group-hover/product:text-slate-500">Unit Cost</label>
+                            <span class="font-bold text-slate-700 text-sm">₹{{ item.unit_cost | number:'1.0-0' }}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 tracking-wider text-green-500/70 transition-colors group-hover/product:text-green-500">Unit Profit</label>
+                            <span class="font-bold text-green-600 text-sm group-hover/product:translate-x-1 transition-transform origin-left">+₹{{ item.unit_profit | number:'1.0-0' }}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 tracking-wider transition-colors group-hover/product:text-slate-500">Avg Sales</label>
+                            <span class="font-bold text-slate-700 text-sm">{{ item.avg_monthly_sales }} / mo</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 tracking-wider transition-colors group-hover/product:text-slate-500">EBO Score</label>
+                            <span class="font-bold text-slate-700 text-sm">{{ item.score | number:'1.2-2' }}</span>
+                        </div>
+                        
+                        <!-- Nested Group for Total Investment -->
+                        <div class="group/total col-span-2 mt-2 pt-3 border-t border-slate-50 flex justify-between items-center transition-all duration-300 hover:bg-primary/5 hover:px-2 hover:rounded-xl group-hover/product:border-primary/10">
+                            <label class="text-xs font-bold text-slate-500 transition-colors group-hover/product:text-primary/70 group-hover/total:text-primary">Total Investment</label>
+                            <span class="font-black text-primary text-xl transition-all group-hover/product:scale-105 group-hover/total:scale-110 group-hover/total:text-primary-dark">₹{{ item.subtotal | number:'1.0-0' }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div *ngIf="dataSource.filteredData.length === 0" class="p-12 text-center bg-white rounded-2xl shadow-premium border border-slate-50">
+                    <mat-icon class="text-slate-300 text-6xl mb-4">search_off</mat-icon>
+                    <p class="text-slate-500 font-medium">No products match "{{ input.value }}"</p>
+                </div>
+            </div>
+
+            <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons
+                class="mt-4 rounded-xl overflow-hidden shadow-sm border border-slate-100"
+                aria-label="Select page of products">
+            </mat-paginator>
 
         </div>
 

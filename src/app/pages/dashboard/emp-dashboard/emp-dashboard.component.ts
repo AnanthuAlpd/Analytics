@@ -105,6 +105,17 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
     }
   ];
 
+  // Calendar properties
+  currentDate: Date = new Date();
+  calendarDays: any[] = [];
+  selectedDate: Date = new Date();
+  monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  // Lead Data for filtering
+  allLeads: Lead[] = [];
+  allFollowUps: Lead[] = [];
+  leadNotifications: any[] = [];
+
   // Subscription management
   private destroy$ = new Subject<void>();
 
@@ -119,6 +130,7 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initSparklineCharts();
     this.loadDashboardData();
+    this.generateCalendar();
   }
 
   private initSparklineCharts(): void {
@@ -237,7 +249,8 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
     this.leadsService.getCurrentUserClientLeads()
       .pipe(takeUntil(this.destroy$))
       .subscribe(leads => {
-        const leadsArray = leads || [];
+        this.allLeads = leads || [];
+        const leadsArray = this.allLeads;
         const currentMonth = this.toLocalISO(new Date()).substring(0, 7);
         
         this.clientLeads = leadsArray.filter(l => {
@@ -247,7 +260,6 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
         }).length;
         
         const trend = this.getTrendData(leadsArray, 'Client');
-        console.log(`[Sparkline] Final Client Array:`, trend.data);
         
         if (this.clientSparklineOptions) {
           this.clientSparklineOptions = { 
@@ -256,13 +268,13 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
             xaxis: { categories: [...trend.categories] }
           };
           
-          // Force manual refresh
           setTimeout(() => {
             if (this.clientChartComponent) {
               this.clientChartComponent.updateOptions(this.clientSparklineOptions);
             }
           }, 100);
         }
+        this.filterNotificationsByDate();
         this.cdr.detectChanges();
       });
 
@@ -301,7 +313,8 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
     this.leadsService.getFollowUpLeads()
       .pipe(takeUntil(this.destroy$))
       .subscribe(leads => {
-        const leadsArray = leads || [];
+        this.allFollowUps = leads || [];
+        const leadsArray = this.allFollowUps;
         this.followUpLeads = leadsArray.length;
 
         const trend = this.getTrendData(leadsArray, 'FollowUp');
@@ -313,7 +326,6 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
             xaxis: { categories: [...trend.categories] }
           };
 
-          // Force manual refresh
           setTimeout(() => {
             if (this.followUpChartComponent) {
               this.followUpChartComponent.updateOptions(this.followUpSparklineOptions);
@@ -321,9 +333,12 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
           }, 100);
         }
 
+        this.filterNotificationsByDate();
         this.cdr.detectChanges();
       });
   }
+
+
 
   private getTrendData(leads: Lead[], type: string): { data: number[], categories: string[] } {
     // Get today at midnight local time
@@ -389,5 +404,118 @@ export class EmpDashboardComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) this.loadDashboardData();
     });
+  }
+  // ================= CALENDAR LOGIC =================
+  generateCalendar(): void {
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+    
+    this.calendarDays = [];
+
+    // Previous month's padding days
+    for (let i = firstDay; i > 0; i--) {
+      this.calendarDays.push({
+        day: prevMonthDays - i + 1,
+        currentMonth: false,
+        hasActivity: false
+      });
+    }
+
+    // Current month's days
+    for (let i = 1; i <= daysInMonth; i++) {
+      const isToday = i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
+      
+      // Random activity for demo (dates 5, 12, 18, 25)
+      const hasActivity = [5, 12, 18, 25].includes(i);
+      
+      this.calendarDays.push({
+        day: i,
+        currentMonth: true,
+        isToday,
+        hasActivity,
+        selected: i === this.selectedDate.getDate() && month === this.selectedDate.getMonth() && year === this.selectedDate.getFullYear()
+      });
+    }
+
+    // Next month's padding days (to fill 42 cells grid)
+    const remainingCells = 42 - this.calendarDays.length;
+    for (let i = 1; i <= remainingCells; i++) {
+      this.calendarDays.push({
+        day: i,
+        currentMonth: false,
+        hasActivity: false
+      });
+    }
+  }
+
+  prevMonth(): void {
+    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+    this.generateCalendar();
+  }
+
+  nextMonth(): void {
+    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+    this.generateCalendar();
+  }
+
+  selectDate(day: any): void {
+    if (day.currentMonth) {
+      this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day.day);
+      this.generateCalendar();
+      this.filterNotificationsByDate();
+    }
+  }
+
+  filterNotificationsByDate(): void {
+    const selectedKey = this.toLocalISO(this.selectedDate);
+    const notifications: any[] = [];
+
+    // 1. Filter Follow-ups for this date
+    this.allFollowUps.forEach(l => {
+      const followUpDate = this.toLocalISO(this.safeParseDate(l.follow_up_date));
+      if (followUpDate === selectedKey) {
+        notifications.push({
+          type: 'followup',
+          title: 'Follow-up Required',
+          description: `Contact ${l.name} regarding ${l.remarks || 'scheduled update'}`,
+          time: 'Scheduled',
+          icon: 'notification_important',
+          color: 'rose'
+        });
+      }
+    });
+
+    // 2. Filter New Leads created on this date
+    this.allLeads.forEach(l => {
+      const createdDate = this.toLocalISO(this.safeParseDate(l.created_at));
+      if (createdDate === selectedKey) {
+        notifications.push({
+          type: 'new',
+          title: 'Lead Assigned',
+          description: `${l.name} was added to your queue`,
+          time: this.getTimeAgo(l.created_at),
+          icon: 'person_add',
+          color: 'blue'
+        });
+      }
+    });
+
+    this.leadNotifications = notifications;
+  }
+
+  getTimeAgo(date: string | Date): string {
+    const now = new Date();
+    const past = new Date(date);
+    const diffInMs = now.getTime() - past.getTime();
+    const diffInMins = Math.floor(diffInMs / (1000 * 60));
+    
+    if (diffInMins < 1) return 'Just now';
+    if (diffInMins < 60) return `${diffInMins}m ago`;
+    if (diffInMins < 1440) return `${Math.floor(diffInMins / 60)}h ago`;
+    return this.toLocalISO(past);
   }
 }

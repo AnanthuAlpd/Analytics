@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -841,15 +843,30 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.revenueChartOptions.xaxis = { ...this.revenueChartOptions.xaxis, categories: categories };
   }
 
+  private ensureArray<T>(data: any): T[] {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (data.data && Array.isArray(data.data)) return data.data;
+    if (data.alerts && Array.isArray(data.alerts)) return data.alerts;
+    if (data.products && Array.isArray(data.products)) return data.products;
+    if (typeof data === 'object') {
+        // Look for any array property as a fallback
+        const arrayProp = Object.values(data).find(val => Array.isArray(val));
+        if (arrayProp) return arrayProp as T[];
+    }
+    return [];
+  }
+
   loadBusinessAlerts(): void {
     this.demoDashboardService.getBusinessAlerts()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.businessAlerts = data;
+          this.businessAlerts = this.ensureArray<BusinessAlert>(data);
         },
         error: (err) => {
           console.error('Error loading business alerts:', err);
+          this.businessAlerts = [];
         }
       });
   }
@@ -859,10 +876,11 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.topPerformers = data;
+          this.topPerformers = this.ensureArray<TopPerformer>(data);
         },
         error: (err) => {
           console.error('Error loading top performers:', err);
+          this.topPerformers = [];
         }
       });
   }
@@ -871,8 +889,15 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.demoDashboardService.getInventoryHealth()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
+        next: (response) => {
+          // Handle wrapped response: { status: 'success', data: { ... } }
+          const data = response && response.data ? response.data : response;
           this.inventoryHealth = data;
+          
+          // Ensure nested arrays are safe for template iteration
+          if (this.inventoryHealth) {
+            this.inventoryHealth.at_risk_products = this.ensureArray(this.inventoryHealth.at_risk_products);
+          }
         },
         error: (err) => {
           console.error('Error loading inventory health:', err);
@@ -885,16 +910,166 @@ export class DemoDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (products) => {
-          this.productList = products;
+          this.productList = this.ensureArray<any>(products);
         },
         error: (err) => {
           console.error('Error loading product list:', err);
+          this.productList = [];
         }
       });
   }
 
   onSelect(event: any): void {
     console.log('Item clicked', event);
+  }
+
+  exportToPdf(): void {
+    const doc = new jsPDF();
+    const timestamp = new Date().getTime();
+    const dateStr = new Date().toLocaleDateString();
+    const timeStr = new Date().toLocaleTimeString();
+
+    // --- 1. PROFESSIONAL HEADER ---
+    doc.setFontSize(22);
+    doc.setTextColor(63, 81, 181); // Primary Indigo
+    doc.text('Business Analytics Executive Report', 14, 22);
+
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${dateStr} at ${timeStr}`, 14, 30);
+    doc.text('Confidential Intelligence Report', 14, 35);
+    
+    // Draw a divider line
+    doc.setDrawColor(230, 230, 230);
+    doc.line(14, 40, 196, 40);
+
+    let currentY = 50;
+
+    // --- 2. EXECUTIVE KPI SUMMARY ---
+    doc.setFontSize(14);
+    doc.setTextColor(40);
+    doc.text('Executive Summary', 14, currentY);
+    currentY += 10;
+
+    const kpiRows = this.kpiCards.map(card => [
+        card.label,
+        card.isCurrency ? `Rs. ${Number(card.value).toLocaleString('en-IN')}` : card.value.toString(),
+        card.trend ? `${card.trend > 0 ? '+' : ''}${card.trend}%` : (card.badge ? `${card.badge}%` : '-')
+    ]);
+
+    autoTable(doc, {
+        head: [['Metric', 'Value', 'Performance']],
+        body: kpiRows,
+        startY: currentY,
+        theme: 'grid',
+        headStyles: { fillColor: [63, 81, 181], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 10, cellPadding: 4 },
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 15;
+
+    // --- 3. FORECAST INTELLIGENCE ---
+    doc.setFontSize(14);
+    doc.setTextColor(40);
+    doc.text('Forecast Intelligence', 14, currentY);
+    currentY += 10;
+
+    const forecastRows = this.forecastCards.map(card => [
+        card.label,
+        card.value.toString(),
+        card.subValue || (card.badge ? card.badge.toString() : '-')
+    ]);
+
+    autoTable(doc, {
+        head: [['AI Prediction Metric', 'Estimated Value', 'Status/Trend']],
+        body: forecastRows,
+        startY: currentY,
+        theme: 'striped',
+        headStyles: { fillColor: [114, 9, 183], textColor: 255 }, // Vibrant Purple for AI
+        styles: { fontSize: 10, cellPadding: 4 }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 15;
+
+    // --- 4. TOP PERFORMING PRODUCTS ---
+    doc.setFontSize(14);
+    doc.setTextColor(40);
+    doc.text('Top Performing Products', 14, currentY);
+    currentY += 10;
+
+    const topPerformerRows = this.topPerformers.map((item, index) => [
+        `#${index + 1}`,
+        item.product_name,
+        item.units_sold.toLocaleString(),
+        `Rs. ${item.revenue.toLocaleString('en-IN')}`
+    ]);
+
+    autoTable(doc, {
+        head: [['Rank', 'Product Name', 'Units Sold', 'Revenue (INR)']],
+        body: topPerformerRows,
+        startY: currentY,
+        theme: 'grid',
+        headStyles: { fillColor: [243, 156, 18], textColor: 255 }, // Amber for performers
+        styles: { fontSize: 9, cellPadding: 3 },
+        columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 15;
+
+    // --- 5. INVENTORY HEALTH ---
+    if (this.inventoryHealth) {
+        // Start a new page if we're near the bottom
+        if (currentY > 230) {
+            doc.addPage();
+            currentY = 20;
+        }
+
+        doc.setFontSize(14);
+        doc.setTextColor(40);
+        doc.text('Inventory Health & Risk Analysis', 14, currentY);
+        currentY += 8;
+
+        doc.setFontSize(10);
+        if (this.inventoryHealth.status === 'Healthy') {
+            doc.setTextColor(46, 204, 113); // Green
+        } else {
+            doc.setTextColor(231, 76, 60); // Red
+        }
+        doc.text(`Overall Status: ${this.inventoryHealth.status.toUpperCase()}`, 14, currentY);
+        currentY += 5;
+
+        doc.setTextColor(80);
+        doc.text(`Total Stock Value (Cost): Rs. ${this.inventoryHealth.total_inventory_value_cost.toLocaleString('en-IN')}`, 14, currentY);
+        currentY += 5;
+        doc.text(`Estimated Sale Value: Rs. ${this.inventoryHealth.total_inventory_value_sale.toLocaleString('en-IN')}`, 14, currentY);
+        currentY += 10;
+
+        if (this.inventoryHealth.at_risk_products && this.inventoryHealth.at_risk_products.length > 0) {
+            const riskRows = this.inventoryHealth.at_risk_products.map(p => [p.name, p.stock.toString()]);
+            autoTable(doc, {
+                head: [['At-Risk Product (Low Stock)', 'Stock Remaining']],
+                body: riskRows,
+                startY: currentY,
+                theme: 'plain',
+                headStyles: { fillColor: [231, 76, 60], textColor: 255 },
+                styles: { fontSize: 9, cellPadding: 2 }
+            });
+        }
+    }
+
+    // --- FOOTER ---
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${i} of ${pageCount}`, 196, 285, { align: 'right' });
+        doc.text('Powered by Prabhas Analytics AI Engine', 14, 285);
+    }
+
+    // TRIGGER DOWNLOAD
+    doc.save(`Prabhas_Analytics_Report_${timestamp}.pdf`);
   }
 
 }

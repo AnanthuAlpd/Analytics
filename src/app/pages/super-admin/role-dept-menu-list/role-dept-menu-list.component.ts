@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Department, Role, SuperAdminService } from 'src/app/services/super-admin.service';
 import { Menu } from 'src/app/theme/components/menu/menu.model';
 import { MenuService } from 'src/app/theme/components/menu/menu.service';
@@ -23,6 +24,8 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>();
   displayedColumns: string[] = [];
   loading = true;
+  errorMessage: string | null = null;
+  isUnauthorized = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   constructor(
@@ -32,20 +35,25 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
     private menuService: MenuService, 
     private dialog: MatDialog,
     private swal: SweetAlertService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadData();
   }
-  loadData(){if (this.data.type === 'department') {
-    this.loadDepartments();
-  } else if (this.data.type === 'role') {
-    this.loadRoles();
+  loadData() {
+    this.errorMessage = null;
+    this.isUnauthorized = false;
+    if (this.data.type === 'department') {
+      this.loadDepartments();
+    } else if (this.data.type === 'role') {
+      this.loadRoles();
+    }
+    else if (this.data.type === 'menu') {
+      this.loadMenus();
+    }
   }
-  else if (this.data.type === 'menu') {
-    this.loadMenus();
-  }}
     
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -63,8 +71,7 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading departments:', error);
-        this.loading = false;
+        this.handleError(error);
       }
     });
   }
@@ -80,8 +87,7 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading roles:', error);
-        this.loading = false;
+        this.handleError(error);
       }
     });
   }
@@ -96,8 +102,7 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading roles:', error);
-        this.loading = false;
+        this.handleError(error);
       }
     });
   }
@@ -173,6 +178,23 @@ export class RoleDeptMenuListComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  private handleError(error: any) {
+    this.loading = false;
+    if (error.status === 401) {
+      this.isUnauthorized = true;
+      this.errorMessage = 'Your session has expired. Please login again to continue.';
+    } else {
+      this.errorMessage = error.error?.message || `Failed to load ${this.data.type}s. Please try again later.`;
+    }
+    console.error(`Error loading ${this.data.type}s:`, error);
+  }
+
+  logout() {
+    this.dialogRef.close();
+    // Assuming you have a logout method in your auth service or just navigate to login
+    this.router.navigate(['/login']);
   }
 
   private capitalize(text: string): string {

@@ -13,11 +13,32 @@ export interface Lead {
   mob_no: string;
   lead_source_id?: number;
   status_id?: number;
+  stage_id?: number;
+  stage_name?: string;
   status?: string;
   lead_source?: string;
   remarks: string;
   created_at: string;
   follow_up_date?: string;
+}
+
+export interface StageAction {
+  id: number;
+  stage_id: number;
+  action_name: string;
+  description: string;
+  is_mandatory: boolean;
+}
+
+export interface LeadStage {
+  id: number;
+  stage_name: string;
+  day_number: number;
+  order_no: number;
+  next_stage_id: number | null;
+  delay_days: number;
+  is_active: boolean;
+  actions: StageAction[];
 }
 
 export interface LeadActivity {
@@ -38,8 +59,8 @@ export interface LeadActivity {
 export class LeadsService {
 
   private apiUrl: string;
-  constructor(private http: HttpClient, private appSettings: AppSettings, private authService: AuthService) { 
-    this.apiUrl = this.appSettings.settings.baseUrl; 
+  constructor(private http: HttpClient, private appSettings: AppSettings, private authService: AuthService) {
+    this.apiUrl = this.appSettings.settings.baseUrl;
   }
 
   getAllLeads(): Observable<Lead[]> {
@@ -126,6 +147,18 @@ export class LeadsService {
 
   getLeadSources(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/leads/sources`);
+  }
+
+  getPipelineStages(): Observable<LeadStage[]> {
+    return this.http.get<LeadStage[]>(`${this.apiUrl}/leads/pipeline-stages`);
+  }
+
+  getActivityTypes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/leads/activity-types`);
+  }
+
+  advanceLeadStage(leadId: number, stageId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/leads/${leadId}/advance-stage`, { stage_id: stageId });
   }
 }
 
