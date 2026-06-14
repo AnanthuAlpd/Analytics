@@ -68,6 +68,6 @@
 <mat-dialog-actions align="end" class="dialog-actions">
   <button mat-button mat-dialog-close class="btn-cancel">Cancel</button>
   <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid" class="btn-primary">
-    {{ isEditMode ? 'Update' : 'Add' }} {{ data.type | titlecase }}
+    {{ isEditMode ? 'Update' : 'Add' }} {{ data.type === 'employee' ? 'Hero' : (data.type === 'client' ? 'Legend' : (data.type | titlecase)) }}
   </button>
 </mat-dialog-actions>

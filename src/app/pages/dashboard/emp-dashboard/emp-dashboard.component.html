@@ -7,7 +7,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
-            <!-- Client Leads Card -->
+            <!-- Legend Leads Card -->
             <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
                 <mat-card-header class="!p-0 mb-6">
                     <div mat-card-avatar
@@ -15,7 +15,7 @@
                         <mat-icon class="!text-3xl !w-7 !h-7">group_add</mat-icon>
                     </div>
                     <div class="flex flex-col ml-4">
-                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Client
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Legend
                             Leads</mat-card-title>
                         <mat-card-subtitle class="!text-xs text-slate-500 !m-0">New this month</mat-card-subtitle>
                     </div>
@@ -42,20 +42,19 @@
                     </div>
                 </mat-card-content>
 
-                <mat-card-actions
-                    class="!p-0 pt-4 flex flex-row justify-between items-center border-t border-slate-100">
-                    <button mat-button color="primary" (click)="viewDetails('client')"
-                        class="!text-xs !font-bold capitalize !px-2">
-                        <mat-icon class="!mr-1">visibility</mat-icon> Details
+                <div class="mt-auto pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
+                    <button mat-flat-button color="primary" (click)="viewDetails('client')"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">visibility</mat-icon> Details
                     </button>
-                    <button mat-stroked-button color="primary" (click)="openLeadFormDialog('Client')"
-                        class="!rounded-lg !text-xs !font-bold !px-3 hover:shadow-sm">
-                        <mat-icon class="!mr-1">person_add</mat-icon> Add
+                    <button mat-flat-button color="primary" (click)="openLeadFormDialog('Client')"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">person_add</mat-icon> Add
                     </button>
-                </mat-card-actions>
+                </div>
             </mat-card>
 
-            <!-- Employee Leads Card -->
+            <!-- Hero Leads Card -->
             <mat-card class="card-premium !bg-white/70 backdrop-blur-lg flex flex-col !p-4">
                 <mat-card-header class="!p-0 mb-6">
                     <div mat-card-avatar
@@ -63,7 +62,7 @@
                         <mat-icon class="!text-3xl !w-7 !h-7">badge</mat-icon>
                     </div>
                     <div class="flex flex-col ml-4">
-                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Employee
+                        <mat-card-title class="!text-lg !font-bold text-slate-800 !m-0 line-clamp-1">Hero
                             Leads</mat-card-title>
                         <mat-card-subtitle class="!text-xs text-slate-500 !m-0">New this month</mat-card-subtitle>
                     </div>
@@ -91,17 +90,16 @@
                     </div>
                 </mat-card-content>
 
-                <mat-card-actions
-                    class="!p-0 pt-4 flex flex-row justify-between items-center border-t border-slate-100">
-                    <button mat-button color="warn" (click)="viewDetails('employee')"
-                        class="!text-xs !font-bold capitalize !px-2">
-                        <mat-icon class="!mr-1">visibility</mat-icon> Details
+                <div class="mt-auto pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
+                    <button mat-flat-button color="warn" (click)="viewDetails('employee')"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">visibility</mat-icon> Details
                     </button>
-                    <button mat-stroked-button color="warn" (click)="openLeadFormDialog('Employee')"
-                        class="!rounded-lg !text-xs !font-bold !px-3 hover:shadow-sm">
-                        <mat-icon class="!mr-1">badge</mat-icon> Add
+                    <button mat-flat-button color="warn" (click)="openLeadFormDialog('Employee')"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">badge</mat-icon> Add
                     </button>
-                </mat-card-actions>
+                </div>
             </mat-card>
 
             <!-- Pending Leads Card -->
@@ -138,13 +136,12 @@
                     </div>
                 </mat-card-content>
 
-                <mat-card-actions class="!p-0 pt-4 flex flex-row items-center border-t border-slate-100">
-                    <button mat-button color="warn" routerLink="/user-leads/emp-leads-list"
-                        class="!text-xs !font-bold capitalize !px-2 flex-grow text-left">
-                        <mat-icon class="!mr-1">visibility</mat-icon> Action Queue
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <button mat-flat-button color="warn" routerLink="/user-leads/emp-leads-list"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">visibility</mat-icon> Action Queue
                     </button>
-                    <div class="w-12 h-1 flex-shrink-0"></div>
-                </mat-card-actions>
+                </div>
             </mat-card>
 
             <!-- Earnings Card -->
@@ -181,12 +178,12 @@
                     </div>
                 </mat-card-content>
 
-                <mat-card-actions class="!p-0 pt-4 border-t border-slate-100">
-                    <button mat-button color="accent"
-                        class="w-full !text-xs !font-bold capitalize flex items-center justify-center">
-                        <mat-icon class="!mr-1">payment</mat-icon> View Earnings
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <button mat-flat-button color="accent"
+                        class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                        <mat-icon class="!mr-1 transition-transform group-hover:scale-110">payment</mat-icon> View Earnings
                     </button>
-                </mat-card-actions>
+                </div>
             </mat-card>
         </div>
     </div>
@@ -320,8 +317,8 @@
                     </mat-card-content>
                     <mat-card-actions class="!p-4 border-t border-slate-100 mt-auto">
                         <button mat-flat-button color="primary" (click)="openResource(res)"
-                            class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide">
-                            <mat-icon class="!mr-1">play_arrow</mat-icon> Watch Now
+                            class="w-full !rounded-lg !py-1 !text-xs font-bold tracking-wide hover:shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 group">
+                            <mat-icon class="!mr-1 transition-transform group-hover:scale-110">play_arrow</mat-icon> Watch Now
                         </button>
                     </mat-card-actions>
                 </mat-card>

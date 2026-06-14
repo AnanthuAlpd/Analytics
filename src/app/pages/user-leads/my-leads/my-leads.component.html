@@ -240,7 +240,7 @@
                             <div class="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center text-slate-200 mb-6 border border-slate-100 animate-pulse">
                                 <mat-icon class="!text-6xl !w-16 !h-16">cloud_off</mat-icon>
                             </div>
-                            <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">No {{ leadType }} leads found</h3>
+                            <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">No {{ leadType === 'employee' ? 'hero' : (leadType === 'client' ? 'legend' : leadType) }} leads found</h3>
                             <p class="text-slate-400 text-sm max-w-[300px] leading-relaxed">Your directory is currently empty. Start adding leads to populate this dashboard.</p>
                             <button mat-stroked-button color="primary" (click)="onAddLead()" class="mt-8 !rounded-xl !font-black uppercase tracking-widest text-[10px] h-10 px-8">
                                 <mat-icon class="mr-2">add</mat-icon> Create First Lead

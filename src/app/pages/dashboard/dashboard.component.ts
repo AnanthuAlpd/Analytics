@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit {
       disableClose: false,
       data: {
         type: type,
-        title: type === 'client' ? 'Recently Added Clients' : 'Recently Added Employees',
+        title: type === 'client' ? 'Recently Added Legends' : 'Recently Added Heroes',
         filterRecent: true
       }
     });

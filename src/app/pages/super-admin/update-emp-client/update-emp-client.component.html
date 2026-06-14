@@ -3,7 +3,7 @@
     <div mat-dialog-title class="dialog-header" fxLayout="row" fxLayoutAlign="space-between center">
       <div fxLayout="column">
         <span class="title">{{ isEditMode ? 'Edit Profile' : 'Create Profile' }}</span>
-        <span class="subtitle">Configure the {{ data.type }}'s account and access roles</span>
+        <span class="subtitle">Configure the {{ data.type === 'employee' ? 'hero' : (data.type === 'client' ? 'legend' : data.type) }}'s account and access roles</span>
       </div>
       <button mat-icon-button type="button" (click)="onCancel()" class="close-icon"><mat-icon>close</mat-icon></button>
     </div>

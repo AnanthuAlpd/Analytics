@@ -61,7 +61,7 @@
                                         </span>
                                         <span [class]="lead.lead_cat === 'Client' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100'"
                                               class="text-[8px] px-1.5 py-0.5 rounded border font-black uppercase tracking-wider">
-                                            {{ lead.lead_cat }}
+                                            {{ lead.lead_cat === 'Employee' ? 'Hero' : (lead.lead_cat === 'Client' ? 'Legend' : lead.lead_cat) }}
                                         </span>
                                     </div>
 

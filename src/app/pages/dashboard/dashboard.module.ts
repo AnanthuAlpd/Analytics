@@ -37,13 +37,13 @@ export const routes: Routes = [
     path: 'employee',
     component: EmpDashboardComponent,
     canActivate: [AuthGuard],
-    data: { breadcrumb: 'Employee Dashboard', expectedRole: 'EMPLOYEE' }
+    data: { breadcrumb: 'Hero Dashboard', expectedRole: 'EMPLOYEE' }
   },
   {
     path: 'client',
     component: ClientDashboardComponent,
     canActivate: [AuthGuard],
-    data: { breadcrumb: 'Client Dashboard', expectedRole: 'CLIENT' }
+    data: { breadcrumb: 'Legend Dashboard', expectedRole: 'CLIENT' }
   }
 ];
 

@@ -27,7 +27,7 @@
             <mat-icon matPrefix>category</mat-icon>
             <mat-select formControlName="lead_cat">
               <mat-option *ngFor="let cat of leadCategories" [value]="cat">
-                {{ cat }}
+                {{ cat === 'Employee' ? 'Hero' : (cat === 'Client' ? 'Legend' : cat) }}
               </mat-option>
             </mat-select>
           </mat-form-field>

@@ -10,7 +10,7 @@
                 <h2 class="text-xl font-black text-slate-900 leading-none m-0 uppercase tracking-tight">{{ lead.name }}</h2>
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                    Lead ID: #{{ lead.id }} • {{ lead.lead_cat }}
+                    Lead ID: #{{ lead.id }} • {{ lead.lead_cat === 'Employee' ? 'Hero' : (lead.lead_cat === 'Client' ? 'Legend' : lead.lead_cat) }}
                 </span>
             </div>
         </div>
@@ -22,7 +22,7 @@
     <mat-dialog-content class="!p-0 !m-0 !overflow-x-hidden">
         <div class="flex flex-col p-4 md:p-8 gap-6">
 
-            <!-- 🛤️ Pipeline Section (Employee Only) -->
+            <!-- 🛤️ Pipeline Section (Hero Only) -->
             <div *ngIf="lead.lead_cat === 'Employee'" class="bg-indigo-900/5 rounded-3xl p-6 border border-indigo-100/50">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-200">

@@ -6,7 +6,7 @@
             <div class="flex items-center gap-3">
                 <mat-icon class="scale-125">people</mat-icon>
                 <div class="flex flex-col">
-                    <h2 class="!m-0 text-lg font-black uppercase tracking-widest leading-none">{{ data?.title || (entityType | titlecase) + ' Directory' }}</h2>
+                    <h2 class="!m-0 text-lg font-black uppercase tracking-widest leading-none">{{ data?.title || (entityType === 'employee' ? 'Hero' : (entityType === 'client' ? 'Legend' : (entityType | titlecase))) + ' Directory' }}</h2>
                     <p class="text-[10px] opacity-70 font-medium uppercase tracking-wider mt-1">Manage platform members & access</p>
                 </div>
             </div>
@@ -19,21 +19,21 @@
             <!-- ⏳ Loading Overlay -->
             <div *ngIf="loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-12 text-center">
                 <mat-spinner diameter="40" strokeWidth="3"></mat-spinner>
-                <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-4">Synchronizing {{ entityType }} records...</p>
+                <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-4">Synchronizing {{ entityType === 'employee' ? 'hero' : (entityType === 'client' ? 'legend' : entityType) }} records...</p>
             </div>
 
             <!-- 📋 Header Actions -->
             <div class="p-4 sm:p-6 bg-slate-50/50 border-b border-slate-100">
                 <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
                     <div class="relative flex-1 max-w-md group">
-                        <input (keyup)="applyFilter($event)" [placeholder]="'Search ' + entityType + 's...'" 
+                        <input (keyup)="applyFilter($event)" [placeholder]="entityType === 'employee' ? 'Search Heroes...' : (entityType === 'client' ? 'Search Legends...' : 'Search ' + entityType + 's...')" 
                                class="w-full h-11 pl-11 pr-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none text-sm font-medium">
                         <mat-icon class="absolute left-4 top-2.5 text-slate-300 group-hover:text-primary transition-colors !text-xl">search</mat-icon>
                     </div>
 
                     <button mat-flat-button color="primary" (click)="addNew()"
                             class="!rounded-2xl h-11 px-6 !font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all active:scale-95">
-                        <mat-icon class="mr-2 !text-sm !w-4 !h-4">person_add</mat-icon> Create {{ entityType | titlecase }}
+                        <mat-icon class="mr-2 !text-sm !w-4 !h-4">person_add</mat-icon> Create {{ entityType === 'employee' ? 'Hero' : (entityType === 'client' ? 'Legend' : (entityType | titlecase)) }}
                     </button>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                                 <div class="flex flex-col min-w-0">
                                     <span class="text-[8px] font-black uppercase tracking-[0.15em] leading-none mb-1 px-1.5 py-0.5 rounded bg-slate-50 text-slate-400 border border-slate-100 w-max truncate"
                                           [ngClass]="getDeptClass(item.main_department)">
-                                        {{ entityType === 'employee' ? (item.main_department || 'General') : 'Client Entity' }}
+                                        {{ entityType === 'employee' ? (item.main_department || 'General') : 'Legend Entity' }}
                                     </span>
                                     <h4 class="m-0 font-bold text-surface-900 text-base tracking-tight truncate">{{ item.name }}</h4>
                                     <span class="text-[10px] text-slate-400 font-medium truncate">{{ item.email }}</span>
@@ -189,7 +189,7 @@
                             </td>
                         </ng-container>
 
-                        <!-- Client specific columns -->
+                        <!-- Legend specific columns -->
                         <ng-container matColumnDef="phone">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header class="!p-0 !bg-slate-50 !font-black !uppercase !tracking-widest !text-[10px] !text-slate-500 border-b border-slate-100">
                                 <div class="px-6 py-5 whitespace-nowrap">Phone</div>

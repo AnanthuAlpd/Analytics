@@ -9,7 +9,9 @@
   <mat-form-field appearance="fill">
     <mat-label>Lead Category</mat-label>
     <mat-select formControlName="lead_cat">
-      <mat-option *ngFor="let cat of leadCategories" [value]="cat">{{ cat }}</mat-option>
+      <mat-option *ngFor="let cat of leadCategories" [value]="cat">
+        {{ cat === 'Employee' ? 'Hero' : (cat === 'Client' ? 'Legend' : cat) }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 

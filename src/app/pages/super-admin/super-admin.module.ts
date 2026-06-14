@@ -14,22 +14,22 @@ export const routes: Routes = [
       {
         path: 'employee-list',
         component: EntityListEmpClientComponent,
-        data: { type: 'employee',breadcrumb: 'Employee List' }
+        data: { type: 'employee',breadcrumb: 'Hero List' }
       },
       {
         path: 'client-list',
         component: EntityListEmpClientComponent,
-        data: { type: 'client',breadcrumb: 'Client List' }
+        data: { type: 'client',breadcrumb: 'Legend List' }
       },
       {
         path: 'leads/emp-leads-list',
         component: EntityListLeadsComponent,
-        data: { type: 'employee', breadcrumb: 'Employee Leads List' }
+        data: { type: 'employee', breadcrumb: 'Hero Leads List' }
       },
       {
         path: 'leads/client-leads-list',
         component: EntityListLeadsComponent,
-        data: { type: 'client', breadcrumb: 'Client Leads List' }
+        data: { type: 'client', breadcrumb: 'Legend Leads List' }
       }
     ]
   },

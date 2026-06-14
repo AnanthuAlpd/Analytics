@@ -1,12 +1,12 @@
 <mat-toolbar class="sidenav-header shadow-sm">
-    <div class="header-container flex items-center w-full px-4" 
-        [class.justify-between]="settings.menuType != 'mini'"
+    <div class="header-container flex items-center w-full px-4" [class.justify-between]="settings.menuType != 'mini'"
         [class.justify-center]="settings.menuType == 'mini'">
         <a class="logo-wrapper flex items-center no-underline" [href]="staticWebsiteUrl">
             <img src="assets/img/logo/logo.jpeg" alt="Logo" class="logo-img">
             <div *ngIf="settings.menuType == 'default'" class="flex flex-col ml-3">
                 <span class="logo-text">PothansAI</span>
-                <span *ngIf="isDemoDashboard || (serviceName && router.url.includes('/dashboard/client'))" class="text-[9px] font-black text-[#764ba2] opacity-60 tracking-[0.2em] uppercase mt-[-2px] whitespace-nowrap">
+                <span *ngIf="isDemoDashboard || (serviceName && router.url.includes('/dashboard/client'))"
+                    class="text-[9px] font-black text-[#764ba2] opacity-60 tracking-[0.2em] uppercase mt-[-2px] whitespace-nowrap">
                     {{ isDemoDashboard ? 'Prabha Analytics' : serviceName }}
                 </span>
             </div>
@@ -16,37 +16,35 @@
 
 <div class="dashboard-context-switcher" *ngIf="hasAdminRole() && settings.menuType != 'mini'">
     <mat-button-toggle-group [value]="dashboardModeService.currentMode"
-        (change)="dashboardModeService.setMode($event.value)" 
-        class="sidebar-switcher flex items-center justify-center">
+        (change)="dashboardModeService.setMode($event.value)" class="sidebar-switcher flex items-center justify-center">
         <mat-button-toggle value="admin" class="flex-1" matTooltip="Admin Overview">
             <div class="toggle-content flex items-center justify-center gap-2">
                 <mat-icon>admin_panel_settings</mat-icon>
                 <span>Admin</span>
             </div>
         </mat-button-toggle>
-        <mat-button-toggle value="employee" class="flex-1" matTooltip="Employee Workspace">
+        <mat-button-toggle value="employee" class="flex-1" matTooltip="Hero Workspace">
             <div class="toggle-content flex items-center justify-center gap-2">
                 <mat-icon>dashboard</mat-icon>
-                <span>Staff</span>
+                <span>Hero</span>
             </div>
         </mat-button-toggle>
     </mat-button-toggle-group>
 </div>
 
-<div class="user-block transition-all duration-300 flex flex-col items-center"
-    [class.show]="settings.sidenavUserBlock">
-    
+<div class="user-block transition-all duration-300 flex flex-col items-center" [class.show]="settings.sidenavUserBlock">
+
     <div class="user-main-info flex items-center justify-center w-full px-4 gap-4 py-4">
         <div class="avatar-wrapper relative">
             <img [src]="userImage" alt="user-image" class="avatar-img shadow-lg">
         </div>
-        
+
         <div class="user-details flex flex-col" *ngIf="settings.menuType != 'mini'">
             <p class="name font-bold leading-tight">{{userName}}</p>
             <p class="dept text-sm opacity-80">{{deptName}}</p>
         </div>
     </div>
-    
+
     <div class="logout-section w-full flex justify-center pb-4" *ngIf="settings.menuType != 'mini'">
         <button mat-icon-button (click)="logout()" class="logout-btn" matTooltip="Sign Out">
             <mat-icon>power_settings_new</mat-icon>
@@ -58,4 +56,4 @@
     <div id="vertical-menu">
         <app-vertical-menu [menuItems]="menuItems" [menuParentId]="null"></app-vertical-menu>
     </div>
-</perfect-scrollbar>
+</perfect-scrollbar>

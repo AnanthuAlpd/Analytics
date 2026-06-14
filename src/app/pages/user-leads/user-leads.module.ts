@@ -13,12 +13,12 @@ export const routes: Routes = [
       {
         path: 'emp-leads-list',
         component: MyLeadsComponent,
-        data: { type: 'employee', breadcrumb: 'My Employee Leads' }
+        data: { type: 'employee', breadcrumb: 'My Hero Leads' }
       },
       {
         path: 'client-leads-list',
         component: MyLeadsComponent,
-        data: { type: 'client', breadcrumb: 'My Client Leads' }
+        data: { type: 'client', breadcrumb: 'My Legend Leads' }
       }
     ]
   }

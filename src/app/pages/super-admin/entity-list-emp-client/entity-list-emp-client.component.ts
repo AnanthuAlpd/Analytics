@@ -46,14 +46,14 @@ export class EntityListEmpClientComponent implements OnInit {
       // It's a dialog
       this.entityType = this.dialogData.type;
       this.data = this.dialogData;
-      this.title = this.dialogData.title || (this.entityType === 'client' ? 'Client List' : 'Employee List');
+      this.title = this.dialogData.title || (this.entityType === 'client' ? 'Legend List' : 'Hero List');
       this.loadData();
     } else {
       // It's a route
       this.route.data.subscribe(data => {
         this.entityType = data['type'];
         this.data = data; // Set the data property
-        this.title = this.entityType === 'client' ? 'Client List' : 'Employee List';
+        this.title = this.entityType === 'client' ? 'Legend List' : 'Hero List';
         this.loadData();
       });
     }
@@ -115,7 +115,7 @@ export class EntityListEmpClientComponent implements OnInit {
           ${initials}
         </div>
         <h2 style="margin: 0; padding: 0; font-size: 24px; font-weight: 700; color: #0f172a;">${item.name}</h2>
-        <p style="margin: 4px 0 0; color: #64748b; font-size: 14px;">${isEmp ? (item.main_department || 'Employee') : 'Client Partner'}</p>
+        <p style="margin: 4px 0 0; color: #64748b; font-size: 14px;">${isEmp ? (item.main_department || 'Hero') : 'Legend Partner'}</p>
       </div>
 
       <div style="text-align: left; padding: 0 12px 12px;">
